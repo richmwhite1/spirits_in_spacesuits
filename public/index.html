@@ -89,10 +89,10 @@ nav.scrolled {
   position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(
     to bottom,
-    rgba(3,6,9,.25) 0%,
-    rgba(3,6,9,.15) 30%,
-    rgba(3,6,9,.40) 65%,
-    rgba(6,9,15,.92) 100%
+    rgba(3,6,9,.10) 0%,
+    rgba(3,6,9,.05) 30%,
+    rgba(3,6,9,.30) 65%,
+    rgba(6,9,15,.88) 100%
   );
 }
 .hero-content {
@@ -208,7 +208,7 @@ h2 {
 }
 .ask-side-photo::after {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(to top, rgba(13,30,20,.7) 0%, transparent 60%);
+  background: linear-gradient(to top, rgba(13,30,20,.45) 0%, transparent 55%);
 }
 .ask-side-name {
   font-family: var(--serif); font-size: 1.5rem; font-weight: 300;
@@ -734,7 +734,8 @@ h2 {
   background: var(--surface); border: 1px solid var(--border-mid);
   overflow: hidden;
 }
-.book-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.book-cover img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(1.15) brightness(1.05); transition: filter .3s; }
+.book-card:hover .book-cover img { filter: saturate(1.3) brightness(1.12); }
 .book-cover-text {
   font-family: var(--serif); font-size: .58rem; color: var(--gold-dim);
   text-align: center; padding: .4rem; line-height: 1.4;
