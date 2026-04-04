@@ -732,8 +732,9 @@ h2 {
 .book-cover {
   width: 70px; flex-shrink: 0; aspect-ratio: 2/3;
   background: var(--surface); border: 1px solid var(--border-mid);
-  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
 }
+.book-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .book-cover-text {
   font-family: var(--serif); font-size: .58rem; color: var(--gold-dim);
   text-align: center; padding: .4rem; line-height: 1.4;
@@ -1179,7 +1180,7 @@ footer {
     <p class="section-lead fade-in">Six books spanning forty years — theology, psychology, mysticism, and the science of prayer.</p>
     <div class="books-grid fade-in">
       <div class="book-card featured">
-        <div class="book-cover"><div class="book-cover-text">Setting God Free</div></div>
+        <div class="book-cover"><img src="/books/setting-god-free.jpg" alt="Setting God Free"></div>
         <div>
           <span class="book-badge">Latest</span>
           <p class="book-title">Setting God Free</p>
@@ -1192,7 +1193,7 @@ footer {
         </div>
       </div>
       <div class="book-card featured">
-        <div class="book-cover"><div class="book-cover-text">Spirits in Spacesuits</div></div>
+        <div class="book-cover"><img src="/books/spirits-in-spacesuits.jpg" alt="Spirits in Spacesuits"></div>
         <div>
           <span class="book-badge">Foundational</span>
           <p class="book-title">Spirits in Spacesuits</p>
@@ -1204,7 +1205,7 @@ footer {
         </div>
       </div>
       <div class="book-card">
-        <div class="book-cover"><div class="book-cover-text">Why?</div></div>
+        <div class="book-cover"><img src="/books/why.jpg" alt="Why?"></div>
         <div>
           <p class="book-title">Why?</p>
           <p class="book-subtitle">What Your Life Is Telling You About Who You Are and Why You're Here</p>
@@ -1215,7 +1216,7 @@ footer {
         </div>
       </div>
       <div class="book-card">
-        <div class="book-cover"><div class="book-cover-text">Souls on Safari</div></div>
+        <div class="book-cover"><img src="/books/souls-on-safari.jpg" alt="Souls on Safari"></div>
         <div>
           <p class="book-title">Souls on Safari</p>
           <p class="book-subtitle">A Guided Tour of Mystical Wisdom</p>
@@ -1226,7 +1227,7 @@ footer {
         </div>
       </div>
       <div class="book-card">
-        <div class="book-cover"><div class="book-cover-text">A Sensible God</div></div>
+        <div class="book-cover"><img src="/books/a-sensible-god.jpg" alt="A Sensible God"></div>
         <div>
           <p class="book-title">A Sensible God</p>
           <p class="book-subtitle">Stories and Scriptures of Science and Psychology</p>
@@ -1237,7 +1238,7 @@ footer {
         </div>
       </div>
       <div class="book-card">
-        <div class="book-cover"><div class="book-cover-text">Different Paths to Source</div></div>
+        <div class="book-cover"><img src="/books/different-paths.jpg" alt="Different Paths to Source"></div>
         <div>
           <span class="book-badge">2025 · Contributed Chapter</span>
           <p class="book-title">Different Paths to Source</p>
