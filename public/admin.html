@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Spirits in Spacesuits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --void:    #03060a;
+  --deep:    #06090f;
+  --dark:    #080d18;
+  --navy:    #0b1020;
+  --mid:     #101828;
+  --surface: #172030;
+  --lift:    #1d2a3c;
+  --gold:    #c8963e;
+  --gold-b:  #e8c060;
+  --gold-d:  #8a6528;
+  --gold-p:  #d4b882;
+  --cream:   #f0e8d8;
+  --cream-d: #c4b8a4;
+  --body:    #928478;
+  --muted:   #574e46;
+  --faint:   #2a2420;
+  --border:  rgba(200,150,62,.10);
+  --bm:      rgba(200,150,62,.18);
+  --bs:      rgba(200,150,62,.28);
+  --glow:    rgba(200,150,62,.08);
+  --green:   #2a7a4a;
+  --red:     #8a3030;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans:  'Jost', system-ui, sans-serif;
+}
+html, body { height: 100%; }
+body { font-family: var(--sans); background: var(--dark); color: var(--body); font-size: 15px; line-height: 1.6; font-weight: 300; }
+
+/* LOGIN */
+#loginScreen { position: fixed; inset: 0; background: var(--void); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.login-box { width: 100%; max-width: 360px; padding: 2rem; border: 1px solid var(--bm); background: var(--navy); }
+.login-logo { font-family: var(--serif); font-size: 1.1rem; color: var(--gold-p); margin-bottom: .3rem; font-weight: 300; }
+.login-sub { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-d); margin-bottom: 2rem; }
+.login-box label { display: block; font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+.login-box input { width: 100%; padding: .7rem .9rem; background: var(--mid); border: 1px solid var(--border); color: var(--cream-d); font-family: var(--sans); font-size: .9rem; outline: none; margin-bottom: 1rem; transition: border-color .2s; }
+.login-box input:focus { border-color: var(--gold-d); }
+.login-error { font-size: .78rem; color: #e06060; margin-bottom: .75rem; display: none; }
+
+/* BUTTONS */
+.btn { display: inline-block; padding: .65rem 1.5rem; border: 1px solid var(--gold-d); background: transparent; color: var(--gold); font-family: var(--sans); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: all .2s; font-weight: 400; }
+.btn:hover { background: var(--gold); color: var(--dark); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn-full { width: 100%; }
+.btn-danger { border-color: var(--red); color: #e06060; }
+.btn-danger:hover { background: var(--red); color: var(--cream); }
+.btn-sm { padding: .35rem .75rem; font-size: .65rem; }
+.btn-green { border-color: #2a6a40; color: #70c090; }
+.btn-green:hover { background: #1a4a2c; color: var(--cream); }
+
+/* LAYOUT */
+#app { display: none; height: 100vh; overflow: hidden; }
+#app.show { display: grid; grid-template-columns: 220px 1fr; }
+
+/* SIDEBAR */
+.sidebar { background: var(--void); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 0; overflow-y: auto; }
+.sidebar-logo { padding: 0 1.5rem 1.5rem; border-bottom: 1px solid var(--border); }
+.sidebar-logo-name { font-family: var(--serif); font-size: 1rem; color: var(--gold-p); font-weight: 300; line-height: 1.2; }
+.sidebar-logo-sub { font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-d); margin-top: .2rem; }
+nav.sidenav { padding: 1rem 0; flex: 1; }
+.snav-section { font-size: .56rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); padding: .8rem 1.5rem .3rem; margin-top: .5rem; }
+.snav-item { display: block; width: 100%; padding: .6rem 1.5rem; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: none; border: none; cursor: pointer; text-align: left; font-family: var(--sans); font-weight: 400; transition: color .2s, background .2s; border-left: 2px solid transparent; }
+.snav-item:hover { color: var(--cream-d); background: var(--glow); }
+.snav-item.active { color: var(--gold); border-left-color: var(--gold); background: var(--glow); }
+.sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); font-size: .68rem; color: var(--muted); }
+.sidebar-footer a { color: var(--gold-d); text-decoration: none; }
+.sidebar-footer button { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .68rem; font-family: var(--sans); padding: 0; margin-top: .5rem; display: block; transition: color .2s; }
+.sidebar-footer button:hover { color: var(--gold-d); }
+
+/* MAIN */
+.main { overflow-y: auto; background: var(--dark); }
+.page { display: none; padding: 2.5rem 3rem; max-width: 1000px; }
+.page.active { display: block; }
+.page-title { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; color: var(--gold-p); margin-bottom: .4rem; }
+.page-lead { font-size: .85rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.7; max-width: 640px; }
+
+/* STATS */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); margin-bottom: 2.5rem; }
+.stat-card { background: var(--mid); padding: 1.25rem 1.5rem; }
+.stat-num { font-family: var(--serif); font-size: 2rem; font-weight: 300; color: var(--gold); line-height: 1; margin-bottom: .3rem; }
+.stat-label { font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* TABLES */
+.section-label { font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-d); margin-bottom: 1rem; }
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: left; padding: .6rem .9rem; border-bottom: 1px solid var(--border); font-weight: 400; }
+.data-table td { padding: .65rem .9rem; border-bottom: 1px solid var(--border); font-size: .82rem; color: var(--body); vertical-align: middle; }
+.data-table tr:hover td { background: var(--glow); }
+.type-badge { display: inline-block; padding: .15rem .5rem; font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--border); color: var(--muted); }
+.type-badge.transcript { border-color: rgba(100,160,200,.3); color: #7ab0d0; }
+.type-badge.book       { border-color: rgba(200,150,62,.3); color: var(--gold-d); }
+.type-badge.essay      { border-color: rgba(100,180,130,.3); color: #80c0a0; }
+.type-badge.poem       { border-color: rgba(180,130,200,.3); color: #c090e0; }
+.type-badge.story      { border-color: rgba(200,150,62,.3); color: var(--gold-d); }
+.empty-state { text-align: center; padding: 3rem; color: var(--muted); font-style: italic; font-size: .85rem; }
+.source-id-link { font-size: .7rem; color: var(--gold-d); text-decoration: none; }
+.source-id-link:hover { color: var(--gold); }
+
+/* PAGE HEADER ROW */
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+.page-header-text { flex: 1; }
+
+/* SEARCH + FILTER BAR */
+.filter-bar { display: flex; gap: .75rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.filter-search { position: relative; flex: 1; min-width: 200px; }
+.filter-search input { width: 100%; padding: .55rem 1rem .55rem 2rem; background: var(--mid); border: 1px solid var(--border); color: var(--cream-d); font-family: var(--sans); font-size: .82rem; outline: none; transition: border-color .2s; font-weight: 300; }
+.filter-search input:focus { border-color: var(--gold-d); }
+.filter-search::before { content: '⌕'; position: absolute; left: .7rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .9rem; pointer-events: none; }
+.filter-tabs { display: flex; gap: .35rem; }
+.ftab { padding: .35rem .85rem; border: 1px solid var(--border); color: var(--muted); font-size: .67rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; background: transparent; font-family: var(--sans); transition: all .2s; font-weight: 400; }
+.ftab.active, .ftab:hover { border-color: var(--gold-d); color: var(--gold-p); background: var(--glow); }
+
+/* UPLOAD FORM */
+.upload-form { max-width: 580px; }
+.form-group { margin-bottom: 1.4rem; }
+.form-group label { display: block; font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: .7rem .9rem; background: var(--mid); border: 1px solid var(--border); color: var(--cream-d); font-family: var(--sans); font-size: .88rem; outline: none; transition: border-color .2s; font-weight: 300; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold-d); }
+.form-group select { cursor: pointer; }
+.form-group select option { background: var(--mid); }
+.form-group textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+.form-hint { font-size: .72rem; color: var(--muted); margin-top: .4rem; line-height: 1.5; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.dropzone { border: 1px dashed var(--bm); padding: 2rem; text-align: center; cursor: pointer; transition: all .2s; background: var(--mid); margin-bottom: .75rem; }
+.dropzone:hover, .dropzone.drag-over { border-color: var(--gold-d); background: var(--glow); }
+.dropzone-icon { font-size: 1.4rem; color: var(--gold-d); margin-bottom: .5rem; }
+.dropzone-label { font-size: .85rem; color: var(--body); margin-bottom: .25rem; }
+.dropzone-hint { font-size: .72rem; color: var(--muted); }
+.dropzone input[type="file"] { display: none; }
+#fileNameDisplay { font-size: .8rem; color: var(--gold-d); margin-top: .5rem; font-style: italic; }
+.upload-status { display: none; padding: .9rem 1.1rem; margin-top: 1rem; border: 1px solid var(--border); font-size: .82rem; line-height: 1.6; }
+.upload-status.running { border-color: rgba(100,160,200,.3); color: #7ab0d0; }
+.upload-status.success { border-color: rgba(100,180,130,.3); color: #80c0a0; }
+.upload-status.error   { border-color: rgba(220,100,100,.3); color: #e08080; }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(3,6,9,.88); z-index: 800; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--navy); border: 1px solid var(--bm); width: 100%; max-width: 680px; margin: auto; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); }
+.modal-title { font-family: var(--serif); font-size: 1.35rem; color: var(--gold-p); font-weight: 300; }
+.modal-close { background: none; border: 1px solid var(--border); color: var(--muted); width: 30px; height: 30px; cursor: pointer; font-size: .85rem; transition: all .2s; }
+.modal-close:hover { border-color: var(--bm); color: var(--cream-d); }
+.modal-body { padding: 1.75rem 2rem; }
+.modal-footer { padding: 1.25rem 2rem; border-top: 1px solid var(--border); display: flex; gap: .75rem; justify-content: flex-end; }
+
+/* KEYS EDITOR */
+.keys-editor { border: 1px solid var(--border); background: var(--mid); }
+.key-row { display: grid; grid-template-columns: 1fr 2fr 30px; gap: .5rem; padding: .6rem .75rem; border-bottom: 1px solid var(--border); align-items: center; }
+.key-row:last-child { border-bottom: none; }
+.key-row input { background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--cream-d); font-family: var(--sans); font-size: .82rem; padding: .3rem .4rem; outline: none; width: 100%; font-weight: 300; }
+.key-row input:focus { border-bottom-color: var(--gold-d); }
+.key-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; transition: color .2s; padding: 0; text-align: center; }
+.key-remove:hover { color: #e06060; }
+.add-key-btn { display: block; width: 100%; padding: .55rem; background: transparent; border: 1px dashed var(--border); color: var(--muted); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; font-family: var(--sans); transition: all .2s; margin-top: .5rem; }
+.add-key-btn:hover { border-color: var(--gold-d); color: var(--gold-p); }
+
+/* IMAGE PREVIEW */
+.img-preview { margin-top: .5rem; display: none; }
+.img-preview img { max-height: 120px; border: 1px solid var(--border); }
+
+/* CONFIRM */
+.confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(3,6,9,.85); z-index: 900; align-items: center; justify-content: center; }
+.confirm-overlay.open { display: flex; }
+.confirm-box { background: var(--navy); border: 1px solid var(--bm); padding: 2rem; max-width: 380px; width: 100%; }
+.confirm-box h3 { font-family: var(--serif); font-size: 1.3rem; color: var(--gold-p); font-weight: 300; margin-bottom: .75rem; }
+.confirm-box p { font-size: .85rem; color: var(--body); margin-bottom: 1.5rem; line-height: 1.65; }
+.confirm-actions { display: flex; gap: .75rem; justify-content: flex-end; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; padding: .85rem 1.5rem; border: 1px solid var(--bm); font-size: .82rem; color: var(--cream-d); background: var(--surface); opacity: 0; transform: translateY(8px); transition: all .25s; pointer-events: none; max-width: 320px; }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { border-color: rgba(100,180,130,.4); color: #90d0a8; }
+.toast.error   { border-color: rgba(220,100,100,.4); color: #e09090; }
+
+/* LOADING SPINNER */
+.loading { text-align: center; padding: 2.5rem; color: var(--muted); font-style: italic; font-size: .85rem; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  #app.show { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .page { padding: 1.5rem; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .modal { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Spirits in Spacesuits</div>
+    <div class="login-sub">Admin Panel</div>
+    <label for="passwordInput">Password</label>
+    <input type="password" id="passwordInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')login()">
+    <div class="login-error" id="loginError">Incorrect password.</div>
+    <button class="btn btn-full" onclick="login()">Sign In</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-name">Spirits in Spacesuits</div>
+      <div class="sidebar-logo-sub">Admin Panel</div>
+    </div>
+    <nav class="sidenav">
+      <div class="snav-section">AI Knowledge Base</div>
+      <button class="snav-item active" onclick="showPage('corpus', this)">Corpus Stats</button>
+      <button class="snav-item" onclick="showPage('upload', this)">Add to Corpus</button>
+      <div class="snav-section">Site Content</div>
+      <button class="snav-item" onclick="showPage('content', this)">Stories, Essays & Poems</button>
+      <button class="snav-item" onclick="showPage('models', this)">Models of Reality</button>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/" target="_blank">← View Site</a><br>
+      <button onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- ── CORPUS PAGE ── -->
+    <div class="page active" id="page-corpus">
+      <h1 class="page-title">AI Corpus</h1>
+      <p class="page-lead">The RAG knowledge base powering "Ask Seán." Add transcripts and books here — not stories or poems, which belong in <em>Stories, Essays & Poems</em>.</p>
+      <div class="loading" id="corpusLoading">Loading corpus stats…</div>
+      <div id="corpusContent" style="display:none;">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total Chunks</div></div>
+          <div class="stat-card"><div class="stat-num" id="statSources">—</div><div class="stat-label">Sources</div></div>
+          <div class="stat-card"><div class="stat-num" id="statTranscripts">—</div><div class="stat-label">Transcript Chunks</div></div>
+          <div class="stat-card"><div class="stat-num" id="statBooks">—</div><div class="stat-label">Book / Essay Chunks</div></div>
+        </div>
+        <div class="section-label">All Sources</div>
+        <table class="data-table">
+          <thead><tr><th>Type</th><th>Title</th><th>Chunks</th><th>YouTube</th><th></th></tr></thead>
+          <tbody id="sourcesBody"></tbody>
+        </table>
+        <div class="empty-state" id="noSources" style="display:none;">No content in the corpus yet. Use "Add to Corpus" to get started.</div>
+      </div>
+    </div>
+
+    <!-- ── UPLOAD PAGE ── -->
+    <div class="page" id="page-upload">
+      <h1 class="page-title">Add to Corpus</h1>
+      <p class="page-lead">Add a transcript, book chapter, or essay to the AI knowledge base. It will be chunked, embedded, and made searchable. <strong>Only plain text (.txt) and subtitle (.srt) files are supported</strong> — save Word documents as .txt first.</p>
+      <div class="upload-form">
+        <div class="form-group">
+          <label>File</label>
+          <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()"
+               ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave()">
+            <div class="dropzone-icon">↑</div>
+            <div class="dropzone-label">Drop file here or click to browse</div>
+            <div class="dropzone-hint">.txt or .srt only — Word docs must be saved as .txt first</div>
+            <input type="file" id="fileInput" accept=".txt,.srt" onchange="handleFileSelect(event)">
+          </div>
+          <div id="fileNameDisplay"></div>
+        </div>
+        <div class="form-group">
+          <label>Or Paste Text Directly</label>
+          <textarea id="textInput" placeholder="Paste transcript or document text here…"></textarea>
+          <div class="form-hint">Pasting text here overrides the uploaded file.</div>
+        </div>
+        <div class="form-group">
+          <label>Title <span style="color:#e06060">*</span></label>
+          <input type="text" id="titleInput" placeholder="e.g. The Nature of God — Homily 2019-04-14">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Source Type <span style="color:#e06060">*</span></label>
+            <select id="sourceTypeInput">
+              <option value="transcript">Transcript (YouTube lecture)</option>
+              <option value="book">Book chapter</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date (optional)</label>
+            <input type="date" id="dateInput">
+          </div>
+        </div>
+        <div class="form-group" id="videoIdGroup">
+          <label>YouTube Video ID (optional)</label>
+          <input type="text" id="videoIdInput" placeholder="e.g. dQw4w9WgXcQ" oninput="previewThumb(this.value)">
+          <div class="form-hint">The ID after /watch?v= — lets the AI surface this video in answers.</div>
+          <div id="thumbPreview" style="margin-top:.75rem; display:none;">
+            <img id="thumbImg" style="height:56px; border:1px solid var(--border);">
+          </div>
+        </div>
+        <div class="upload-status" id="uploadStatus"></div>
+        <button class="btn" id="uploadBtn" onclick="uploadContent()">Ingest into Corpus →</button>
+      </div>
+    </div>
+
+    <!-- ── CONTENT PAGE (Stories, Essays, Poems) ── -->
+    <div class="page" id="page-content">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1 class="page-title">Stories, Essays & Poems</h1>
+          <p class="page-lead">Content that appears on the site. Add, edit, or remove pieces here — they publish immediately.</p>
+        </div>
+        <button class="btn btn-green" onclick="openContentModal()">+ Add New</button>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-search">
+          <input type="text" id="contentSearch" placeholder="Search by title…" oninput="debounceContentSearch(this.value)">
+        </div>
+        <div class="filter-tabs">
+          <button class="ftab active" onclick="setContentFilter('all', this)">All</button>
+          <button class="ftab" onclick="setContentFilter('story', this)">Stories</button>
+          <button class="ftab" onclick="setContentFilter('essay', this)">Essays</button>
+          <button class="ftab" onclick="setContentFilter('poem', this)">Poems</button>
+        </div>
+      </div>
+      <div class="loading" id="contentLoading">Loading…</div>
+      <div id="contentTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th>Type</th><th>Title</th><th>Date</th><th style="width:130px"></th></tr></thead>
+          <tbody id="contentBody"></tbody>
+        </table>
+        <div class="empty-state" id="noContent" style="display:none;">No content yet. Click "+ Add New" to get started.</div>
+      </div>
+    </div>
+
+    <!-- ── MODELS PAGE ── -->
+    <div class="page" id="page-models">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1 class="page-title">Models of Reality</h1>
+          <p class="page-lead">Seán's conceptual frameworks. Add, edit, or reorder them here.</p>
+        </div>
+        <button class="btn btn-green" onclick="openModelModal()">+ Add Model</button>
+      </div>
+      <div class="loading" id="modelsLoading">Loading…</div>
+      <div id="modelsTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th style="width:50px">#</th><th>Title</th><th>Subtitle</th><th style="width:130px"></th></tr></thead>
+          <tbody id="modelsBody"></tbody>
+        </table>
+        <div class="empty-state" id="noModels" style="display:none;">No models yet. Click "+ Add Model" to get started.</div>
+      </div>
+    </div>
+
+  </div><!-- .main -->
+</div><!-- #app -->
+
+<!-- CONTENT EDIT MODAL -->
+<div class="modal-overlay" id="contentModal" onclick="closeContentModalBg(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="contentModalTitle">Add Story / Essay / Poem</div>
+      <button class="modal-close" onclick="closeContentModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="contentId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Type <span style="color:#e06060">*</span></label>
+          <select id="contentType">
+            <option value="story">Story</option>
+            <option value="essay">Essay</option>
+            <option value="poem">Poem</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date (optional)</label>
+          <input type="text" id="contentDate" placeholder="e.g. February 18, 2019">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Title <span style="color:#e06060">*</span></label>
+        <input type="text" id="contentTitle" placeholder="Title of the piece">
+      </div>
+      <div class="form-group">
+        <label>Excerpt <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — shown on the card grid</span></label>
+        <textarea id="contentExcerpt" style="min-height:80px;" placeholder="A short 1–2 sentence summary shown on the card. Plain text only."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Import from File <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — optional, populates Body below</span></label>
+        <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+          <label class="btn btn-sm" style="cursor:pointer;display:inline-block;">
+            Choose File
+            <input type="file" id="contentFileInput" accept=".txt,.docx,.pdf" style="display:none;" onchange="importContentFile(event)">
+          </label>
+          <span id="contentFileStatus" style="font-size:.75rem;color:var(--muted);"></span>
+        </div>
+        <div class="form-hint">.txt, .docx (Word), or .pdf — text is extracted and placed in Body. Title is filled from the filename if empty.</div>
+      </div>
+      <div class="form-group">
+        <label>Body <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — HTML allowed (use &lt;p&gt;, &lt;em&gt;, &lt;strong&gt;)</span></label>
+        <textarea id="contentBody" style="min-height:220px;" placeholder="Full text. You can use HTML tags like <p>, <em>, <strong>, <ol>, <li>."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closeContentModal()">Cancel</button>
+      <button class="btn btn-sm btn-green" id="contentSaveBtn" onclick="saveContent()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODEL EDIT MODAL -->
+<div class="modal-overlay" id="modelModal" onclick="closeModelModalBg(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modelModalTitle">Add Model of Reality</div>
+      <button class="modal-close" onclick="closeModelModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="modelId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Number (optional)</label>
+          <input type="text" id="modelNum" placeholder="e.g. 08">
+        </div>
+        <div class="form-group">
+          <label>Sort Order</label>
+          <input type="number" id="modelOrder" placeholder="e.g. 8" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Title <span style="color:#e06060">*</span></label>
+        <input type="text" id="modelTitle" placeholder="e.g. The 4 C's of Compassion">
+      </div>
+      <div class="form-group">
+        <label>Subtitle</label>
+        <input type="text" id="modelSubtitle" placeholder="Short descriptor line shown on the card">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="modelDescription" style="min-height:120px;" placeholder="2–3 paragraphs explaining the framework. Separate paragraphs with a blank line."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Image <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — visual aid, optional (JPEG / PNG / GIF / WebP)</span></label>
+        <input type="hidden" id="modelImageUrl">
+        <div style="display:flex;gap:.5rem;align-items:flex-start;flex-wrap:wrap;">
+          <div class="dropzone" id="imgDropzone" onclick="document.getElementById('imgFileInput').click()"
+               style="flex:1;min-width:200px;padding:1rem;margin-bottom:0;"
+               ondragover="handleImgDragOver(event)" ondrop="handleImgDrop(event)" ondragleave="handleImgDragLeave()">
+            <div class="dropzone-icon" style="font-size:1rem;margin-bottom:.2rem;">↑</div>
+            <div class="dropzone-label" style="font-size:.78rem;">Click or drop image</div>
+            <div class="dropzone-hint">JPEG · PNG · GIF · WebP</div>
+            <input type="file" id="imgFileInput" accept="image/jpeg,image/png,image/gif,image/webp" onchange="handleImgSelect(event)">
+          </div>
+          <div id="imgPreviewWrap" style="display:none;position:relative;">
+            <img id="modelImagePreviewImg" alt="" style="max-height:120px;max-width:160px;border:1px solid var(--border);">
+            <button onclick="clearModelImage()" title="Remove image" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);border:none;color:#e06060;cursor:pointer;width:20px;height:20px;font-size:.75rem;line-height:1;">×</button>
+          </div>
+        </div>
+        <div id="imgUploadStatus" style="font-size:.75rem;color:var(--muted);margin-top:.35rem;"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>YouTube Video ID (optional)</label>
+          <input type="text" id="modelVideoId" placeholder="e.g. dQw4w9WgXcQ">
+        </div>
+        <div class="form-group">
+          <label>Video Title (optional)</label>
+          <input type="text" id="modelVideoTitle" placeholder="e.g. The Hero's Journey">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Key Elements</label>
+        <div class="keys-editor" id="keysEditor"></div>
+        <button class="add-key-btn" onclick="addKeyRow()">+ Add Key Element</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closeModelModal()">Cancel</button>
+      <button class="btn btn-sm btn-green" id="modelSaveBtn" onclick="saveModel()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3 id="confirmTitle">Confirm Delete</h3>
+    <p id="confirmMsg"></p>
+    <div class="confirm-actions">
+      <button class="btn btn-sm" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-sm btn-danger" id="confirmOkBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════
+   AUTH
+══════════════════════════════════════ */
+let adminSecret = null;
+
+async function login() {
+  const pw = document.getElementById('passwordInput').value.trim();
+  if (!pw) return;
+  const btn = document.querySelector('#loginScreen .btn');
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const res = await fetch('/api/admin/auth', { method: 'POST', headers: { 'x-admin-secret': pw } });
+    if (res.ok) {
+      adminSecret = pw;
+      sessionStorage.setItem('adminSecret', pw);
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').classList.add('show');
+      loadCorpus();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+    }
+  } catch { document.getElementById('loginError').textContent = 'Connection error.'; document.getElementById('loginError').style.display = 'block'; }
+  btn.disabled = false; btn.textContent = 'Sign In';
+}
+
+function logout() { sessionStorage.removeItem('adminSecret'); location.reload(); }
+
+(function() {
+  const saved = sessionStorage.getItem('adminSecret');
+  if (!saved) return;
+  fetch('/api/admin/auth', { method: 'POST', headers: { 'x-admin-secret': saved } })
+    .then(r => {
+      if (r.ok) {
+        adminSecret = saved;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('app').classList.add('show');
+        loadCorpus();
+      } else { sessionStorage.removeItem('adminSecret'); }
+    }).catch(() => {});
+})();
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.snav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  el.classList.add('active');
+  if (name === 'corpus')  loadCorpus();
+  if (name === 'content') loadContent();
+  if (name === 'models')  loadModels();
+}
+
+/* ══════════════════════════════════════
+   CORPUS
+══════════════════════════════════════ */
+async function loadCorpus() {
+  document.getElementById('corpusLoading').style.display = 'block';
+  document.getElementById('corpusContent').style.display = 'none';
+  try {
+    const res = await fetch('/api/admin/stats', { headers: { 'x-admin-secret': adminSecret } });
+    if (!res.ok) throw new Error();
+    renderCorpus(await res.json());
+  } catch {
+    document.getElementById('corpusLoading').textContent = 'Failed to load. Check connection.';
+  }
+}
+
+function renderCorpus(data) {
+  document.getElementById('corpusLoading').style.display = 'none';
+  document.getElementById('corpusContent').style.display = 'block';
+  document.getElementById('statTotal').textContent = data.totalChunks.toLocaleString();
+  document.getElementById('statSources').textContent = data.sourceCount;
+  document.getElementById('statTranscripts').textContent = data.transcriptChunks.toLocaleString();
+  document.getElementById('statBooks').textContent = data.bookChunks.toLocaleString();
+  const tbody = document.getElementById('sourcesBody');
+  if (!data.sources.length) {
+    tbody.innerHTML = '';
+    document.getElementById('noSources').style.display = 'block';
+    return;
+  }
+  document.getElementById('noSources').style.display = 'none';
+  tbody.innerHTML = data.sources.map(s => `
+    <tr>
+      <td><span class="type-badge ${s.source_type}">${s.source_type}</span></td>
+      <td>${esc(s.source_title)}</td>
+      <td>${s.chunk_count.toLocaleString()}</td>
+      <td>${s.source_id ? `<a class="source-id-link" href="https://www.youtube.com/watch?v=${esc(s.source_id)}" target="_blank">${esc(s.source_id)} ↗</a>` : '<span style="color:var(--muted)">—</span>'}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="confirmCorpusDelete('${esc(s.source_title)}','${esc(s.source_type)}')">Delete</button></td>
+    </tr>`).join('');
+}
+
+let pendingDelete = null;
+function confirmCorpusDelete(title, sourceType) {
+  pendingDelete = { type: 'corpus', title, sourceType };
+  document.getElementById('confirmTitle').textContent = 'Delete from Corpus';
+  document.getElementById('confirmMsg').textContent = `This permanently removes all "${sourceType}" chunks for "${title}". The AI will no longer use this content.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executeCorpusDelete;
+}
+async function executeCorpusDelete() {
+  if (!pendingDelete) return;
+  const { title, sourceType } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch('/api/admin/delete', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify({ title, sourceType })
+    });
+    const data = await res.json();
+    res.ok ? (toast(`Deleted ${data.deleted ?? '?'} chunks for "${title}"`, 'success'), loadCorpus()) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
+}
+
+/* ══════════════════════════════════════
+   UPLOAD
+══════════════════════════════════════ */
+let fileText = null;
+
+function handleFileSelect(e) { const f = e.target.files[0]; if (f) readFile(f); }
+function handleDragOver(e) { e.preventDefault(); document.getElementById('dropzone').classList.add('drag-over'); }
+function handleDragLeave() { document.getElementById('dropzone').classList.remove('drag-over'); }
+function handleDrop(e) { e.preventDefault(); document.getElementById('dropzone').classList.remove('drag-over'); if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); }
+
+function readFile(file) {
+  const display = document.getElementById('fileNameDisplay');
+  const allowed = /\.(txt|srt)$/i;
+  if (!allowed.test(file.name)) {
+    display.textContent = '';
+    display.style.color = '#e06060';
+    display.textContent = `✗ "${file.name}" is not supported. Save as .txt first (in Word: File → Save As → Plain Text).`;
+    fileText = null;
+    return;
+  }
+  display.style.color = 'var(--gold-d)';
+  display.textContent = `Reading: ${file.name}…`;
+  const titleInput = document.getElementById('titleInput');
+  if (!titleInput.value.trim()) {
+    titleInput.value = file.name.replace(/\.(txt|srt)$/i,'').replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  }
+  const reader = new FileReader();
+  reader.onload = e => { fileText = e.target.result; display.textContent = `✓ ${file.name} (${Math.round(fileText.length/1024)} KB)`; };
+  reader.onerror = () => { display.textContent = 'Error reading file.'; };
+  reader.readAsText(file);
+}
+
+function previewThumb(id) {
+  const preview = document.getElementById('thumbPreview');
+  const clean = id.trim();
+  if (clean.length >= 8) { document.getElementById('thumbImg').src = `https://img.youtube.com/vi/${clean}/mqdefault.jpg`; preview.style.display = 'block'; }
+  else { preview.style.display = 'none'; }
+}
+
+document.getElementById('sourceTypeInput').addEventListener('change', function() {
+  document.getElementById('videoIdGroup').style.display = this.value === 'transcript' ? 'block' : 'none';
+});
+
+async function uploadContent() {
+  const text = document.getElementById('textInput').value.trim() || fileText;
+  const title = document.getElementById('titleInput').value.trim();
+  const sourceType = document.getElementById('sourceTypeInput').value;
+  const sourceId = document.getElementById('videoIdInput').value.trim() || null;
+  const sourceDate = document.getElementById('dateInput').value || null;
+  if (!text) return showUploadStatus('error', 'Provide a file or paste text first.');
+  if (!title) return showUploadStatus('error', 'Title is required.');
+  if (text.length < 50) return showUploadStatus('error', 'Text is too short (min 50 characters).');
+  const btn = document.getElementById('uploadBtn');
+  btn.disabled = true; btn.textContent = 'Ingesting…';
+  showUploadStatus('running', `Processing "${title}"… embedding and storing chunks. This may take 10–30 seconds for large files.`);
+  try {
+    const res = await fetch('/api/admin/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify({ text, title, sourceType, sourceId, sourceDate })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showUploadStatus('success', `✓ "${data.title}" ingested — ${data.chunks} chunks stored. The AI can now answer from this content.`);
+      toast(`"${data.title}" added (${data.chunks} chunks)`, 'success');
+      ['textInput','titleInput','videoIdInput','dateInput'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('fileNameDisplay').textContent = '';
+      document.getElementById('thumbPreview').style.display = 'none';
+      fileText = null;
+    } else {
+      showUploadStatus('error', data.error || 'Upload failed.');
+    }
+  } catch { showUploadStatus('error', 'Connection error. Try again.'); }
+  btn.disabled = false; btn.textContent = 'Ingest into Corpus →';
+}
+
+function showUploadStatus(type, msg) {
+  const el = document.getElementById('uploadStatus');
+  el.className = `upload-status ${type}`; el.textContent = msg; el.style.display = 'block';
+}
+
+/* ══════════════════════════════════════
+   CONTENT (Stories, Essays, Poems)
+══════════════════════════════════════ */
+let contentFilter = 'all';
+let contentSearchVal = '';
+let contentSearchTimer = null;
+
+async function loadContent() {
+  document.getElementById('contentLoading').style.display = 'block';
+  document.getElementById('contentTableWrap').style.display = 'none';
+  const params = new URLSearchParams({ limit: '200' });
+  if (contentFilter !== 'all') params.set('type', contentFilter);
+  if (contentSearchVal) params.set('q', contentSearchVal);
+  try {
+    const res = await fetch('/api/stories?' + params);
+    const data = await res.json();
+    renderContentTable(data.stories || []);
+  } catch { document.getElementById('contentLoading').textContent = 'Failed to load.'; }
+}
+
+function renderContentTable(items) {
+  document.getElementById('contentLoading').style.display = 'none';
+  document.getElementById('contentTableWrap').style.display = 'block';
+  if (!items.length) {
+    document.getElementById('contentBody').innerHTML = '';
+    document.getElementById('noContent').style.display = 'block';
+    return;
+  }
+  document.getElementById('noContent').style.display = 'none';
+  document.getElementById('contentBody').innerHTML = items.map(s => `
+    <tr>
+      <td><span class="type-badge ${s.content_type}">${s.content_type}</span></td>
+      <td>${esc(s.title)}</td>
+      <td style="color:var(--muted);font-size:.75rem;">${esc(s.story_date || '—')}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editContent(${JSON.stringify(JSON.stringify(s))})" style="margin-right:.4rem;">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmContentDelete('${esc(s.id)}','${esc(s.title)}')">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+function setContentFilter(f, el) {
+  contentFilter = f;
+  document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadContent();
+}
+
+function debounceContentSearch(val) {
+  contentSearchVal = val;
+  clearTimeout(contentSearchTimer);
+  contentSearchTimer = setTimeout(loadContent, 300);
+}
+
+// ── Content Modal
+function openContentModal(prefill) {
+  document.getElementById('contentId').value = '';
+  document.getElementById('contentType').value = 'story';
+  document.getElementById('contentDate').value = '';
+  document.getElementById('contentTitle').value = '';
+  document.getElementById('contentExcerpt').value = '';
+  document.getElementById('contentBody').value = '';
+  document.getElementById('contentModalTitle').textContent = 'Add Story / Essay / Poem';
+  document.getElementById('contentSaveBtn').textContent = 'Save';
+  if (prefill) {
+    document.getElementById('contentId').value = prefill.id || '';
+    document.getElementById('contentType').value = prefill.content_type || 'story';
+    document.getElementById('contentDate').value = prefill.story_date || '';
+    document.getElementById('contentTitle').value = prefill.title || '';
+    document.getElementById('contentExcerpt').value = prefill.excerpt || '';
+    document.getElementById('contentBody').value = prefill.body || '';
+    document.getElementById('contentModalTitle').textContent = 'Edit ' + (prefill.content_type || 'story').charAt(0).toUpperCase() + (prefill.content_type || 'story').slice(1);
+  }
+  document.getElementById('contentModal').classList.add('open');
+}
+
+function editContent(jsonStr) {
+  try { openContentModal(JSON.parse(jsonStr)); } catch {}
+}
+
+function closeContentModal() { document.getElementById('contentModal').classList.remove('open'); }
+function closeContentModalBg(e) { if (e.target === document.getElementById('contentModal')) closeContentModal(); }
+
+async function saveContent() {
+  const id = document.getElementById('contentId').value;
+  const payload = {
+    content_type: document.getElementById('contentType').value,
+    title:        document.getElementById('contentTitle').value.trim(),
+    story_date:   document.getElementById('contentDate').value.trim(),
+    excerpt:      document.getElementById('contentExcerpt').value.trim(),
+    body:         document.getElementById('contentBody').value,
+  };
+  if (!payload.title) return toast('Title is required', 'error');
+  const btn = document.getElementById('contentSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/stories?id=${id}` : '/api/stories';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(id ? 'Saved!' : `"${data.story?.title}" added`, 'success');
+      closeContentModal();
+      loadContent();
+    } else { toast(data.error || 'Save failed', 'error'); }
+  } catch { toast('Connection error', 'error'); }
+  btn.disabled = false; btn.textContent = 'Save';
+}
+
+function confirmContentDelete(id, title) {
+  pendingDelete = { type: 'content', id, title };
+  document.getElementById('confirmTitle').textContent = 'Delete Content';
+  document.getElementById('confirmMsg').textContent = `Permanently delete "${title}"? This cannot be undone.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executeContentDelete;
+}
+async function executeContentDelete() {
+  if (!pendingDelete) return;
+  const { id, title } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch(`/api/stories?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    res.ok ? (toast(`"${title}" deleted`, 'success'), loadContent()) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
+}
+
+/* ══════════════════════════════════════
+   MODELS
+══════════════════════════════════════ */
+async function loadModels() {
+  document.getElementById('modelsLoading').style.display = 'block';
+  document.getElementById('modelsTableWrap').style.display = 'none';
+  try {
+    const res = await fetch('/api/models');
+    const data = await res.json();
+    renderModelsTable(data.models || []);
+  } catch { document.getElementById('modelsLoading').textContent = 'Failed to load.'; }
+}
+
+function renderModelsTable(items) {
+  document.getElementById('modelsLoading').style.display = 'none';
+  document.getElementById('modelsTableWrap').style.display = 'block';
+  if (!items.length) {
+    document.getElementById('modelsBody').innerHTML = '';
+    document.getElementById('noModels').style.display = 'block';
+    return;
+  }
+  document.getElementById('noModels').style.display = 'none';
+  // Store in map for edit lookups (avoids HTML attribute escaping issues)
+  _modelsMap = {};
+  items.forEach(m => { _modelsMap[m.id] = m; });
+  document.getElementById('modelsBody').innerHTML = items.map(m => `
+    <tr>
+      <td style="color:var(--gold-d);font-family:var(--serif);">${esc(m.num || '—')}</td>
+      <td style="color:var(--cream-d);">${esc(m.title)}</td>
+      <td style="color:var(--muted);font-size:.78rem;">${esc(m.subtitle || '—')}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editModel('${esc(m.id)}')" style="margin-right:.4rem;">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmModelDelete('${esc(m.id)}','${esc(m.title).replace(/'/g,'&#39;')}')">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ── Model Modal
+function openModelModal(prefill) {
+  document.getElementById('modelId').value = '';
+  document.getElementById('modelNum').value = '';
+  document.getElementById('modelOrder').value = '';
+  document.getElementById('modelTitle').value = '';
+  document.getElementById('modelSubtitle').value = '';
+  document.getElementById('modelDescription').value = '';
+  document.getElementById('modelImageUrl').value = '';
+  document.getElementById('imgPreviewWrap').style.display = 'none';
+  document.getElementById('imgUploadStatus').textContent = '';
+  document.getElementById('imgFileInput').value = '';
+  document.getElementById('modelVideoId').value = '';
+  document.getElementById('modelVideoTitle').value = '';
+  document.getElementById('modelModalTitle').textContent = 'Add Model of Reality';
+  document.getElementById('modelSaveBtn').textContent = 'Save';
+  renderKeysEditor([]);
+  if (prefill) {
+    document.getElementById('modelId').value = prefill.id || '';
+    document.getElementById('modelNum').value = prefill.num || '';
+    document.getElementById('modelOrder').value = prefill.sort_order ?? '';
+    document.getElementById('modelTitle').value = prefill.title || '';
+    document.getElementById('modelSubtitle').value = prefill.subtitle || '';
+    document.getElementById('modelDescription').value = prefill.description || '';
+    document.getElementById('modelImageUrl').value = prefill.image_url || '';
+    document.getElementById('modelVideoId').value = prefill.video_id || '';
+    document.getElementById('modelVideoTitle').value = prefill.video_title || '';
+    document.getElementById('modelModalTitle').textContent = 'Edit Model';
+    if (prefill.image_url) showModelImagePreview(prefill.image_url);
+    renderKeysEditor(prefill.keys || []);
+  }
+  document.getElementById('modelModal').classList.add('open');
+}
+
+let _modelsMap = {};
+function editModel(id) {
+  const m = _modelsMap[id];
+  if (m) openModelModal(m);
+}
+
+function closeModelModal() { document.getElementById('modelModal').classList.remove('open'); }
+function closeModelModalBg(e) { if (e.target === document.getElementById('modelModal')) closeModelModal(); }
+
+function showModelImagePreview(url) {
+  if (!url) return;
+  document.getElementById('modelImagePreviewImg').src = url;
+  document.getElementById('imgPreviewWrap').style.display = 'block';
+}
+
+function clearModelImage() {
+  document.getElementById('modelImageUrl').value = '';
+  document.getElementById('modelImagePreviewImg').src = '';
+  document.getElementById('imgPreviewWrap').style.display = 'none';
+  document.getElementById('imgFileInput').value = '';
+  document.getElementById('imgUploadStatus').textContent = '';
+}
+
+// Image drag-and-drop
+function handleImgDragOver(e) { e.preventDefault(); document.getElementById('imgDropzone').classList.add('drag-over'); }
+function handleImgDragLeave() { document.getElementById('imgDropzone').classList.remove('drag-over'); }
+function handleImgDrop(e) {
+  e.preventDefault();
+  document.getElementById('imgDropzone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) uploadModelImage(file);
+}
+function handleImgSelect(e) {
+  const file = e.target.files[0];
+  if (file) uploadModelImage(file);
+}
+
+async function uploadModelImage(file) {
+  const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowed.includes(file.type)) {
+    document.getElementById('imgUploadStatus').textContent = 'Only JPEG, PNG, GIF, or WebP allowed.';
+    document.getElementById('imgUploadStatus').style.color = '#e09090';
+    return;
+  }
+  const status = document.getElementById('imgUploadStatus');
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Uploading…';
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const res = await fetch('/api/upload-image', {
+      method: 'POST',
+      headers: { 'x-admin-secret': adminSecret },
+      body: formData,
+    });
+    const data = await res.json();
+    if (res.ok && data.url) {
+      document.getElementById('modelImageUrl').value = data.url;
+      showModelImagePreview(data.url);
+      status.style.color = '#90d0a8';
+      status.textContent = 'Image uploaded ✓';
+    } else {
+      status.style.color = '#e09090';
+      status.textContent = data.error || 'Upload failed.';
+    }
+  } catch {
+    status.style.color = '#e09090';
+    status.textContent = 'Upload error — check connection.';
+  }
+}
+
+// ── Keys Editor
+function renderKeysEditor(keys) {
+  const editor = document.getElementById('keysEditor');
+  editor.innerHTML = '';
+  keys.forEach((k, i) => addKeyRow(k.label, k.value));
+}
+
+function addKeyRow(label = '', value = '') {
+  const editor = document.getElementById('keysEditor');
+  const row = document.createElement('div');
+  row.className = 'key-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Label" value="${esc(label)}" data-key-label>
+    <input type="text" placeholder="Value / description" value="${esc(value)}" data-key-value>
+    <button class="key-remove" onclick="this.closest('.key-row').remove()" title="Remove">×</button>`;
+  editor.appendChild(row);
+}
+
+function getKeys() {
+  return Array.from(document.querySelectorAll('#keysEditor .key-row')).map(row => ({
+    label: row.querySelector('[data-key-label]').value.trim(),
+    value: row.querySelector('[data-key-value]').value.trim()
+  })).filter(k => k.label || k.value);
+}
+
+async function saveModel() {
+  const id = document.getElementById('modelId').value;
+  const payload = {
+    num:         document.getElementById('modelNum').value.trim(),
+    title:       document.getElementById('modelTitle').value.trim(),
+    subtitle:    document.getElementById('modelSubtitle').value.trim(),
+    description: document.getElementById('modelDescription').value.trim(),
+    image_url:   document.getElementById('modelImageUrl').value.trim(),
+    video_id:    document.getElementById('modelVideoId').value.trim(),
+    video_title: document.getElementById('modelVideoTitle').value.trim(),
+    keys:        getKeys(),
+    sort_order:  parseInt(document.getElementById('modelOrder').value) || 0,
+  };
+  if (!payload.title) return toast('Title is required', 'error');
+  const btn = document.getElementById('modelSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/models?id=${id}` : '/api/models';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(id ? 'Model saved!' : `"${data.model?.title}" added`, 'success');
+      closeModelModal();
+      loadModels();
+    } else { toast(data.error || 'Save failed', 'error'); }
+  } catch { toast('Connection error', 'error'); }
+  btn.disabled = false; btn.textContent = 'Save';
+}
+
+function confirmModelDelete(id, title) {
+  pendingDelete = { type: 'model', id, title };
+  document.getElementById('confirmTitle').textContent = 'Delete Model';
+  document.getElementById('confirmMsg').textContent = `Permanently delete "${title}"? This cannot be undone.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executeModelDelete;
+}
+async function executeModelDelete() {
+  if (!pendingDelete) return;
+  const { id, title } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch(`/api/models?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    res.ok ? (toast(`"${title}" deleted`, 'success'), loadModels()) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
+}
+
+/* ══════════════════════════════════════
+   SHARED
+══════════════════════════════════════ */
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  pendingDelete = null;
+}
+
+let toastTimer = null;
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeContentModal();
+    closeModelModal();
+    closeConfirm();
+  }
+});
+
+
+/* ══════════════════════════════════════
+   CONTENT FILE IMPORT (docx / pdf / txt)
+══════════════════════════════════════ */
+let _mammothLoaded = false;
+
+async function loadMammoth() {
+  if (_mammothLoaded || window.mammoth) { _mammothLoaded = true; return; }
+  await new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js';
+    s.onload = resolve; s.onerror = reject;
+    document.head.appendChild(s);
+  });
+  _mammothLoaded = true;
+}
+
+async function importContentFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const status = document.getElementById('contentFileStatus');
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Reading…';
+
+  // Auto-fill title from filename if empty
+  const titleEl = document.getElementById('contentTitle');
+  if (!titleEl.value.trim()) {
+    titleEl.value = file.name.replace(/\.(txt|docx|pdf)$/i, '').trim();
+  }
+
+  try {
+    if (file.name.endsWith('.txt')) {
+      const text = await file.text();
+      document.getElementById('contentBody').value = textToSimpleHtml(text);
+      status.style.color = '#90d0a8';
+      status.textContent = `Imported ${file.name} ✓`;
+
+    } else if (file.name.endsWith('.docx')) {
+      await loadMammoth();
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.convertToHtml({ arrayBuffer });
+      document.getElementById('contentBody').value = result.value;
+      status.style.color = '#90d0a8';
+      status.textContent = `Imported ${file.name} ✓`;
+
+    } else if (file.name.endsWith('.pdf')) {
+      // Load PDF.js from CDN
+      if (!window.pdfjsLib) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs';
+          s.type = 'module';
+          s.onload = resolve; s.onerror = reject;
+          document.head.appendChild(s);
+        });
+        // Use importmap fallback approach for PDF.js
+        window.pdfjsLib = await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs');
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
+      }
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        fullText += content.items.map(item => item.str).join(' ') + '\n\n';
+      }
+      document.getElementById('contentBody').value = textToSimpleHtml(fullText);
+      status.style.color = '#90d0a8';
+      status.textContent = `Imported ${pdf.numPages}-page PDF ✓`;
+
+    } else {
+      status.style.color = '#e09090';
+      status.textContent = 'Unsupported file type. Use .txt, .docx, or .pdf';
+    }
+  } catch (err) {
+    status.style.color = '#e09090';
+    status.textContent = `Error: ${err.message}`;
+  }
+  // Reset input so same file can be re-selected
+  e.target.value = '';
+}
+
+function textToSimpleHtml(text) {
+  // Remove Word-style PAGE markers
+  text = text.replace(/\s*PAGE\s+\d+\s*/gi, '');
+  const paras = text.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+  return paras.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('\n');
+}
+</script>
+</body>
+</html>

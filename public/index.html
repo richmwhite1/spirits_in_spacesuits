@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spirits in Spacesuits — Fr. Seán Ó'Laoire, PhD</title>
+<meta name="description" content="The complete archive of Fr. Seán Ó'Laoire's fifty years of teaching — freely given to all who seek. Ask Seán's AI, explore 671 videos, and read his stories.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --void:          #030609;
+  --deep:          #06090f;
+  --dark:          #080d18;
+  --navy:          #0b1020;
+  --mid:           #101828;
+  --surface:       #172030;
+  --lift:          #1d2a3c;
+
+  --gold:          #c8963e;
+  --gold-bright:   #e8c060;
+  --gold-dim:      #8a6528;
+  --gold-pale:     #d4b882;
+
+  --forest:        #0d1e14;
+  --forest-mid:    #163322;
+
+  --cream:         #f2ece0;
+  --cream-dim:     #d8cfc2;
+  --body:          #b8afa4;
+  --muted:         #8a7e74;
+  --faint:         #4a4038;
+
+  --border:        rgba(200,150,62,.12);
+  --border-mid:    rgba(200,150,62,.22);
+  --border-strong: rgba(200,150,62,.35);
+  --glow:          rgba(200,150,62,.10);
+
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans:  'Jost', system-ui, sans-serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans); background: var(--dark);
+  color: var(--body); font-size: 17px; line-height: 1.75;
+  font-weight: 300; overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 3rem; height: 62px;
+  background: rgba(6,9,15,0); backdrop-filter: blur(0px);
+  border-bottom: 1px solid rgba(200,150,62,0);
+  transition: background .4s, border-color .4s, backdrop-filter .4s;
+}
+nav.scrolled {
+  background: rgba(6,9,15,.92); backdrop-filter: blur(16px);
+  border-color: var(--border);
+}
+.nav-logo {
+  font-family: var(--serif); font-size: 1.05rem; font-weight: 400;
+  color: var(--gold-pale); letter-spacing: .04em; text-decoration: none;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
+.nav-links a {
+  font-size: .78rem; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--cream-dim); text-decoration: none; transition: color .2s;
+}
+.nav-links a:hover { color: var(--cream-dim); }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+.hamburger span { display: block; width: 22px; height: 1px; background: var(--gold-pale); transition: all .25s; }
+
+/* ── HERO ── */
+#hero {
+  position: relative; min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: url('/milkyway.png');
+  background-size: cover; background-position: center 20%;
+}
+.hero-overlay {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(3,6,9,.25) 0%,
+    rgba(3,6,9,.15) 30%,
+    rgba(3,6,9,.40) 65%,
+    rgba(6,9,15,.92) 100%
+  );
+}
+.hero-content {
+  position: relative; z-index: 2;
+  padding: 10rem 2rem 7rem; max-width: 780px;
+}
+.hero-eyebrow {
+  font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(212,184,130,.85); margin-bottom: 1.6rem; font-weight: 400;
+}
+.hero-h1 {
+  font-family: var(--serif); font-size: clamp(3.4rem, 9vw, 7rem);
+  font-weight: 300; line-height: 1.0; letter-spacing: -.01em;
+  color: #ecdfa8; margin-bottom: 1rem;
+  text-shadow: 0 2px 40px rgba(0,0,0,.7);
+}
+.hero-rule {
+  width: 70px; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(200,150,62,.6), transparent);
+  margin: 1.4rem auto;
+}
+.hero-sub {
+  font-family: var(--serif); font-size: clamp(1rem, 2.2vw, 1.3rem);
+  font-style: italic; font-weight: 300; color: var(--cream-dim);
+  letter-spacing: .02em; margin-bottom: 1.6rem;
+  text-shadow: 0 1px 14px rgba(0,0,0,.6);
+}
+.hero-mission {
+  font-size: clamp(1rem, 1.8vw, 1.1rem); color: rgba(216,207,194,.95);
+  max-width: 640px; margin: 0 auto 2.4rem; line-height: 1.9;
+  text-shadow: 0 1px 14px rgba(0,0,0,.6);
+}
+.hero-stats {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: .5rem 0; margin-bottom: 2.8rem;
+}
+.hstat { display: flex; flex-direction: column; align-items: center; padding: 0 1.6rem; }
+.hnum {
+  font-family: var(--serif); font-size: 1.9rem; font-weight: 300;
+  color: var(--gold); line-height: 1; text-shadow: 0 0 24px rgba(200,150,62,.4);
+}
+.hlabel {
+  font-size: .6rem; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(200,150,62,.6); margin-top: .2rem;
+}
+.hdivider { width: 1px; height: 2rem; background: rgba(200,150,62,.2); }
+.hero-ctas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-gold {
+  display: inline-block; padding: .75rem 2.2rem;
+  border: 1px solid var(--gold); color: var(--dark);
+  background: var(--gold); font-family: var(--sans);
+  font-size: .73rem; letter-spacing: .12em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer; transition: all .25s; font-weight: 400;
+}
+.btn-gold:hover { background: var(--gold-bright); border-color: var(--gold-bright); }
+.btn-outline {
+  display: inline-block; padding: .75rem 2.2rem;
+  border: 1px solid rgba(200,150,62,.35); color: var(--cream-dim);
+  background: transparent; font-family: var(--sans);
+  font-size: .73rem; letter-spacing: .12em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer; transition: all .25s; font-weight: 400;
+}
+.btn-outline:hover { border-color: var(--gold-dim); color: var(--gold-pale); }
+.scroll-cue {
+  position: absolute; bottom: 2.2rem; left: 50%;
+  transform: translateX(-50%); z-index: 2;
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+  color: rgba(200,150,62,.5); font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+}
+.scroll-cue::after {
+  content: ''; display: block; width: 1px; height: 36px;
+  background: linear-gradient(to bottom, rgba(200,150,62,.5), transparent);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ── SHARED SECTION STYLES ── */
+section { padding: 6rem 2rem; position: relative; }
+.inner { max-width: 1100px; margin: 0 auto; }
+.eyebrow {
+  font-size: .66rem; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--gold-dim); margin-bottom: .9rem; font-weight: 400;
+}
+h2 {
+  font-family: var(--serif); font-size: clamp(1.9rem, 3.8vw, 3rem);
+  font-weight: 300; color: var(--gold-pale); line-height: 1.1; margin-bottom: 1.2rem;
+}
+.section-lead {
+  font-family: var(--serif); font-size: 1.2rem; font-style: italic;
+  color: var(--cream-dim); max-width: 620px; margin-bottom: 2.4rem;
+  font-weight: 300; line-height: 1.8;
+}
+.rule { width: 100%; height: 1px; background: var(--border); }
+
+/* ── ASK SEÁN ── */
+#ask { background: var(--void); padding: 0; }
+.ask-shell {
+  display: grid; grid-template-columns: 340px 1fr;
+  min-height: 100vh;
+}
+.ask-side {
+  background: var(--forest); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; padding: 5rem 2.5rem 3rem;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.ask-side-photo {
+  width: 100%; aspect-ratio: 1/1; overflow: hidden;
+  border: 1px solid var(--border-mid); margin-bottom: 2rem;
+  position: relative;
+}
+.ask-side-photo img {
+  width: 100%; height: 100%; object-fit: cover;
+  object-position: center top; display: block;
+}
+.ask-side-photo::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(13,30,20,.7) 0%, transparent 60%);
+}
+.ask-side-name {
+  font-family: var(--serif); font-size: 1.5rem; font-weight: 300;
+  color: var(--gold-pale); margin-bottom: .3rem;
+}
+.ask-side-title {
+  font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold-dim); margin-bottom: 1.4rem;
+}
+.ask-side-body {
+  font-size: 1rem; color: var(--cream-dim); line-height: 1.85; margin-bottom: 1.4rem;
+}
+.ask-corpus {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+  background: var(--border); margin-top: auto;
+}
+.corpus-item {
+  background: rgba(13,30,20,.8); padding: .9rem 1rem;
+}
+.corpus-num {
+  font-family: var(--serif); font-size: 1.5rem; font-weight: 300;
+  color: var(--gold); line-height: 1; margin-bottom: .25rem;
+}
+.corpus-label {
+  font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+}
+.ask-main {
+  display: flex; flex-direction: column; padding: 4rem 3rem 2rem;
+  max-width: 760px;
+}
+.ask-main-header { margin-bottom: 2.4rem; }
+.ask-main-header h2 { margin-bottom: .5rem; }
+.ask-main-header p {
+  font-size: .9rem; color: var(--body); line-height: 1.8; max-width: 580px;
+}
+
+/* Chat UI */
+.chat-window {
+  flex: 1; display: flex; flex-direction: column;
+  border: 1px solid var(--border); background: rgba(255,255,255,.015);
+  min-height: 520px;
+}
+.chat-history {
+  flex: 1; padding: 1.75rem; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 1.5rem;
+}
+.chat-history::-webkit-scrollbar { width: 3px; }
+.chat-history::-webkit-scrollbar-thumb { background: var(--border-strong); }
+.chat-empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 3rem 2rem; gap: 2rem;
+}
+.chat-empty-icon {
+  width: 52px; height: 52px; border: 1px solid var(--border-mid);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.chat-empty-icon::before {
+  content: '✦'; color: var(--gold-dim); font-size: 1.2rem;
+}
+.chat-empty p {
+  font-family: var(--serif); font-size: 1.1rem; font-style: italic;
+  color: var(--muted); text-align: center; max-width: 380px; line-height: 1.7;
+}
+.chat-suggestions { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+.suggestion-pill {
+  padding: .45rem 1rem; border: 1px solid var(--border-mid);
+  background: transparent; color: var(--body); font-size: .75rem;
+  letter-spacing: .06em; cursor: pointer; font-family: var(--sans);
+  transition: all .2s; font-weight: 300;
+}
+.suggestion-pill:hover { border-color: var(--gold-dim); color: var(--gold-pale); background: var(--glow); }
+
+/* Message bubbles */
+.msg { display: flex; flex-direction: column; gap: .5rem; }
+.msg-user { align-items: flex-end; }
+.msg-sean { align-items: flex-start; }
+.msg-bubble-user {
+  background: rgba(200,150,62,.12); border: 1px solid var(--border-mid);
+  padding: 1rem 1.3rem; max-width: 85%; font-size: 1rem; line-height: 1.8;
+  color: var(--cream);
+}
+.msg-bubble-sean {
+  background: rgba(255,255,255,.03); border: 1px solid var(--border-mid);
+  border-left: 2px solid var(--gold-dim); padding: 1.2rem 1.5rem;
+  max-width: 95%; font-family: var(--serif); font-size: 1.1rem;
+  line-height: 1.9; color: var(--cream-dim);
+}
+.msg-bubble-sean p { margin-bottom: .8rem; }
+.msg-bubble-sean p:last-child { margin-bottom: 0; }
+.msg-label {
+  font-size: .62rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted);
+}
+.msg-label-sean { color: var(--gold-dim); }
+
+/* Sources */
+.msg-sources { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+.source-chip {
+  padding: .25rem .7rem; border: 1px solid var(--border);
+  font-size: .65rem; letter-spacing: .08em; color: var(--muted);
+  font-family: var(--sans);
+}
+
+/* Related videos after answer */
+.msg-related { margin-top: .75rem; }
+.msg-related-label {
+  font-size: .6rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold-dim); margin-bottom: .6rem;
+}
+.msg-videos { display: flex; gap: .75rem; flex-wrap: wrap; }
+.msg-video-thumb {
+  display: flex; gap: .6rem; align-items: center; width: 200px;
+  border: 1px solid var(--border); background: transparent;
+  text-decoration: none; transition: border-color .2s; padding: .4rem;
+}
+.msg-video-thumb:hover { border-color: var(--border-strong); }
+.msg-video-img {
+  width: 64px; height: 36px; flex-shrink: 0; overflow: hidden;
+  background: var(--surface);
+}
+.msg-video-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.msg-video-title {
+  font-size: .72rem; color: var(--cream-dim); line-height: 1.35;
+  font-family: var(--serif);
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* Loading */
+.msg-loading .msg-bubble-sean {
+  display: flex; gap: .4rem; align-items: center; padding: 1rem 1.4rem;
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold-dim); animation: dotpulse 1.4s ease-in-out infinite;
+}
+.dot:nth-child(2) { animation-delay: .2s; }
+.dot:nth-child(3) { animation-delay: .4s; }
+
+/* Input area */
+.chat-input-area {
+  border-top: 1px solid var(--border); padding: 1rem 1.25rem;
+  display: flex; gap: .75rem; align-items: flex-end;
+  background: rgba(255,255,255,.018);
+}
+.chat-input-area textarea {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--cream-dim); font-family: var(--sans); font-size: .9rem;
+  font-weight: 300; line-height: 1.6; resize: none; min-height: 44px;
+  max-height: 120px; padding: .5rem 0;
+}
+.chat-input-area textarea::placeholder { color: var(--muted); }
+.chat-send {
+  flex-shrink: 0; width: 40px; height: 40px;
+  border: 1px solid var(--gold-dim); background: transparent;
+  color: var(--gold); cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: all .2s;
+  font-family: var(--sans); font-size: .9rem;
+}
+.chat-send:hover { background: var(--gold); color: var(--dark); }
+.chat-send:disabled { opacity: .35; cursor: not-allowed; }
+.chat-footer-note {
+  font-size: .82rem; color: var(--muted); text-align: center;
+  margin-top: 1rem; line-height: 1.6;
+}
+.chat-footer-note strong { color: var(--gold-dim); font-weight: 400; }
+.rate-remaining { font-size: .7rem; color: var(--muted); }
+
+/* ── LATEST FROM SEÁN ── */
+#latest { background: var(--navy); }
+.latest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); }
+.latest-featured {
+  grid-column: 1 / -1; position: relative; aspect-ratio: 16/7;
+  background: var(--deep); overflow: hidden; cursor: pointer; text-decoration: none;
+  display: block;
+}
+.latest-featured img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .5s;
+}
+.latest-featured:hover img { transform: scale(1.02); }
+.latest-featured-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(6,9,15,.9) 0%, transparent 55%);
+}
+.latest-featured-content {
+  position: absolute; bottom: 0; left: 0; right: 0; padding: 2.5rem 2.5rem 2rem;
+}
+.latest-featured-label {
+  font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold-dim); margin-bottom: .6rem;
+}
+.latest-featured-title {
+  font-family: var(--serif); font-size: clamp(1.3rem, 2.5vw, 2rem);
+  font-weight: 300; color: var(--cream); line-height: 1.2; margin-bottom: .75rem;
+}
+.latest-featured-date { font-size: .75rem; color: var(--body); }
+.latest-play {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 68px; height: 68px; border: 1px solid rgba(200,150,62,.7);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  background: rgba(6,9,15,.4); transition: background .2s;
+}
+.latest-featured:hover .latest-play { background: rgba(200,150,62,.2); }
+.latest-play::after {
+  content: ''; border-left: 18px solid var(--gold-pale);
+  border-top: 11px solid transparent; border-bottom: 11px solid transparent;
+  margin-left: 4px;
+}
+.latest-secondary {
+  background: var(--mid); padding: 1.5rem; text-decoration: none;
+  display: flex; gap: 1rem; align-items: flex-start; transition: background .2s;
+}
+.latest-secondary:hover { background: rgba(200,150,62,.05); }
+.latest-secondary-thumb {
+  width: 100px; height: 56px; flex-shrink: 0; overflow: hidden;
+  background: var(--surface);
+}
+.latest-secondary-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.latest-secondary-title {
+  font-family: var(--serif); font-size: .95rem; color: var(--cream-dim);
+  line-height: 1.4; margin-bottom: .3rem;
+}
+.latest-secondary-date { font-size: .72rem; color: var(--muted); }
+#latestLoading { text-align: center; padding: 4rem; color: var(--muted); font-style: italic; }
+.latest-cta { text-align: center; margin-top: 2.5rem; }
+
+/* ── TODAY'S STORY ── */
+#today { background: var(--forest); }
+.today-inner { max-width: 820px; margin: 0 auto; }
+.today-label {
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;
+}
+.today-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0;
+}
+.today-date-label {
+  font-size: .66rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold-dim);
+}
+.today-title {
+  font-family: var(--serif); font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 300; color: var(--gold-pale); line-height: 1.1;
+  margin-bottom: .5rem;
+}
+.today-story-date {
+  font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold-dim); margin-bottom: 1.8rem;
+}
+.today-excerpt {
+  font-family: var(--serif); font-size: 1.15rem; font-style: italic;
+  color: var(--cream-dim); line-height: 1.85; margin-bottom: 1.75rem;
+  border-left: 2px solid var(--gold-dim); padding-left: 1.5rem;
+}
+.today-body {
+  display: none; font-family: var(--serif); font-size: 1.05rem;
+  color: var(--cream-dim); line-height: 1.95; margin-bottom: 1.5rem;
+}
+.today-body.open { display: block; animation: fadeInUp .3s ease; }
+.today-body p { margin-bottom: 1.1rem; }
+.today-toggle {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--gold-dim); background: none; border: none; cursor: pointer;
+  font-family: var(--sans); transition: color .2s; padding: 0;
+}
+.today-toggle:hover { color: var(--gold-pale); }
+.today-more {
+  margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.today-more p { font-size: .8rem; color: var(--muted); font-style: italic; }
+
+/* ── VIDEO ARCHIVE ── */
+#videos { background: var(--dark); }
+.video-controls {
+  display: flex; gap: 1rem; align-items: center;
+  flex-wrap: wrap; margin-bottom: 2rem;
+}
+.video-search-wrap { position: relative; flex: 1; min-width: 200px; }
+.video-search {
+  width: 100%; padding: .6rem 1rem .6rem 2.2rem;
+  background: var(--mid); border: 1px solid var(--border);
+  color: var(--cream-dim); font-family: var(--sans); font-size: .85rem;
+  outline: none; transition: border-color .2s; font-weight: 300;
+}
+.video-search:focus { border-color: var(--gold-dim); }
+.video-search::placeholder { color: var(--muted); }
+.video-search-icon {
+  position: absolute; left: .75rem; top: 50%; transform: translateY(-50%);
+  color: var(--muted); font-size: .8rem; pointer-events: none;
+}
+.video-tabs { display: flex; flex-wrap: wrap; gap: .4rem; }
+.vtab {
+  padding: .4rem .95rem; border: 1px solid var(--border);
+  color: var(--muted); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer; background: transparent; font-family: var(--sans);
+  transition: all .2s; font-weight: 400;
+}
+.vtab.active, .vtab:hover {
+  border-color: var(--gold-dim); color: var(--gold-pale); background: var(--glow);
+}
+.video-scroll-track {
+  overflow-x: auto; padding-bottom: 1rem; cursor: grab;
+}
+.video-scroll-track:active { cursor: grabbing; }
+.video-scroll-track::-webkit-scrollbar { height: 3px; }
+.video-scroll-track::-webkit-scrollbar-thumb { background: var(--border-mid); }
+.video-row {
+  display: flex; gap: 1rem; width: max-content;
+}
+.video-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem;
+}
+.video-card {
+  background: var(--mid); border: 1px solid var(--border);
+  cursor: pointer; transition: border-color .2s, transform .2s;
+  flex-shrink: 0; width: 260px;
+}
+.video-card:hover { border-color: var(--border-mid); transform: translateY(-2px); }
+.video-thumb {
+  position: relative; aspect-ratio: 16/9;
+  background: var(--surface); overflow: hidden;
+}
+.video-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.video-thumb-overlay {
+  position: absolute; inset: 0; display: flex;
+  align-items: center; justify-content: center;
+  background: rgba(6,9,15,.3); transition: background .2s;
+}
+.video-card:hover .video-thumb-overlay { background: rgba(6,9,15,.1); }
+.play-btn {
+  width: 40px; height: 40px; border: 1px solid rgba(200,150,62,.7);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.play-btn::after {
+  content: ''; border-left: 12px solid var(--gold-pale);
+  border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+  margin-left: 3px;
+}
+.video-info { padding: .8rem .9rem 1rem; }
+.video-info h3 {
+  font-family: var(--serif); font-size: .9rem; font-weight: 400;
+  color: var(--cream-dim); line-height: 1.35; margin-bottom: .3rem;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.video-meta { font-size: .7rem; color: var(--muted); }
+#videoLoading { text-align: center; padding: 4rem; color: var(--muted); font-style: italic; }
+#videoError { display: none; text-align: center; padding: 3rem; color: var(--muted); }
+.video-count { font-size: .72rem; color: var(--muted); margin-bottom: 1rem; }
+.video-more-btn { text-align: center; margin-top: 2rem; }
+
+/* ── STORIES ── */
+#stories { background: var(--mid); }
+.stories-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2px; background: var(--border);
+}
+.story-card {
+  background: var(--dark); padding: 1.5rem 1.75rem;
+  cursor: pointer; transition: background .2s; display: block;
+}
+.story-card:hover { background: rgba(200,150,62,.04); }
+.story-num {
+  font-size: .6rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--gold-dim); margin-bottom: .55rem;
+}
+.story-card-title {
+  font-family: var(--serif); font-size: 1.05rem; font-weight: 400;
+  color: var(--cream-dim); line-height: 1.35; margin-bottom: .45rem;
+}
+.story-card-excerpt { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.story-read {
+  font-size: .63rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gold-dim); margin-top: .7rem;
+}
+
+/* Story Modal */
+.story-modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(3,6,9,.96); z-index: 600;
+  align-items: flex-start; justify-content: center;
+  padding: 2rem; overflow-y: auto;
+}
+.story-modal-overlay.open { display: flex; }
+.story-modal {
+  width: 100%; max-width: 720px; background: var(--navy);
+  border: 1px solid var(--border-mid); margin: auto;
+}
+.story-modal-header {
+  padding: 1.5rem 2rem; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+}
+.story-modal-title {
+  font-family: var(--serif); font-size: 1.5rem; color: var(--gold-pale);
+  font-weight: 300; line-height: 1.3;
+}
+.modal-close {
+  width: 32px; height: 32px; border: 1px solid var(--border-mid);
+  background: transparent; color: var(--muted); cursor: pointer;
+  font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .2s; font-family: var(--sans);
+}
+.modal-close:hover { border-color: var(--gold); color: var(--gold); }
+.story-modal-body {
+  padding: 2rem; font-family: var(--serif); font-size: 1.05rem;
+  color: var(--cream-dim); line-height: 1.95;
+  max-height: 72vh; overflow-y: auto;
+}
+.story-modal-body p { margin-bottom: 1.2rem; }
+.story-modal-body .story-date {
+  font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold-dim); margin-bottom: 1.5rem; font-family: var(--sans);
+}
+.story-modal-body ol, .story-modal-body ul { padding-left: 1.5rem; margin-bottom: 1.2rem; }
+.story-modal-body li { margin-bottom: .5rem; line-height: 1.7; }
+.story-modal-body strong { color: var(--cream); font-weight: 500; }
+.story-modal-body::-webkit-scrollbar { width: 3px; }
+.story-modal-body::-webkit-scrollbar-thumb { background: var(--border-strong); }
+
+/* ── TEACHINGS ── */
+#teachings { background: var(--navy); }
+.teachings-layout { display: grid; grid-template-columns: 220px 1fr; gap: 5rem; align-items: start; }
+.teachings-nav { position: sticky; top: 5rem; }
+.tnav-item {
+  display: block; padding: .7rem 0; border-bottom: 1px solid var(--border);
+  font-size: .76rem; letter-spacing: .06em; color: var(--muted);
+  text-decoration: none; transition: color .2s; cursor: pointer; background: none;
+  border-left: none; border-right: none; border-top: none; font-family: var(--sans);
+  font-weight: 300; text-align: left; width: 100%;
+}
+.tnav-item:hover, .tnav-item.active { color: var(--gold-pale); }
+.tnav-item.active { color: var(--gold); }
+.teaching-section { display: none; }
+.teaching-section.active { display: block; animation: fadeInUp .3s ease; }
+.teaching-section h3 {
+  font-family: var(--serif); font-size: 1.8rem; font-weight: 300;
+  color: var(--gold-pale); margin-bottom: 1.2rem;
+}
+.teaching-section p {
+  font-size: 1.02rem; color: var(--cream-dim); line-height: 1.9; margin-bottom: 1.1rem;
+}
+.pullquote {
+  border-left: 2px solid var(--gold-dim); padding: .5rem 1.5rem;
+  margin: 1.8rem 0; font-family: var(--serif); font-size: 1.2rem;
+  font-style: italic; color: var(--cream-dim); font-weight: 300; line-height: 1.6;
+}
+.dream-block {
+  background: rgba(200,150,62,.03); border: 1px solid var(--border);
+  padding: 1.5rem 2rem; margin: 1.5rem 0;
+}
+.dream-block p {
+  font-family: var(--serif); font-size: 1.05rem; font-style: italic;
+  color: var(--cream-dim); line-height: 1.8; margin-bottom: .35rem !important;
+}
+
+/* ── MODELS ── */
+#models { background: var(--dark); }
+.models-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2px; background: var(--border); }
+.model-card {
+  background: var(--mid); cursor: pointer; transition: background .2s;
+}
+.model-card:hover { background: rgba(200,150,62,.04); }
+.model-card.expanded { grid-column: 1 / -1; background: rgba(200,150,62,.025); }
+.model-head {
+  display: flex; align-items: center; gap: 1.2rem; padding: 1.5rem;
+  border-bottom: 1px solid transparent; transition: border-color .2s;
+}
+.model-card.expanded .model-head { border-color: var(--border); }
+.model-num {
+  font-family: var(--serif); font-size: 2rem; font-weight: 300;
+  color: var(--gold-dim); line-height: 1; flex-shrink: 0; width: 2.4rem;
+}
+.model-head-text { flex: 1; }
+.model-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; color: var(--gold-pale); margin-bottom: .2rem; }
+.model-sub { font-size: .74rem; color: var(--muted); }
+.model-chevron {
+  width: 20px; height: 20px; border: 1px solid var(--border-mid);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: transform .3s;
+}
+.model-card.expanded .model-chevron { transform: rotate(180deg); border-color: var(--gold-dim); }
+.model-chevron::after {
+  content: ''; border-left: 5px solid transparent;
+  border-right: 5px solid transparent; border-top: 5px solid var(--gold-dim);
+}
+.model-body { display: none; padding: 0 1.5rem 2rem; }
+.model-card.expanded .model-body { display: block; animation: fadeInUp .3s ease; }
+.model-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
+.model-desc p { font-size: .9rem; color: var(--body); line-height: 1.85; margin-bottom: .9rem; }
+.model-desc h4 { font-family: var(--serif); font-size: 1rem; color: var(--gold-pale); font-weight: 400; margin: 1.2rem 0 .5rem; }
+.model-key { display: flex; gap: .75rem; margin-bottom: .6rem; align-items: flex-start; }
+.model-key-label {
+  font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--gold-dim); flex-shrink: 0; padding-top: .12rem; min-width: 100px;
+}
+.model-key-value { font-size: .85rem; color: var(--body); line-height: 1.5; }
+.model-video-link {
+  display: flex; align-items: center; gap: .75rem;
+  margin-top: 1.5rem; padding: .8rem 1rem; border: 1px solid var(--border-mid);
+  text-decoration: none; transition: all .2s; background: rgba(255,255,255,.02);
+}
+.model-video-link:hover { border-color: var(--gold-dim); background: var(--glow); }
+.model-yt-thumb { width: 72px; height: 40px; flex-shrink: 0; overflow: hidden; background: var(--surface); }
+.model-yt-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.model-yt-info { flex: 1; }
+.model-yt-label { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: .2rem; }
+.model-yt-title { font-family: var(--serif); font-size: .85rem; color: var(--cream-dim); line-height: 1.3; }
+
+/* ── BOOKS ── */
+#books { background: var(--mid); }
+.books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 2rem; }
+.book-card {
+  display: flex; gap: 1.2rem; align-items: flex-start;
+  padding: 1.5rem; background: var(--dark); border: 1px solid var(--border); transition: border-color .2s;
+}
+.book-card:hover { border-color: var(--border-mid); }
+.book-card.featured { border-color: var(--gold-dim); }
+.book-cover {
+  width: 70px; flex-shrink: 0; aspect-ratio: 2/3;
+  background: var(--surface); border: 1px solid var(--border-mid);
+  display: flex; align-items: center; justify-content: center;
+}
+.book-cover-text {
+  font-family: var(--serif); font-size: .58rem; color: var(--gold-dim);
+  text-align: center; padding: .4rem; line-height: 1.4;
+}
+.book-badge {
+  display: inline-block; font-size: .58rem; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--gold-dim); border: 1px solid var(--border-mid); padding: .18rem .5rem;
+  margin-bottom: .45rem;
+}
+.book-title { font-family: var(--serif); font-size: 1.05rem; font-weight: 500; color: var(--gold-pale); line-height: 1.3; margin-bottom: .35rem; }
+.book-subtitle { font-size: .78rem; font-style: italic; color: var(--muted); margin-bottom: .45rem; }
+.book-desc { font-size: .82rem; color: var(--body); line-height: 1.7; margin-bottom: .7rem; }
+.book-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+.book-link {
+  font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gold-dim); text-decoration: none;
+  border-bottom: 1px solid var(--border-mid); padding-bottom: 2px;
+  transition: color .2s, border-color .2s;
+}
+.book-link:hover { color: var(--gold); border-color: var(--gold); }
+
+/* ── ABOUT ── */
+#about { background: var(--navy); }
+.about-layout { display: grid; grid-template-columns: 340px 1fr; gap: 5rem; align-items: start; margin-top: 2.5rem; }
+.about-photo-wrap {
+  position: relative;
+}
+.about-photo {
+  width: 100%; aspect-ratio: 3/4; overflow: hidden;
+  border: 1px solid var(--border-mid); position: relative;
+}
+.about-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.about-photo::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(11,16,32,.6) 100%);
+}
+.about-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); margin-top: 2.5rem; }
+.fact { background: var(--mid); padding: 1.1rem; }
+.fact-label { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: .35rem; }
+.fact-value { font-family: var(--serif); font-size: 1.35rem; font-weight: 300; color: var(--cream-dim); line-height: 1.2; }
+.about-text h3 { font-family: var(--serif); font-size: 1.7rem; font-weight: 300; color: var(--gold-pale); margin-bottom: 1.2rem; line-height: 1.25; }
+.about-text p { font-size: 1.02rem; color: var(--cream-dim); line-height: 1.9; margin-bottom: 1.2rem; }
+.about-links { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.about-link {
+  font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gold-dim); text-decoration: none; border: 1px solid var(--border-mid);
+  padding: .38rem .85rem; transition: all .2s;
+}
+.about-link:hover { border-color: var(--gold-dim); color: var(--gold-pale); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--void); border-top: 1px solid var(--border);
+  padding: 3rem 2rem;
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
+}
+.footer-logo { font-family: var(--serif); font-size: 1.05rem; color: var(--gold-dim); font-weight: 300; }
+.footer-nav { display: flex; gap: 2rem; list-style: none; flex-wrap: wrap; }
+.footer-nav a { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .2s; }
+.footer-nav a:hover { color: var(--gold-dim); }
+.footer-copy {
+  font-size: .72rem; color: var(--muted); width: 100%; text-align: center;
+  margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); line-height: 1.7;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+@keyframes dotpulse { 0%, 80%, 100% { opacity: .25; transform: scale(.9); } 40% { opacity: 1; transform: scale(1.1); } }
+.fade-in { opacity: 0; transform: translateY(18px); transition: opacity .65s ease, transform .65s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+.fd1 { transition-delay: .1s; } .fd2 { transition-delay: .2s; } .fd3 { transition-delay: .3s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .ask-shell { grid-template-columns: 1fr; }
+  .ask-side { position: static; height: auto; flex-direction: row; flex-wrap: wrap; gap: 1.5rem; padding: 2rem 1.5rem; }
+  .ask-side-photo { max-width: 140px; flex-shrink: 0; }
+  .ask-side-name { font-size: 1.2rem; }
+  .ask-corpus { width: 100%; margin-top: .5rem; }
+  .ask-main { padding: 2rem 1.5rem; }
+  .latest-grid { grid-template-columns: 1fr; }
+  .teachings-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+  .teachings-nav { position: static; display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
+  .tnav-item { border: 1px solid var(--border); padding: .5rem .9rem; }
+  .model-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+  .about-layout { grid-template-columns: 1fr; gap: 2rem; }
+  .about-photo { max-width: 280px; }
+  nav { padding: 0 1.25rem; }
+  .nav-links { display: none; flex-direction: column; position: absolute; top: 62px; left: 0; right: 0; background: rgba(6,9,15,.97); padding: 1.5rem; gap: 1.5rem; border-bottom: 1px solid var(--border); }
+  .nav-links.open { display: flex; }
+  .nav-links a { font-size: .9rem; }
+  .hamburger { display: flex; }
+  section { padding: 3.5rem 1.25rem; }
+  .books-grid { grid-template-columns: 1fr; }
+  .footer-inner { flex-direction: column; text-align: center; }
+  .footer-nav { justify-content: center; }
+  .hdivider { display: none; }
+  h2 { font-size: clamp(1.7rem, 6vw, 2.4rem); }
+  .section-lead { font-size: 1.05rem; }
+  .today-title { font-size: clamp(1.6rem, 6vw, 2.4rem); }
+  .today-excerpt { font-size: 1rem; }
+  .teaching-section h3 { font-size: 1.5rem; }
+  .teaching-section p { font-size: 1rem; }
+  .pullquote { font-size: 1.05rem; padding: .5rem 1rem; }
+}
+@media (max-width: 600px) {
+  .hero-h1 { font-size: 3rem; }
+  .hero-mission { font-size: 1rem; }
+  .hero-content { padding: 8rem 1.5rem 5rem; }
+  .ask-side { flex-direction: column; }
+  .ask-side-photo { max-width: 100%; }
+  .ask-main { padding: 1.5rem 1rem; }
+  .msg-bubble-sean { font-size: 1rem; padding: 1rem 1.1rem; }
+  .chat-input-area textarea { font-size: 1rem; }
+  .about-facts { grid-template-columns: 1fr 1fr; }
+  .ask-corpus { grid-template-columns: 1fr 1fr; }
+  .msg-videos { flex-direction: column; }
+  .msg-video-thumb { width: 100%; }
+  .suggestion-pill { font-size: .82rem; padding: .5rem 1rem; }
+  .latest-featured-title { font-size: 1.2rem; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .video-card { width: 220px; }
+  .story-card { padding: 1.25rem; }
+  .story-card-title { font-size: 1rem; }
+  .book-card { flex-direction: column; }
+  .book-cover { width: 100%; max-width: 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo">Spirits in Spacesuits</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#latest">Latest</a></li>
+    <li><a href="#ask">Ask Seán</a></li>
+    <li><a href="#videos">Videos</a></li>
+    <li><a href="#stories">Stories</a></li>
+    <li><a href="#teachings">Teachings</a></li>
+    <li><a href="#books">Books</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow fade-in">Fr. Seán Ó'Laoire, PhD — Theologian · Psychologist · Mystic</p>
+    <h1 class="hero-h1 fade-in fd1">Spirits in<br>Spacesuits</h1>
+    <div class="hero-rule fade-in fd2"></div>
+    <p class="hero-sub fade-in fd2">& the Eucharistic Prayer of the Cosmos</p>
+    <p class="hero-mission fade-in fd2">
+      Seán has spent fifty years as a priest, scientist, and contemplative developing a body of work
+      on consciousness, the soul, and the nature of God. He is sharing every word of it —
+      every book, every homily, every teaching — freely, with every person on earth who seeks it.
+      This is that archive.
+    </p>
+    <div class="hero-stats fade-in fd3">
+      <div class="hstat"><span class="hnum">671</span><span class="hlabel">Videos</span></div>
+      <div class="hdivider"></div>
+      <div class="hstat"><span class="hnum">6</span><span class="hlabel">Books</span></div>
+      <div class="hdivider"></div>
+      <div class="hstat"><span class="hnum">500+</span><span class="hlabel">Hours of Teaching</span></div>
+      <div class="hdivider"></div>
+      <div class="hstat"><span class="hnum">50+</span><span class="hlabel">Years</span></div>
+    </div>
+    <div class="hero-ctas fade-in fd3">
+      <a href="#ask" class="btn-gold">Ask Seán's AI</a>
+      <a href="#videos" class="btn-outline">Explore the Archive</a>
+    </div>
+  </div>
+  <div class="scroll-cue">Explore</div>
+</section>
+
+<!-- LATEST FROM SEÁN (before Ask Seán) -->
+<section id="latest">
+  <div class="inner">
+    <p class="eyebrow fade-in">Direct from the Channel</p>
+    <h2 class="fade-in">Latest from Seán</h2>
+    <p class="section-lead fade-in">Auto-updated the moment he posts. Watch directly here or browse the full archive below.</p>
+    <div id="latestContainer">
+      <div id="latestLoading">Loading latest teaching…</div>
+    </div>
+    <div class="latest-cta fade-in" style="margin-top:1.5rem;">
+      <a href="#videos" class="btn-outline">Browse All 671 Videos →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ASK SEÁN -->
+<section id="ask" style="padding:0;">
+  <div class="ask-shell">
+
+    <!-- Side panel: Seán's photo + context -->
+    <div class="ask-side">
+      <div class="ask-side-photo">
+        <img src="/sean.webp" alt="Fr. Seán Ó'Laoire in conversation">
+      </div>
+      <p class="ask-side-name">Fr. Seán Ó'Laoire</p>
+      <p class="ask-side-title">Theologian · Psychologist · Mystic</p>
+      <p class="ask-side-body">
+        This AI draws exclusively from Seán's recorded teachings — his homilies, lectures,
+        and books. It will not speculate or go beyond the archive. If he hasn't addressed
+        something in the material, it will tell you.
+      </p>
+      <p class="ask-side-body" style="font-style:italic; color:var(--muted); font-size:.8rem;">
+        "A map is not the terrain. A cosmology is not reality. But we need maps to guide ourselves."
+      </p>
+      <div class="ask-corpus">
+        <div class="corpus-item">
+          <div class="corpus-num">600+</div>
+          <div class="corpus-label">Transcripts</div>
+        </div>
+        <div class="corpus-item">
+          <div class="corpus-num">6</div>
+          <div class="corpus-label">Books</div>
+        </div>
+        <div class="corpus-item">
+          <div class="corpus-num">50</div>
+          <div class="corpus-label">Questions / Day</div>
+        </div>
+        <div class="corpus-item">
+          <div class="corpus-num">Free</div>
+          <div class="corpus-label">Always</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main chat area -->
+    <div class="ask-main">
+      <div class="ask-main-header">
+        <p class="eyebrow">A Virtual Seán</p>
+        <h2>Ask Seán's AI</h2>
+        <p>Ask anything Seán has ever addressed — prayer, the soul, the nature of God, science and spirit.
+           Answers are drawn word-for-word from his archive, with sources shown.</p>
+      </div>
+
+      <div class="chat-window">
+        <div class="chat-history" id="chatHistory">
+          <!-- messages injected here -->
+        </div>
+        <div class="chat-empty" id="chatEmpty">
+          <div class="chat-empty-icon"></div>
+          <p>Ask anything Seán has ever taught.<br>His actual words. His actual voice.</p>
+          <div class="chat-suggestions">
+            <button class="suggestion-pill" onclick="askSuggestion('What does Seán teach about personal cosmology?')">Personal cosmology</button>
+            <button class="suggestion-pill" onclick="askSuggestion('How does Seán understand prayer?')">What is prayer?</button>
+            <button class="suggestion-pill" onclick="askSuggestion('What does Seán say about the soul\'s journey?')">The soul's journey</button>
+            <button class="suggestion-pill" onclick="askSuggestion('What is Seán\'s view of God?')">The nature of God</button>
+            <button class="suggestion-pill" onclick="askSuggestion('How does Seán reconcile science and spirituality?')">Science & spirit</button>
+            <button class="suggestion-pill" onclick="askSuggestion('What does Seán teach about the three selves?')">The three selves</button>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <textarea
+            id="questionInput"
+            placeholder="Ask anything from Seán's teachings..."
+            rows="1"
+            onkeydown="handleKey(event)"
+            oninput="autoResize(this)"
+          ></textarea>
+          <button class="chat-send" id="sendBtn" onclick="askSean()" title="Ask">→</button>
+        </div>
+      </div>
+      <p class="chat-footer-note">
+        Draws only from Seán's recorded archive. <strong>No hallucination — if it's not in his teachings, it will say so.</strong>
+        <span id="rateDisplay"></span>
+      </p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- TODAY'S STORY -->
+<section id="today">
+  <div class="today-inner">
+    <div class="today-label fade-in">
+      <div class="today-dot"></div>
+      <span class="today-date-label" id="todayDateLabel">From Seán's Journal</span>
+    </div>
+    <div id="todayStory"><!-- injected --></div>
+  </div>
+</section>
+
+<!-- VIDEO ARCHIVE -->
+<section id="videos">
+  <div class="inner">
+    <p class="eyebrow fade-in">The Complete Record</p>
+    <h2 class="fade-in">Video Archive</h2>
+    <p class="section-lead fade-in" id="videoArchiveLead">Browse Seán's recorded teachings and conversations. Every one free.</p>
+    <div class="video-controls fade-in" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <div class="video-search-wrap" style="flex:1;min-width:200px;">
+        <span class="video-search-icon">⌕</span>
+        <input class="video-search" id="videoSearch" type="text"
+          placeholder="Search videos by title…"
+          oninput="debounceSearch(this.value)">
+      </div>
+      <a href="https://www.youtube.com/@spiritsinspacesuits" target="_blank" rel="noopener"
+         style="font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);text-decoration:none;white-space:nowrap;border:1px solid rgba(200,150,62,.25);padding:.45rem 1rem;transition:all .2s;"
+         onmouseover="this.style.borderColor='rgba(200,150,62,.5)';this.style.color='var(--gold)'"
+         onmouseout="this.style.borderColor='rgba(200,150,62,.25)';this.style.color='var(--gold-dim)'">
+        Visit Channel →
+      </a>
+    </div>
+    <p class="video-count" id="videoCount"></p>
+    <div id="videoLoading">Loading videos…</div>
+    <div class="video-scroll-track" id="videoScrollTrack" style="display:none;">
+      <div class="video-row" id="videoGrid"></div>
+    </div>
+    <div id="videoError"><p>Unable to load videos. <a href="https://www.youtube.com/@spiritsinspacesuits" target="_blank" rel="noopener" style="color:var(--gold-dim);">Visit the channel →</a></p></div>
+    <div class="video-more-btn fade-in" id="videoMoreBtn" style="display:none;">
+      <button class="btn-outline" onclick="loadMoreVideos()">Load More</button>
+    </div>
+  </div>
+</section>
+
+<!-- STORIES -->
+<section id="stories">
+  <div class="inner">
+    <p class="eyebrow fade-in">From Seán's Journal</p>
+    <h2 class="fade-in">Stories, Essays & Poems</h2>
+    <p class="section-lead fade-in">Reflections written in the quiet of Tír na nÓg — brief, precise, and occasionally startling.</p>
+    <div class="stories-controls fade-in" style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem;">
+      <div style="display:flex;gap:.35rem;" id="storyTabs">
+        <button class="vtab active" onclick="filterStories('all',this)">All</button>
+        <button class="vtab" onclick="filterStories('story',this)">Stories</button>
+        <button class="vtab" onclick="filterStories('essay',this)">Essays</button>
+        <button class="vtab" onclick="filterStories('poem',this)">Poems</button>
+      </div>
+      <div style="position:relative;flex:1;min-width:180px;">
+        <input type="text" id="storiesSearch" placeholder="Search by title…" oninput="debounceStoriesSearch(this.value)"
+          style="width:100%;padding:.5rem 1rem .5rem 1.9rem;background:var(--lift);border:1px solid var(--border);color:var(--cream-dim);font-family:var(--sans);font-size:.8rem;outline:none;font-weight:300;">
+        <span style="position:absolute;left:.65rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;pointer-events:none;">⌕</span>
+      </div>
+    </div>
+    <div id="storiesLoading" style="display:none;text-align:center;padding:2rem;color:var(--muted);font-style:italic;font-size:.85rem;">Loading…</div>
+    <div class="stories-grid" id="storiesGrid"></div>
+    <div style="text-align:center;margin-top:1.5rem;display:none;" id="storiesMoreBtn">
+      <button class="btn-outline" onclick="loadMoreStories()">Load More →</button>
+    </div>
+  </div>
+</section>
+
+<!-- CORE TEACHINGS -->
+<section id="teachings">
+  <div class="inner">
+    <p class="eyebrow fade-in">An Orientation</p>
+    <h2 class="fade-in">Core Teachings</h2>
+    <p class="section-lead fade-in">For the newcomer and the longtime student alike — the ideas that anchor everything else.</p>
+    <div class="teachings-layout">
+      <div class="teachings-nav fade-in">
+        <button class="tnav-item active" onclick="showTeaching('cosmology',this)">Personal Cosmology</button>
+        <button class="tnav-item" onclick="showTeaching('god',this)">The Nature of God</button>
+        <button class="tnav-item" onclick="showTeaching('soul',this)">The Soul's Journey</button>
+        <button class="tnav-item" onclick="showTeaching('prayer',this)">Prayer</button>
+        <button class="tnav-item" onclick="showTeaching('science',this)">Science & Spirit</button>
+        <button class="tnav-item" onclick="showTeaching('mysticism',this)">Comparative Mysticism</button>
+      </div>
+      <div class="fade-in fd1">
+        <div class="teaching-section active" id="teaching-cosmology">
+          <h3>Personal Cosmology</h3>
+          <p>By "personal cosmology," Seán means something precise: the story you tell yourself about why anything exists, and what your place in that story is. Not belief inherited from a tradition, not the scientific model, not someone else's metaphysics — your own, arrived at honestly.</p>
+          <div class="dream-block">
+            <p>The soul is a dream that God is having.</p>
+            <p>And when the soul dreams, it dreams a body.</p>
+            <p>And when the body dreams, it dreams an ego.</p>
+            <p>And when the ego dreams, it dreams a lifetime.</p>
+            <p>We are players in God's dream.</p>
+            <p>Our ultimate identity is Source.</p>
+          </div>
+          <p>Most people have never explicitly formed a personal cosmology. They have absorbed fragments — childhood religion, university science, cultural mythology — and these sit unexamined, often in contradiction. His invitation is not to adopt his cosmology. It is to do the work of forming your own, with full awareness of what you are choosing and why.</p>
+          <div class="pullquote">"A map is not the terrain. A cosmology is not reality. But we need maps to guide ourselves."</div>
+          <p>He identifies four elements needed to navigate: Reality (everything you can sense, feel, think, remember, dream, choose, or imagine), Truth (not facts, but that which transforms and aligns you with Source), Memory (extending to past lives and the Akashic Records), and Imagination (not making things up, but shifting states of consciousness to encounter what actually exists in other dimensions).</p>
+        </div>
+        <div class="teaching-section" id="teaching-god">
+          <h3>The Nature of God</h3>
+          <p>There are five things Seán does not believe about God. God is not a person, not a creator, not a covenant-maker, not a micro-manager, and not partisan. These five negations clear the ground for what he does believe.</p>
+          <div class="pullquote">"Everything that exists is a Word-of-God-Made-Flesh. Not just Jesus — every elephant, every spider, every human being."</div>
+          <p>God has two aspects: the transcendent "Isness" of God, which is totally ineffable and about which we can say nothing, and the Immanence of God — as She breathes and moves through Her manifestation. It is not the nature of God to sit in a workshop making things from nothing. It is the nature of God to emanate. As a flower is the emanation of its bulb, all of creation is the emanation of God.</p>
+          <p>The Christian Trinity, read mystically: the Father is the Isness of God. The Word is God's Total Self-Knowledge. The Holy Spirit is God's Total Love for Herself. This is not the God of institutional religion. It is the God the mystics of every tradition have always pointed toward.</p>
+          <div class="pullquote">"We are God in drag."</div>
+        </div>
+        <div class="teaching-section" id="teaching-soul">
+          <h3>The Soul's Journey</h3>
+          <p>The central metaphor — spirits in spacesuits — captures what Seán considers the most important reversal in how we understand ourselves. We are not primarily biological organisms who occasionally have spiritual experiences. We are primarily souls who have temporarily taken on physical form.</p>
+          <p>Souls exist in timelessness. At some stage, every soul volunteers for separation from Source — not on this planet alone. But all of them strap themselves into what God plays: Hide-and-Go-Seek with Herself.</p>
+          <div class="pullquote">"God plays 'Hide-and-Go-Seek' with Herself. She manifests aspects of Herself which forget that they are aspects of Herself. The game is: can you remember?"</div>
+          <p>We do not incarnate as individuals. We come down in Soul Pods — groups of souls who move from incarnation to incarnation together. The roles change, the genders change, the relationships change. But the same pod keeps choosing circumstances that give each soul the ideal conditions to develop the virtues it came to develop.</p>
+          <p>Enlightenment, in his framework, is a function of four variables: Self-Understanding, Intelligence, Wisdom, and Compassion. The last one alone runs from minus 100 (psychopathy) to plus 100 — it is the only variable that can go below zero.</p>
+        </div>
+        <div class="teaching-section" id="teaching-prayer">
+          <h3>Prayer</h3>
+          <p>Prayer is not petition. It is not a mechanism for getting things from God. It is participation. The Eucharistic Prayer of the Cosmos — the subtitle of this site — is his articulation of what prayer looks like when it transcends any single tradition.</p>
+          <div class="pullquote">"Prayer is not asking God to change his mind. It is asking yourself to change yours."</div>
+          <p>Seán conducted empirical scientific research on intercessory prayer in clinical settings — among the first such studies. What he found: prayer works. Not because God intervenes, but because the boundaries of the individual self are far more permeable than we assume. Prayer changes the one who prays. It also, by mechanisms that science is only beginning to measure, affects what is prayed for.</p>
+          <p>Near his home in Tír na nÓg, Healdsburg, he has 23 stations of the Eucharistic Prayer of the Cosmos — a personal pilgrimage he walks, ringing a bell at each station. This is what he means by prayer as a bodily, daily, cosmic act rather than a weekly petition at a building.</p>
+        </div>
+        <div class="teaching-section" id="teaching-science">
+          <h3>Science & Spirituality</h3>
+          <p>Seán trained in pure mathematics and mathematical physics before entering seminary. He holds a PhD in transpersonal psychology and has spent decades finding the places where serious science and serious mysticism converge rather than conflict.</p>
+          <div class="pullquote">"A 'mysticist' is a cross between a mystic and a scientist — being scientific about spirituality, and spiritual about science."</div>
+          <p>On evolution: he does not believe in the Darwinian model as usually presented. He sees intelligence built into the evolutionary process. Rather than survival of the fittest, he sees evidence everywhere for cooperation and symbiosis. Rather than gradual change, he sees "Punctuated Equilibria" — sudden quantum leaps when whole new features appear on Earth.</p>
+          <p>On consciousness: he is completely opposed to the materialist view that consciousness is a byproduct of brain activity. Thinking that the brain produces consciousness is like thinking the television set creates the ballgame. The brain is a tuning mechanism. Consciousness is the broadcast. Larger brains improve the video. They have no effect on the game itself.</p>
+        </div>
+        <div class="teaching-section" id="teaching-mysticism">
+          <h3>Comparative Mysticism</h3>
+          <p>Seán was ordained a Catholic priest, spent 14 years among the Kalenjin people of East Africa, and has spent decades in serious engagement with Sufism, Vedanta, Celtic spirituality, Kabbalah, and the mystical streams of all major traditions.</p>
+          <div class="pullquote">"Every tradition contains both poison and medicine. The task is to learn which is which."</div>
+          <p>His conclusion: these traditions do not teach the same thing — they are genuinely different. But they share a common destination, approached by different routes. The mystics are the quality-control department of religion. They are the ones who have the actual direct experience that doctrine is supposed to describe.</p>
+          <p>Celtic Christianity holds particular interest for him — his own inheritance. A tradition that integrated the pre-Christian Celtic world with the Christian one, that kept nature and the feminine sacred, and that was eventually suppressed by Rome precisely because it was too independent. His druid grandfather, his mystic great-grandmother who would have been equally at home in Sufi practice: these are his formation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODELS -->
+<section id="models">
+  <div class="inner">
+    <p class="eyebrow fade-in">Frameworks & Maps</p>
+    <h2 class="fade-in">Models of Reality</h2>
+    <p class="section-lead fade-in" id="modelsLead">Conceptual frameworks Seán uses to make the invisible navigable. Click any to expand.</p>
+    <div class="models-grid" id="modelsGrid"></div>
+  </div>
+</section>
+
+<!-- BOOKS -->
+<section id="books">
+  <div class="inner">
+    <p class="eyebrow fade-in">The Written Word</p>
+    <h2 class="fade-in">Books by Seán</h2>
+    <p class="section-lead fade-in">Six books spanning forty years — theology, psychology, mysticism, and the science of prayer.</p>
+    <div class="books-grid fade-in">
+      <div class="book-card featured">
+        <div class="book-cover"><div class="book-cover-text">Setting God Free</div></div>
+        <div>
+          <span class="book-badge">Latest</span>
+          <p class="book-title">Setting God Free</p>
+          <p class="book-subtitle">Moving Beyond the Caricature We've Created in Our Own Image</p>
+          <p class="book-desc">A priest, scientist, and psychologist examine how mainstream religion handed down a God only a sadomasochist could love — and what comes after.</p>
+          <div class="book-links">
+            <a href="https://www.amazon.com/Setting-God-Free-Caricature-Created-ebook/dp/B098TRFN2C/" target="_blank" rel="noopener" class="book-link">Amazon</a>
+            <a href="https://www.audible.com/pd/Setting-God-Free-Audiobook/B0C6NFFWVH" target="_blank" rel="noopener" class="book-link">Audible</a>
+          </div>
+        </div>
+      </div>
+      <div class="book-card featured">
+        <div class="book-cover"><div class="book-cover-text">Spirits in Spacesuits</div></div>
+        <div>
+          <span class="book-badge">Foundational</span>
+          <p class="book-title">Spirits in Spacesuits</p>
+          <p class="book-subtitle">A Manual for Everyday Mystics</p>
+          <p class="book-desc">A spiritual guide to the mystical core of ancient traditions — weaving East and West, science and soul, through the voice of a storyteller-priest steeped in Irish and African mythology.</p>
+          <div class="book-links">
+            <a href="https://www.amazon.com/Spirits-Spacesuits-Manual-Everyday-Mystics/dp/1553955056/" target="_blank" rel="noopener" class="book-link">Amazon</a>
+          </div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover"><div class="book-cover-text">Why?</div></div>
+        <div>
+          <p class="book-title">Why?</p>
+          <p class="book-subtitle">What Your Life Is Telling You About Who You Are and Why You're Here</p>
+          <p class="book-desc">Co-authored with Matt McKay and Ralph Metzner. Dismantles old cosmologies and offers practical exercises for aligning with your soul's actual mission.</p>
+          <div class="book-links">
+            <a href="https://www.amazon.com/Why-What-Telling-about-Youre/dp/1608827755/" target="_blank" rel="noopener" class="book-link">Amazon</a>
+          </div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover"><div class="book-cover-text">Souls on Safari</div></div>
+        <div>
+          <p class="book-title">Souls on Safari</p>
+          <p class="book-subtitle">A Guided Tour of Mystical Wisdom</p>
+          <p class="book-desc">A safari into the mystical wisdom that has sustained the search of all peoples through all time — told through the oral tradition of Ireland and Africa.</p>
+          <div class="book-links">
+            <a href="https://www.amazon.com/Souls-Safari-Sean-OLaoire/dp/1587366118/" target="_blank" rel="noopener" class="book-link">Amazon</a>
+          </div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover"><div class="book-cover-text">A Sensible God</div></div>
+        <div>
+          <p class="book-title">A Sensible God</p>
+          <p class="book-subtitle">Stories and Scriptures of Science and Psychology</p>
+          <p class="book-desc">Theology, wisdom, poetry and passion from a Celtic soul, a scientific mind, and a poetic heart. The Big Bang as the sound of God laughing.</p>
+          <div class="book-links">
+            <a href="https://www.amazon.com/Sensible-God-Sean-OLaoire/dp/1436371376/" target="_blank" rel="noopener" class="book-link">Amazon</a>
+          </div>
+        </div>
+      </div>
+      <div class="book-card">
+        <div class="book-cover"><div class="book-cover-text">Different Paths to Source</div></div>
+        <div>
+          <span class="book-badge">2025 · Contributed Chapter</span>
+          <p class="book-title">Different Paths to Source</p>
+          <p class="book-subtitle">Universal Consciousness of God</p>
+          <p class="book-desc">Seán contributes "Developing Your Personal Cosmology — GPS for This Incarnation" to this ten-author anthology on how diverse traditions arrive at the same ground.</p>
+          <div class="book-links">
+            <a href="https://www.amazon.com/Different-Paths-Source-Universal-Consciousness/dp/B0GDTVXX4W" target="_blank" rel="noopener" class="book-link">Amazon</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="inner">
+    <p class="eyebrow fade-in">The Man Behind the Archive</p>
+    <h2 class="fade-in">About Seán</h2>
+    <div class="about-layout">
+      <div class="about-photo-wrap fade-in">
+        <div class="about-photo">
+          <img src="/sean.webp" alt="Fr. Seán Ó'Laoire">
+        </div>
+        <div class="about-facts">
+          <div class="fact"><div class="fact-label">Born</div><div class="fact-value">Co. Kerry, Ireland</div></div>
+          <div class="fact"><div class="fact-label">Ordained</div><div class="fact-value">Catholic Priest</div></div>
+          <div class="fact"><div class="fact-label">Africa</div><div class="fact-value">14 years, Kenya</div></div>
+          <div class="fact"><div class="fact-label">PhD</div><div class="fact-value">Transpersonal Psychology</div></div>
+        </div>
+      </div>
+      <div class="about-text fade-in fd1">
+        <h3>Theologian, psychologist, mystic — and the most generous teacher you may never have met.</h3>
+        <p>Fr. Seán Ó'Laoire grew up in rural Co. Kerry, Ireland, in a family rooted in both the Catholic tradition and the older Celtic one. His druid grandfather and his mystic great-grandmother — who, in Seán's telling, would have been equally at home in Sufi practice — gave him his first education in the relationship between the visible and the invisible.</p>
+        <p>He studied pure mathematics and mathematical physics before entering seminary. After ordination, he spent fourteen years as a missionary among the Kalenjin people of East Africa, an experience that permanently expanded his sense of how many valid cosmologies the universe contains. He came to California in 1990 and spent years as pastor of St. Brendan's in San Jose, then founded the Accompanied Progressing Souls (TAPS) retreat program.</p>
+        <p>He holds a PhD in transpersonal psychology. He has conducted rigorous empirical research on intercessory prayer — among the first peer-reviewed studies of its kind. His conclusion: prayer works, but not for the reasons most people assume.</p>
+        <p>He lives at Tír na nÓg, a small property near Healdsburg, California, where he has built 23 stations of the Eucharistic Prayer of the Cosmos — a pilgrimage he walks each morning, ringing a bell at each station. He is 77. He is still teaching.</p>
+        <p>Everything on this site is his gift — freely and deliberately given. No login required. No paywall. No agenda except the truth as he has found it over fifty years of searching.</p>
+        <div class="about-links">
+          <a href="https://www.youtube.com/@spiritsinspacesuits" target="_blank" rel="noopener" class="about-link">YouTube Channel</a>
+          <a href="#ask" class="about-link">Ask His AI</a>
+          <a href="#books" class="about-link">His Books</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Spirits in Spacesuits</div>
+    <ul class="footer-nav">
+      <li><a href="#ask">Ask Seán</a></li>
+      <li><a href="#videos">Videos</a></li>
+      <li><a href="#stories">Stories</a></li>
+      <li><a href="#teachings">Teachings</a></li>
+      <li><a href="#books">Books</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </div>
+  <div class="footer-copy">
+    The complete archive of Fr. Seán Ó'Laoire, PhD — freely given to all who seek it.<br>
+    spiritsinspacesuits.com &nbsp;·&nbsp; <a href="/admin.html" style="color:var(--gold-dim);text-decoration:none;font-size:.75rem;letter-spacing:.1em;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--gold-dim)'">Admin</a>
+  </div>
+</footer>
+
+<!-- VIDEO PLAYER MODAL -->
+<div class="story-modal-overlay" id="videoModal" onclick="closeVideoModal(event)" style="z-index:700;">
+  <div style="width:100%;max-width:900px;margin:auto;">
+    <div style="position:relative;aspect-ratio:16/9;background:#000;">
+      <iframe id="videoIframe" src="" frameborder="0" allow="autoplay;encrypted-media;fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;"></iframe>
+    </div>
+    <div style="padding:.75rem 0;display:flex;justify-content:space-between;align-items:center;">
+      <span id="videoModalTitle" style="font-family:var(--serif);color:var(--cream-dim);font-size:1rem;"></span>
+      <button onclick="closeVideoModalDirect()" style="background:none;border:1px solid var(--border-mid);color:var(--muted);padding:.35rem .75rem;cursor:pointer;font-family:var(--sans);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMAGE LIGHTBOX -->
+<div id="imgLightbox" onclick="closeImgLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;align-items:center;justify-content:center;cursor:zoom-out;padding:1rem;">
+  <button onclick="closeImgLightbox()" style="position:absolute;top:1rem;right:1.25rem;background:none;border:none;color:rgba(255,255,255,.7);font-size:1.8rem;cursor:pointer;line-height:1;">✕</button>
+  <div style="max-width:90vw;max-height:90vh;text-align:center;" onclick="event.stopPropagation()">
+    <img id="imgLightboxImg" src="" alt="" style="max-width:100%;max-height:85vh;border:1px solid rgba(200,150,62,.3);">
+    <div id="imgLightboxCaption" style="margin-top:.75rem;color:rgba(240,232,216,.7);font-size:.85rem;font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;"></div>
+  </div>
+</div>
+
+<!-- STORY MODAL -->
+<div class="story-modal-overlay" id="storyModal" onclick="closeModal(event)">
+  <div class="story-modal">
+    <div class="story-modal-header">
+      <div class="story-modal-title" id="storyModalTitle"></div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="story-modal-body" id="storyModalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   DATA (loaded from API)
+══════════════════════════════════════ */
+let STORIES = [];       // loaded from /api/stories
+let storiesTotal = 0;
+let storiesOffset = 0;
+let storiesFilter = 'all';
+let storiesSearchVal = '';
+let storiesSearchTimer = null;
+let MODELS = [];        // loaded from /api/models
+
+
+
+/* ══════════════════════════════════════
+   ASK SEÁN CHAT
+══════════════════════════════════════ */
+let conversationHistory = [];
+let isAsking = false;
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    askSean();
+  }
+}
+
+function askSuggestion(q) {
+  document.getElementById('questionInput').value = q;
+  askSean();
+}
+
+async function askSean() {
+  if (isAsking) return;
+  const input = document.getElementById('questionInput');
+  const question = input.value.trim();
+  if (!question) return;
+
+  isAsking = true;
+  document.getElementById('sendBtn').disabled = true;
+  input.value = '';
+  input.style.height = 'auto';
+
+  // Hide empty state
+  document.getElementById('chatEmpty').style.display = 'none';
+
+  // Add user message
+  appendMessage('user', question);
+
+  // Add loading message
+  const loadingId = 'load-' + Date.now();
+  appendLoading(loadingId);
+  scrollChat();
+
+  try {
+    const res = await fetch('/api/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question, history: conversationHistory.slice(-6) })
+    });
+
+    const data = await res.json();
+    removeLoading(loadingId);
+
+    if (!res.ok) {
+      appendErrorMsg(data.message || 'Something went wrong. Please try again.');
+    } else {
+      appendSeanMessage(data.answer, data.sources || [], data.relatedVideos || []);
+      conversationHistory.push({ role: 'user', content: question });
+      conversationHistory.push({ role: 'assistant', content: data.answer });
+      if (data.remaining !== undefined) {
+        const el = document.getElementById('rateDisplay');
+        if (el) el.textContent = ` · ${data.remaining} questions remaining today`;
+      }
+    }
+  } catch (err) {
+    removeLoading(loadingId);
+    appendErrorMsg('Unable to reach the archive right now. Please try again in a moment.');
+  }
+
+  isAsking = false;
+  document.getElementById('sendBtn').disabled = false;
+  scrollChat();
+}
+
+function appendMessage(role, text) {
+  const history = document.getElementById('chatHistory');
+  const div = document.createElement('div');
+  div.className = 'msg msg-user';
+  div.innerHTML = `
+    <span class="msg-label">You</span>
+    <div class="msg-bubble-user">${escapeHtml(text)}</div>
+  `;
+  history.appendChild(div);
+}
+
+function appendSeanMessage(answer, sources, relatedVideos) {
+  const history = document.getElementById('chatHistory');
+  const div = document.createElement('div');
+  div.className = 'msg msg-sean';
+
+  const formattedAnswer = answer
+    .split('\n\n').map(p => `<p>${p.trim()}</p>`).join('')
+    || `<p>${answer}</p>`;
+
+  const sourcesHtml = sources.length > 0 ? `
+    <div class="msg-sources">
+      ${sources.map(s => `<span class="source-chip">${escapeHtml(s.title)}${s.date ? ` · ${s.date}` : ''}</span>`).join('')}
+    </div>` : '';
+
+  const videosHtml = relatedVideos.length > 0 ? `
+    <div class="msg-related">
+      <div class="msg-related-label">Related teachings</div>
+      <div class="msg-videos">
+        ${relatedVideos.map(v => `
+          <a class="msg-video-thumb" href="https://www.youtube.com/watch?v=${v.id}" target="_blank" rel="noopener">
+            <div class="msg-video-img"><img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt="${escapeHtml(v.title || '')}" loading="lazy" onerror="this.style.display='none'"></div>
+            <div class="msg-video-title">${escapeHtml(v.title || 'Watch on YouTube')}</div>
+          </a>
+        `).join('')}
+      </div>
+    </div>` : '';
+
+  div.innerHTML = `
+    <span class="msg-label msg-label-sean">Seán</span>
+    <div class="msg-bubble-sean">
+      ${formattedAnswer}
+      ${sourcesHtml}
+      ${videosHtml}
+    </div>
+  `;
+  history.appendChild(div);
+}
+
+function appendLoading(id) {
+  const history = document.getElementById('chatHistory');
+  const div = document.createElement('div');
+  div.className = 'msg msg-sean msg-loading';
+  div.id = id;
+  div.innerHTML = `
+    <span class="msg-label msg-label-sean">Seán</span>
+    <div class="msg-bubble-sean">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+  `;
+  history.appendChild(div);
+}
+
+function removeLoading(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function appendErrorMsg(text) {
+  const history = document.getElementById('chatHistory');
+  const div = document.createElement('div');
+  div.className = 'msg msg-sean';
+  div.innerHTML = `
+    <span class="msg-label msg-label-sean">Seán</span>
+    <div class="msg-bubble-sean" style="border-color:rgba(180,100,100,.3);color:var(--muted);">
+      <p>${escapeHtml(text)}</p>
+    </div>
+  `;
+  history.appendChild(div);
+}
+
+function scrollChat() {
+  const h = document.getElementById('chatHistory');
+  h.scrollTop = h.scrollHeight;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+/* ══════════════════════════════════════
+   TODAY'S FEATURE (daily rotation, loads from API)
+══════════════════════════════════════ */
+async function renderTodayStory() {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const now = new Date();
+  document.getElementById('todayDateLabel').textContent =
+    `Today's Feature · ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  try {
+    const res = await fetch('/api/stories?today=1');
+    const data = await res.json();
+    const story = data.story;
+    if (!story) return;
+    const typeLabel = story.content_type === 'essay' ? 'Essay' : story.content_type === 'poem' ? 'Poem' : 'Story';
+    document.getElementById('todayStory').innerHTML = `
+      <div style="font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.5rem;">${typeLabel}</div>
+      <h2 class="today-title">${escapeHtml(story.title)}</h2>
+      ${story.story_date ? `<p class="today-story-date">${escapeHtml(story.story_date)}</p>` : ''}
+      <div class="today-excerpt">${escapeHtml(story.excerpt || '')}</div>
+      <div class="today-body" id="todayBody">${story.body || ''}</div>
+      <button class="today-toggle" id="todayToggle" onclick="toggleTodayStory()">
+        <span id="todayToggleText">Read full ${typeLabel.toLowerCase()}</span> ↓
+      </button>
+      <div class="today-more">
+        <p>A new piece surfaces here each day — stories, essays and poems.</p>
+        <a href="#stories" class="btn-outline" style="font-size:.7rem;padding:.5rem 1.2rem;">Full Archive →</a>
+      </div>`;
+  } catch {}
+}
+
+function toggleTodayStory() {
+  const body = document.getElementById('todayBody');
+  const text = document.getElementById('todayToggleText');
+  body.classList.toggle('open');
+  const base = text.textContent.replace('Read full ','').replace('Close','').trim() || 'story';
+  text.textContent = body.classList.contains('open') ? 'Close' : `Read full ${base}`;
+}
+
+/* ══════════════════════════════════════
+   STORIES / ESSAYS / POEMS — API-driven
+══════════════════════════════════════ */
+const STORIES_PAGE = 24;
+
+async function loadStories(reset) {
+  if (reset) { storiesOffset = 0; STORIES = []; }
+  document.getElementById('storiesLoading').style.display = 'block';
+  const params = new URLSearchParams({ limit: String(STORIES_PAGE), offset: String(storiesOffset) });
+  if (storiesFilter !== 'all') params.set('type', storiesFilter);
+  if (storiesSearchVal) params.set('q', storiesSearchVal);
+  try {
+    const res = await fetch('/api/stories?' + params);
+    const data = await res.json();
+    STORIES = reset ? (data.stories || []) : STORIES.concat(data.stories || []);
+    storiesTotal = data.total || 0;
+    storiesOffset = STORIES.length;
+    renderStories();
+  } catch {
+    document.getElementById('storiesLoading').style.display = 'none';
+  }
+}
+
+function filterStories(f, el) {
+  storiesFilter = f;
+  document.querySelectorAll('#storyTabs .vtab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadStories(true);
+}
+
+function debounceStoriesSearch(val) {
+  storiesSearchVal = val;
+  clearTimeout(storiesSearchTimer);
+  storiesSearchTimer = setTimeout(() => loadStories(true), 300);
+}
+
+function loadMoreStories() {
+  loadStories(false);
+}
+
+function renderStories() {
+  document.getElementById('storiesLoading').style.display = 'none';
+  const grid = document.getElementById('storiesGrid');
+  if (!STORIES.length) {
+    grid.innerHTML = '<p style="text-align:center;color:var(--muted);padding:3rem;font-style:italic;">No content found.</p>';
+    document.getElementById('storiesMoreBtn').style.display = 'none';
+    return;
+  }
+  grid.innerHTML = STORIES.map((s, i) => {
+    const badge = s.content_type === 'essay' ? 'Essay' : s.content_type === 'poem' ? 'Poem' : 'Story';
+    return `
+    <div class="story-card" onclick="openStory('${s.id}')">
+      <div class="story-num" style="display:flex;gap:.5rem;align-items:center;">
+        <span>${badge} ${String(i+1).padStart(2,'0')}</span>
+      </div>
+      <div class="story-card-title">${escapeHtml(s.title)}</div>
+      <div class="story-card-excerpt">${escapeHtml(s.excerpt || '')}</div>
+      <div class="story-read">Read →</div>
+    </div>`;
+  }).join('');
+  const moreBtn = document.getElementById('storiesMoreBtn');
+  moreBtn.style.display = (STORIES.length < storiesTotal) ? 'block' : 'none';
+}
+
+function openStory(id) {
+  const s = STORIES.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('storyModalTitle').textContent = s.title;
+  document.getElementById('storyModalBody').innerHTML = s.body || `<p>${escapeHtml(s.excerpt || '')}</p>`;
+  document.getElementById('storyModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(e) { if (e.target === document.getElementById('storyModal')) closeModalDirect(); }
+function closeModalDirect() { document.getElementById('storyModal').classList.remove('open'); document.body.style.overflow = ''; }
+
+/* ══════════════════════════════════════
+   MODELS — API-driven
+══════════════════════════════════════ */
+async function loadModels() {
+  try {
+    const res = await fetch('/api/models');
+    const data = await res.json();
+    MODELS = data.models || [];
+    renderModels();
+  } catch {}
+}
+
+function renderModels() {
+  const grid = document.getElementById('modelsGrid');
+  if (!MODELS.length) { grid.innerHTML = ''; return; }
+  const count = MODELS.length;
+  document.getElementById('modelsLead').textContent =
+    `${count} conceptual framework${count !== 1 ? 's' : ''} Seán uses to make the invisible navigable. Click any to expand.`;
+  grid.innerHTML = MODELS.map((m, i) => {
+    const videoId = m.video_id;
+    const keys = Array.isArray(m.keys) ? m.keys : [];
+    return `
+    <div class="model-card" id="mc-${i}" onclick="toggleModel(${i})">
+      <div class="model-head">
+        <div class="model-num">${escapeHtml(m.num || '')}</div>
+        <div class="model-head-text">
+          <div class="model-title">${escapeHtml(m.title)}</div>
+          <div class="model-sub">${escapeHtml(m.subtitle || '')}</div>
+        </div>
+        <div class="model-chevron"></div>
+      </div>
+      <div class="model-body">
+        <div class="model-layout">
+          <div class="model-desc">
+            ${(m.description || '').split('\n\n').map(p => `<p>${escapeHtml(p.trim())}</p>`).join('')}
+            ${keys.length ? `<h4>Key Elements</h4>${keys.map(k => `
+              <div class="model-key">
+                <span class="model-key-label">${escapeHtml(k.label)}</span>
+                <span class="model-key-value">${escapeHtml(k.value)}</span>
+              </div>`).join('')}` : ''}
+          </div>
+          <div>
+            ${m.image_url ? `<img src="${escapeHtml(m.image_url)}" alt="${escapeHtml(m.title)}" style="width:100%;border:1px solid var(--border);margin-bottom:.75rem;cursor:zoom-in;" loading="lazy" onerror="this.style.display='none'" onclick="openImgLightbox(event,'${escapeHtml(m.image_url)}','${escapeHtml(m.title)}')">` : ''}
+            ${videoId ? `
+            <a class="model-video-link" href="https://www.youtube.com/watch?v=${escapeHtml(videoId)}" target="_blank" rel="noopener">
+              <div class="model-yt-thumb">
+                <img src="https://img.youtube.com/vi/${escapeHtml(videoId)}/mqdefault.jpg" alt="${escapeHtml(m.video_title || '')}" loading="lazy" onerror="this.style.display='none'">
+              </div>
+              <div class="model-yt-info">
+                <div class="model-yt-label">Watch Seán teach this →</div>
+                <div class="model-yt-title">${escapeHtml(m.video_title || '')}</div>
+              </div>
+            </a>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleModel(i) {
+  const card = document.getElementById('mc-' + i);
+  const wasOpen = card.classList.contains('expanded');
+  document.querySelectorAll('.model-card').forEach(c => c.classList.remove('expanded'));
+  if (!wasOpen) { card.classList.add('expanded'); setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50); }
+}
+
+function openImgLightbox(e, url, caption) {
+  e.stopPropagation();
+  const lb = document.getElementById('imgLightbox');
+  document.getElementById('imgLightboxImg').src = url;
+  document.getElementById('imgLightboxCaption').textContent = caption || '';
+  lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeImgLightbox() {
+  document.getElementById('imgLightbox').style.display = 'none';
+  document.getElementById('imgLightboxImg').src = '';
+  document.body.style.overflow = '';
+}
+
+/* ══════════════════════════════════════
+   VIDEOS — YouTube API
+══════════════════════════════════════ */
+let allVideos = [];
+let videoNextPageToken = null;
+let videoSearchQuery = '';
+let videoSearchTimer = null;
+
+async function loadVideos() {
+  try {
+    const res = await fetch('/api/videos?max=50');
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    allVideos = data.videos || [];
+    videoNextPageToken = data.nextPageToken || null;
+    document.getElementById('videoLoading').style.display = 'none';
+    document.getElementById('videoScrollTrack').style.display = 'block';
+    renderVideoGrid();
+    renderLatestVideos();
+    initDragScroll();
+    updateVideoMoreBtn();
+  } catch (err) {
+    document.getElementById('videoLoading').style.display = 'none';
+    document.getElementById('videoError').style.display = 'block';
+    renderLatestVideos();
+  }
+}
+
+function debounceSearch(val) {
+  clearTimeout(videoSearchTimer);
+  videoSearchTimer = setTimeout(() => { videoSearchQuery = val.trim().toLowerCase(); renderVideoGrid(); }, 200);
+}
+
+function renderVideoGrid() {
+  const videos = videoSearchQuery
+    ? allVideos.filter(v => v.title.toLowerCase().includes(videoSearchQuery))
+    : allVideos;
+
+  const countEl = document.getElementById('videoCount');
+  countEl.textContent = videoSearchQuery
+    ? `${videos.length} result${videos.length !== 1 ? 's' : ''} for "${videoSearchQuery}"`
+    : `${allVideos.length} video${allVideos.length !== 1 ? 's' : ''}${videoNextPageToken ? '+' : ''}`;
+
+  document.getElementById('videoGrid').innerHTML = videos.map(v => `
+    <div class="video-card" onclick="openVideoModal('${v.id}','${escapeHtml(v.title).replace(/'/g,"\\'")}')">
+      <div class="video-thumb">
+        <img src="${v.thumbnail}" alt="${escapeHtml(v.title)}" loading="lazy"
+             onerror="this.src='https://img.youtube.com/vi/${v.id}/hqdefault.jpg'">
+        <div class="video-thumb-overlay"><div class="play-btn"></div></div>
+      </div>
+      <div class="video-info">
+        <h3>${escapeHtml(v.title)}</h3>
+        <p class="video-meta">${v.publishedAt ? new Date(v.publishedAt).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : ''}</p>
+      </div>
+    </div>
+  `).join('');
+
+  updateVideoMoreBtn();
+}
+
+function updateVideoMoreBtn() {
+  // Show "Load More" only if there are more pages AND user isn't filtering by search
+  const hasMore = videoNextPageToken && !videoSearchQuery;
+  document.getElementById('videoMoreBtn').style.display = hasMore ? 'block' : 'none';
+}
+
+async function loadMoreVideos() {
+  if (!videoNextPageToken) return;
+  const btn = document.querySelector('#videoMoreBtn .btn-outline');
+  if (btn) { btn.disabled = true; btn.textContent = 'Loading…'; }
+  try {
+    const res = await fetch(`/api/videos?max=50&pageToken=${encodeURIComponent(videoNextPageToken)}`);
+    const data = await res.json();
+    allVideos = allVideos.concat(data.videos || []);
+    videoNextPageToken = data.nextPageToken || null;
+    renderVideoGrid();
+  } catch {}
+  if (btn) { btn.disabled = false; btn.textContent = 'Load More'; }
+}
+
+function initDragScroll() {
+  const track = document.getElementById('videoScrollTrack');
+  let isDown = false, startX, scrollLeft;
+  track.addEventListener('mousedown', e => { isDown = true; startX = e.pageX - track.offsetLeft; scrollLeft = track.scrollLeft; });
+  track.addEventListener('mouseleave', () => isDown = false);
+  track.addEventListener('mouseup', () => isDown = false);
+  track.addEventListener('mousemove', e => {
+    if (!isDown) return;
+    e.preventDefault();
+    track.scrollLeft = scrollLeft - (e.pageX - track.offsetLeft - startX);
+  });
+}
+
+function renderLatestVideos() {
+  const container = document.getElementById('latestContainer');
+  if (!allVideos.length) {
+    container.innerHTML = `<p style="text-align:center;color:var(--muted);padding:2rem;font-style:italic;">
+      Visit <a href="https://www.youtube.com/@spiritsinspacesuits" target="_blank" rel="noopener" style="color:var(--gold-dim);">the channel</a> for the latest teachings.
+    </p>`;
+    return;
+  }
+
+  const [first, ...rest] = allVideos;
+  const secondaries = rest.slice(0, 2);
+
+  container.innerHTML = `
+    <div class="latest-grid fade-in">
+      <div class="latest-featured" onclick="openVideoModal('${first.id}','${escapeHtml(first.title).replace(/'/g,"\\'")}')">
+        <img src="${first.thumbnail}" alt="${escapeHtml(first.title)}"
+             onerror="this.src='https://img.youtube.com/vi/${first.id}/hqdefault.jpg'">
+        <div class="latest-featured-overlay"></div>
+        <div class="latest-featured-content">
+          <div class="latest-featured-label">Latest Teaching</div>
+          <div class="latest-featured-title">${escapeHtml(first.title)}</div>
+          <div class="latest-featured-date">${first.publishedAt ? new Date(first.publishedAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : ''}</div>
+        </div>
+        <div class="latest-play"></div>
+      </div>
+      ${secondaries.map(v => `
+        <div class="latest-secondary" onclick="openVideoModal('${v.id}','${escapeHtml(v.title).replace(/'/g,"\\'")}')">
+          <div class="latest-secondary-thumb">
+            <img src="${v.thumbnail}" alt="${escapeHtml(v.title)}" loading="lazy"
+                 onerror="this.src='https://img.youtube.com/vi/${v.id}/hqdefault.jpg'">
+          </div>
+          <div>
+            <div class="latest-secondary-title">${escapeHtml(v.title)}</div>
+            <div class="latest-secondary-date">${v.publishedAt ? new Date(v.publishedAt).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : ''}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ══════════════════════════════════════
+   TEACHINGS TABS
+══════════════════════════════════════ */
+function showTeaching(id, el) {
+  document.querySelectorAll('.teaching-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tnav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('teaching-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+function toggleNav() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+document.querySelectorAll('#navLinks a').forEach(a => {
+  a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+});
+
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ══════════════════════════════════════
+   SCROLL ANIMATIONS
+══════════════════════════════════════ */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.07 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+/* ══════════════════════════════════════
+   VIDEO MODAL
+══════════════════════════════════════ */
+function openVideoModal(id, title) {
+  document.getElementById('videoIframe').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+  document.getElementById('videoModalTitle').textContent = title;
+  document.getElementById('videoModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeVideoModal(e) {
+  if (e.target === document.getElementById('videoModal')) closeVideoModalDirect();
+}
+function closeVideoModalDirect() {
+  document.getElementById('videoIframe').src = '';
+  document.getElementById('videoModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeVideoModalDirect(); closeModalDirect(); closeImgLightbox(); } });
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+renderTodayStory();
+loadStories(true);
+loadModels();
+loadVideos();
+setTimeout(() => {
+  document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
+}, 200);
+</script>
+</body>
+</html>

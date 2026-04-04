@@ -1,0 +1,13 @@
+node_modules/
+.env.local
+.env
+.vercel/
+
+# Never commit raw transcript or book files
+# These live locally and get ingested into Supabase
+data/
+
+# OS clutter
+.DS_Store
+Thumbs.db
+.vercel
