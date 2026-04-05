@@ -1896,6 +1896,7 @@ function renderLatestVideos() {
       `).join('')}
     </div>
   `;
+  container.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 }
 
 /* ══════════════════════════════════════
