@@ -708,44 +708,6 @@ h2 {
   color: var(--gold-dim); flex-shrink: 0; padding-top: .12rem; min-width: 100px;
 }
 .model-key-value { font-size: .85rem; color: var(--body); line-height: 1.5; }
-/* ── GLOSSARY ── */
-#glossary { background: var(--void); }
-.glossary-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2px; background: var(--border); margin-top: 2rem;
-}
-.gloss-card {
-  background: var(--mid); cursor: pointer; transition: background .2s;
-  user-select: none;
-}
-.gloss-card:hover { background: rgba(200,150,62,.05); }
-.gloss-card.open { background: rgba(200,150,62,.03); }
-.gloss-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 1.1rem 1.3rem; gap: 1rem;
-}
-.gloss-term {
-  font-family: var(--serif); font-size: 1.05rem; font-weight: 400;
-  color: var(--gold-pale); line-height: 1.2;
-}
-.gloss-chevron {
-  width: 18px; height: 18px; border: 1px solid var(--border-mid);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; transition: transform .25s;
-}
-.gloss-card.open .gloss-chevron { transform: rotate(180deg); border-color: var(--gold-dim); }
-.gloss-chevron::after {
-  content: ''; border-left: 4px solid transparent;
-  border-right: 4px solid transparent; border-top: 4px solid var(--gold-dim);
-}
-.gloss-body {
-  display: none; padding: 0 1.3rem 1.4rem;
-  font-size: .88rem; color: var(--body); line-height: 1.8;
-  border-top: 1px solid var(--border);
-  padding-top: 1rem;
-}
-.gloss-card.open .gloss-body { display: block; animation: fadeInUp .2s ease; }
-
 .model-video-link {
   display: flex; align-items: center; gap: .75rem;
   margin-top: 1.5rem; padding: .8rem 1rem; border: 1px solid var(--border-mid);
@@ -920,7 +882,6 @@ footer {
     <li><a href="#teachings">Teachings</a></li>
     <li><a href="#books">Books</a></li>
     <li><a href="#about">About</a></li>
-    <li><a href="#glossary">Glossary</a></li>
   </ul>
   <div class="hamburger" id="hamburger" onclick="toggleNav()">
     <span></span><span></span><span></span>
@@ -1327,16 +1288,6 @@ footer {
   </div>
 </section>
 
-<!-- GLOSSARY -->
-<section id="glossary">
-  <div class="inner">
-    <p class="eyebrow fade-in">Sean's Lexicon</p>
-    <h2 class="fade-in">Words Redefined</h2>
-    <p class="section-lead fade-in">Language shapes reality. These are Seán's definitions — stripped of cultural assumption, returned to their roots. Click any word to expand.</p>
-    <div class="glossary-grid fade-in" id="glossaryGrid"></div>
-  </div>
-</section>
-
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
@@ -1348,7 +1299,6 @@ footer {
       <li><a href="#teachings">Teachings</a></li>
       <li><a href="#books">Books</a></li>
       <li><a href="#about">About</a></li>
-      <li><a href="#glossary">Glossary</a></li>
     </ul>
   </div>
   <div class="footer-copy">
@@ -1954,78 +1904,8 @@ function closeVideoModalDirect() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeVideoModalDirect(); closeModalDirect(); closeImgLightbox(); } });
 
 /* ══════════════════════════════════════
-   GLOSSARY
-══════════════════════════════════════ */
-const glossaryTerms = [
-  { term: "Anam Khara", def: "A soul friend; a soul with whom one has contracted to walk closely across multiple incarnations for mutual growth." },
-  { term: "Auto-telicity", def: "The love of activities for their own sake." },
-  { term: "Christ Consciousness", def: "The permanent awareness of the inner divinity of all beings, creatures, and everything that exists." },
-  { term: "Christa Consciousness", def: "The feminine face of the Divine; the ability to believe, receive, and conceive the Word of God in the heart and womb and presentation of that gift to the world." },
-  { term: "Compassion", def: "Derived from the Aramaic word for "womb" (Rakumeme), it is the act of being womb-like — conceiving, carrying, and giving birth to new life or perspectives sequentially. It is also the mystical art of leaving what is to give birth to what seeks to be." },
-  { term: "Consciousness", def: "Source-saturated self-awareness; the remembrance of our God-nature rather than a byproduct of the brain." },
-  { term: "Conspiracy", def: "When two or more people make a decision affecting others who are neither consulted nor affirmed." },
-  { term: "Education", def: "(Latin EduCare) To lead out from inside; it is the unveiling of innate soul wisdom rather than the filling of an empty vessel with facts." },
-  { term: "Ego", def: "The CEO of a particular state of consciousness or a reducing valve designed to protect the mind from being overwhelmed by the totality of non-local consciousness." },
-  { term: "Evil", def: "A cosmic conspiracy using human intermediaries to separate souls from Source. It is an emergent phenomenon created when beings with free will choose selfishness (service-to-self), eventually coagulating into a dark force or \"global tulpa\"." },
-  { term: "Fantasy", def: "The ability to make up stuff that is not real." },
-  { term: "Father", def: "(Aramaic Ab/Abba/Abone) The birthing principle of the cosmos; a gender-neutral term for the Source that manifests all that is." },
-  { term: "Free Will", def: "The ability to do as I please; the control over spiritual \"input\" or choices rather than outcomes." },
-  { term: "Freedom", def: "The ability to do as pleases God; acting from a radical, instinctive alignment with love." },
-  { term: "Heaven", def: "A state of consciousness based on unity rather than separation." },
-  { term: "Hell", def: "A psychological state created by fear or a sociological reality created by unjust systems, but not an ontological reality of eternal separation." },
-  { term: "History", def: "The \"tracks of humanity\" on the beaches of time; the footprints of spirit as it revolves through complexity to rediscover its divine origins." },
-  { term: "Holy Spirit", def: "The divine womb in which embryonic Christ consciousness is marinated in love. It acts as the receiver/transmitter between Source and manifestation." },
-  { term: "Imagination", def: "The human faculty allowing one to volitionally shift states of consciousness to visit other dimensions, interact with entities, and bring insights back to waking life." },
-  { term: "Integrity", def: "Wholeness; the incorporation of every facet of incarnation into light." },
-  { term: "Knowledge", def: "Information gleaned by the sensorium and processed by the physical brain, primarily used to manipulate the external environment." },
-  { term: "Logos", def: "The morphological agent or \"Potter\" that creates forms for matter. It is the creative principle, primordial sound, or vibration of creation." },
-  { term: "Maya", def: "The illusion of believing or acting as if only the physical world is real." },
-  { term: "Meaning", def: "The \"aha\" experience of harvesting evidence of how well one aligns with their mission. It is data to which meaning has been assigned." },
-  { term: "Mercy", def: "The ability to feel as somebody else, walking fully in their being rather than just knowing what they think." },
-  { term: "Mythish", def: "Mystical teaching in story form; the sacred language used to transmit soul-level truths." },
-  { term: "Namaste", def: "The Hindu greeting meaning \"The God in me recognizes and honors the God in you\"." },
-  { term: "Perfection", def: "(Greek Telos) Radical commitment to the purpose or mission for which one incarnated, rather than a state of sinlessness." },
-  { term: "Preconception Contract", def: "Agreements souls make before incarnating to choose the time, place, and specific mission of their arrival." },
-  { term: "Reality", def: "An artifact of a state of consciousness; everything that can be sensed, thought, remembered, or imagined is real at different levels." },
-  { term: "Ritual", def: "Dramatized storytelling or a technology for shifting states of consciousness to move through different self-identifications." },
-  { term: "Role Self", def: "The temporary character or \"mask\" one plays in a particular life or incarnation." },
-  { term: "Sacrament", def: "The mindful ritualizing of significant shifts in status and obligation within a community." },
-  { term: "Sacrifice", def: "(Latin Sacra Feature) To make holy; recognizing inherent sanctity rather than foregoing pleasure or killing something." },
-  { term: "Salvation", def: "Waking up to one's true nature rather than being \"bought back\" from a devil." },
-  { term: "Signs", def: "One physical reality standing for another." },
-  { term: "Sin", def: "The conscious, deliberate decision not to grow or the refusal to wake up. In archery terms, it means to \"miss the mark,\" providing vital feedback for spiritual growth." },
-  { term: "Son of Man", def: "The truly awake human being who identifies with divinity while in a human spacesuit." },
-  { term: "Soul Self", def: "The eternal essence that volunteered for incarnation and remains connected to Source." },
-  { term: "Source Self", def: "The ultimate unity where everything that exists is realized as \"God in drag\"." },
-  { term: "Symbols", def: "Representations that can be made to tell lies." },
-  { term: "Thin Place", def: "(Crayoloid/Coiloid) A location or time where the veil between the mystical and the mundane is diaphanous." },
-  { term: "Tikkun Olam", def: "The mystical rectification or healing of the world." },
-  { term: "Tonglen", def: "The Buddhist practice of breathing in the pain of the world, transmuting it in the heart, and breathing out compassion." },
-  { term: "Truth", def: "That which transforms an individual and aligns them with Source, Love, or God." },
-  { term: "Wisdom", def: "Data generated by the soul and processed by the heart; the ability to align with the laws of the metaphysical universe. It is also memory without the emotional baggage." }
-];
-
-function renderGlossary() {
-  const grid = document.getElementById('glossaryGrid');
-  grid.innerHTML = glossaryTerms.map((item, i) => `
-    <div class="gloss-card" id="gc-${i}" onclick="toggleGloss(${i})">
-      <div class="gloss-head">
-        <span class="gloss-term">${item.term}</span>
-        <div class="gloss-chevron"></div>
-      </div>
-      <div class="gloss-body">${item.def}</div>
-    </div>
-  `).join('');
-}
-
-function toggleGloss(i) {
-  document.getElementById('gc-' + i).classList.toggle('open');
-}
-
-/* ══════════════════════════════════════
    INIT
 ══════════════════════════════════════ */
-renderGlossary();
 renderTodayStory();
 loadStories(true);
 loadModels();
