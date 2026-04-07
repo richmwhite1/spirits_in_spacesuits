@@ -882,6 +882,40 @@ footer {
   margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); line-height: 1.7;
 }
 
+/* ── BOTTOM NAV (mobile only) ── */
+#bottomNav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+  background: rgba(6,9,15,.97); backdrop-filter: blur(24px);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.bnav-items { display: flex; }
+.bnav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: .28rem; padding: .65rem .25rem .6rem;
+  text-decoration: none; color: var(--muted); min-height: 58px;
+  transition: color .2s; -webkit-tap-highlight-color: transparent;
+  font-size: .55rem; letter-spacing: .1em; text-transform: uppercase;
+  font-family: var(--sans); font-weight: 400;
+}
+.bnav-item.active { color: var(--gold); }
+.bnav-icon {
+  width: 22px; height: 22px; display: flex; align-items: center;
+  justify-content: center; transition: transform .2s;
+}
+.bnav-item.active .bnav-icon { transform: translateY(-1px); }
+.bnav-icon svg {
+  width: 19px; height: 19px; fill: none; stroke: currentColor;
+  stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+}
+.bnav-active-bar {
+  position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 1px; background: var(--gold);
+  transition: width .25s;
+}
+.bnav-item.active .bnav-active-bar { width: 28px; }
+
 /* ── ANIMATIONS ── */
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pulse { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
@@ -922,6 +956,29 @@ footer {
   .teaching-section h3 { font-size: 1.5rem; }
   .teaching-section p { font-size: 1rem; }
   .pullquote { font-size: 1.05rem; padding: .5rem 1rem; }
+  /* touch targets */
+  .vtab { min-height: 44px; padding: .55rem 1rem; display: inline-flex; align-items: center; }
+  .ftab { min-height: 44px; padding: .5rem 1rem; display: inline-flex; align-items: center; }
+  .btn-gold, .btn-outline { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; }
+  .today-toggle { min-height: 48px; padding: .5rem 0; }
+  .modal-close { width: 44px; height: 44px; }
+  /* latest: 16/9 is better than 16/7 on portrait mobile */
+  .latest-featured { aspect-ratio: 16/9; }
+  .latest-featured-content { padding: 1.5rem 1.25rem 1.25rem; }
+  /* story modal: full screen sheet */
+  .story-modal-overlay { padding: 0; align-items: flex-end; }
+  .story-modal { border-radius: 0; width: 100%; margin: 0; max-height: 92vh; display: flex; flex-direction: column; }
+  .story-modal-header { padding: 1.25rem 1.5rem; }
+  .story-modal-body { max-height: none; flex: 1; overflow-y: auto; padding: 1.5rem; }
+  /* video filters wrap nicely */
+  .video-controls { gap: .75rem; }
+  /* teachings tabs wrap cleanly */
+  .tnav-item { min-height: 44px; display: inline-flex; align-items: center; padding: .5rem .9rem; }
+}
+@media (max-width: 768px) {
+  #bottomNav { display: block; }
+  body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
+  footer { padding-bottom: 1rem; }
 }
 @media (max-width: 600px) {
   .hero-h1 { font-size: 3rem; }
@@ -945,6 +1002,28 @@ footer {
   .book-card { flex-direction: column; }
   .book-cover { width: 100%; max-width: 80px; }
   .tform-row { grid-template-columns: 1fr; }
+  /* hero: lean into the image, reduce vertical waste */
+  .hero-content { padding: 5rem 1.25rem 3.5rem; }
+  .hero-eyebrow { font-size: .62rem; }
+  .hero-mission { display: none; } /* too long for small screens — stats + CTAs say enough */
+  .hero-stats { margin-bottom: 2rem; }
+  .hero-ctas { gap: .75rem; }
+  .hero-ctas .btn-gold, .hero-ctas .btn-outline { padding: .8rem 1.5rem; font-size: .72rem; }
+  /* ask seán: hide the side panel photo on very small screens, use stacked layout */
+  .ask-side-photo { display: none; }
+  .ask-side { min-height: auto; }
+  /* story modal full-width */
+  .story-modal-title { font-size: 1.2rem; }
+  /* video card narrower */
+  .video-card { width: 200px; }
+  /* glossary single column */
+  .glossary-grid { grid-template-columns: 1fr; }
+  /* events/testimonials single column */
+  .events-grid { grid-template-columns: 1fr; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  /* today story */
+  .today-inner { padding: 0; }
+  .today-excerpt { padding-left: 1rem; }
 }
 </style>
 </head>
@@ -1458,6 +1537,47 @@ footer {
     spiritsinspacesuits.com &nbsp;·&nbsp; <a href="/admin.html" style="color:var(--gold-dim);text-decoration:none;font-size:.75rem;letter-spacing:.1em;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--gold-dim)'">Admin</a>
   </div>
 </footer>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav id="bottomNav" aria-label="Quick navigation">
+  <div class="bnav-items">
+    <a href="#ask" class="bnav-item" data-section="ask">
+      <div class="bnav-icon" style="position:relative;">
+        <div class="bnav-active-bar"></div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <span>Ask Seán</span>
+    </a>
+    <a href="#videos" class="bnav-item" data-section="videos">
+      <div class="bnav-icon" style="position:relative;">
+        <div class="bnav-active-bar"></div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <span>Videos</span>
+    </a>
+    <a href="#stories" class="bnav-item" data-section="stories">
+      <div class="bnav-icon" style="position:relative;">
+        <div class="bnav-active-bar"></div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="10" x2="3" y2="10"/><line x1="17" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+      </div>
+      <span>Stories</span>
+    </a>
+    <a href="#books" class="bnav-item" data-section="books">
+      <div class="bnav-icon" style="position:relative;">
+        <div class="bnav-active-bar"></div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <span>Books</span>
+    </a>
+    <a href="#about" class="bnav-item" data-section="about">
+      <div class="bnav-icon" style="position:relative;">
+        <div class="bnav-active-bar"></div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span>About</span>
+    </a>
+  </div>
+</nav>
 
 <!-- VIDEO PLAYER MODAL -->
 <div class="story-modal-overlay" id="videoModal" onclick="closeVideoModal(event)" style="z-index:700;">
@@ -2238,6 +2358,26 @@ loadTestimonials();
 setTimeout(() => {
   document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
 }, 200);
+
+/* ── BOTTOM NAV ACTIVE STATE ── */
+(function() {
+  const bnav = document.getElementById('bottomNav');
+  if (!bnav) return;
+  const trackedSections = ['ask', 'videos', 'stories', 'books', 'about'];
+  function updateActive() {
+    const mid = window.scrollY + window.innerHeight * 0.45;
+    let active = null;
+    for (const id of trackedSections) {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= mid) active = id;
+    }
+    bnav.querySelectorAll('.bnav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.section === active);
+    });
+  }
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
 </script>
 </body>
 </html>
