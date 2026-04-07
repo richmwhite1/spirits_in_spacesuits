@@ -230,6 +230,8 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <div class="snav-section">Site Content</div>
       <button class="snav-item" onclick="showPage('content', this)">Stories, Essays & Poems</button>
       <button class="snav-item" onclick="showPage('models', this)">Models of Reality</button>
+      <button class="snav-item" onclick="showPage('events', this)">Events</button>
+      <button class="snav-item" onclick="showPage('testimonials', this)">Testimonials</button>
     </nav>
     <div class="sidebar-footer">
       <a href="/" target="_blank">← View Site</a><br>
@@ -357,6 +359,50 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
           <tbody id="modelsBody"></tbody>
         </table>
         <div class="empty-state" id="noModels" style="display:none;">No models yet. Click "+ Add Model" to get started.</div>
+      </div>
+    </div>
+
+    <!-- ── EVENTS PAGE ── -->
+    <div class="page" id="page-events">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1 class="page-title">Events</h1>
+          <p class="page-lead">Upcoming in-person events. Add or remove them here — they publish immediately.</p>
+        </div>
+        <button class="btn btn-green" onclick="openEventModal()">+ Add Event</button>
+      </div>
+      <div class="loading" id="eventsLoading">Loading…</div>
+      <div id="eventsTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th style="width:110px">Date</th><th>Title</th><th>Location</th><th style="width:130px"></th></tr></thead>
+          <tbody id="eventsBody"></tbody>
+        </table>
+        <div class="empty-state" id="noEvents" style="display:none;">No events yet. Click "+ Add Event" to get started.</div>
+      </div>
+    </div>
+
+    <!-- ── TESTIMONIALS PAGE ── -->
+    <div class="page" id="page-testimonials">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1 class="page-title">Testimonials</h1>
+          <p class="page-lead">Review and approve submitted testimonials before they appear on the site.</p>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-tabs" id="testimonialsFilterTabs">
+          <button class="ftab active" onclick="setTestimonialsFilter('all', this)">All</button>
+          <button class="ftab" onclick="setTestimonialsFilter('pending', this)">Pending</button>
+          <button class="ftab" onclick="setTestimonialsFilter('approved', this)">Approved</button>
+        </div>
+      </div>
+      <div class="loading" id="testimonialsLoading">Loading…</div>
+      <div id="testimonialsTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Location</th><th>Testimonial</th><th style="width:90px">Status</th><th style="width:160px"></th></tr></thead>
+          <tbody id="testimonialsBody"></tbody>
+        </table>
+        <div class="empty-state" id="noTestimonials" style="display:none;">No testimonials found.</div>
       </div>
     </div>
 
@@ -490,6 +536,48 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
   </div>
 </div>
 
+<!-- EVENT MODAL -->
+<div class="modal-overlay" id="eventModal" onclick="closeEventModalBg(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Event</div>
+      <button class="modal-close" onclick="closeEventModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date <span style="color:#e06060">*</span></label>
+          <input type="date" id="eventDate">
+        </div>
+        <div class="form-group">
+          <label>Time <span style="color:var(--muted);font-size:.65rem;text-transform:none;letter-spacing:0"> — optional</span></label>
+          <input type="text" id="eventTime" placeholder="e.g. 7:00 PM PT">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Title <span style="color:#e06060">*</span></label>
+        <input type="text" id="eventTitle" placeholder="e.g. Evening of Contemplative Prayer">
+      </div>
+      <div class="form-group">
+        <label>Location <span style="color:var(--muted);font-size:.65rem;text-transform:none;letter-spacing:0"> — optional</span></label>
+        <input type="text" id="eventLocation" placeholder="e.g. Companions on the Journey, Palo Alto CA">
+      </div>
+      <div class="form-group">
+        <label>Description <span style="color:var(--muted);font-size:.65rem;text-transform:none;letter-spacing:0"> — optional</span></label>
+        <textarea id="eventDescription" style="min-height:90px;" placeholder="Brief description of the event…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Link <span style="color:var(--muted);font-size:.65rem;text-transform:none;letter-spacing:0"> — optional</span></label>
+        <input type="url" id="eventLink" placeholder="https://…">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closeEventModal()">Cancel</button>
+      <button class="btn btn-sm btn-green" id="eventSaveBtn" onclick="saveEvent()">Save Event</button>
+    </div>
+  </div>
+</div>
+
 <!-- CONFIRM DIALOG -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-box">
@@ -554,9 +642,11 @@ function showPage(name, el) {
   document.querySelectorAll('.snav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   el.classList.add('active');
-  if (name === 'corpus')  loadCorpus();
-  if (name === 'content') loadContent();
-  if (name === 'models')  loadModels();
+  if (name === 'corpus')       loadCorpus();
+  if (name === 'content')      loadContent();
+  if (name === 'models')       loadModels();
+  if (name === 'events')       loadEvents();
+  if (name === 'testimonials') loadTestimonials();
 }
 
 /* ══════════════════════════════════════
@@ -1079,6 +1169,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     closeContentModal();
     closeModelModal();
+    closeEventModal();
     closeConfirm();
   }
 });
@@ -1171,6 +1262,184 @@ function textToSimpleHtml(text) {
   text = text.replace(/\s*PAGE\s+\d+\s*/gi, '');
   const paras = text.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
   return paras.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('\n');
+}
+
+/* ══════════════════════════════════════
+   EVENTS
+══════════════════════════════════════ */
+async function loadEvents() {
+  document.getElementById('eventsLoading').style.display = 'block';
+  document.getElementById('eventsTableWrap').style.display = 'none';
+  try {
+    const res = await fetch('/api/events?all=1', { headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    renderEventsTable(data.events || []);
+  } catch { document.getElementById('eventsLoading').textContent = 'Failed to load.'; }
+}
+
+function renderEventsTable(items) {
+  document.getElementById('eventsLoading').style.display = 'none';
+  document.getElementById('eventsTableWrap').style.display = 'block';
+  if (!items.length) {
+    document.getElementById('eventsBody').innerHTML = '';
+    document.getElementById('noEvents').style.display = 'block';
+    return;
+  }
+  document.getElementById('noEvents').style.display = 'none';
+  document.getElementById('eventsBody').innerHTML = items.map(e => {
+    const d = new Date(e.event_date + 'T00:00:00');
+    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return `<tr>
+      <td style="color:var(--gold-d);font-size:.78rem;">${esc(dateStr)}</td>
+      <td style="color:var(--cream-d);">${esc(e.title)}</td>
+      <td style="color:var(--muted);font-size:.78rem;">${esc(e.location || '—')}</td>
+      <td>
+        <button class="btn btn-sm btn-danger" onclick="confirmEventDelete('${esc(e.id)}','${esc(e.title).replace(/'/g,"&#39;")}')">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openEventModal() {
+  ['eventDate','eventTime','eventTitle','eventLocation','eventDescription','eventLink'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('eventSaveBtn').textContent = 'Save Event';
+  document.getElementById('eventModal').classList.add('open');
+}
+function closeEventModal() { document.getElementById('eventModal').classList.remove('open'); }
+function closeEventModalBg(e) { if (e.target === document.getElementById('eventModal')) closeEventModal(); }
+
+async function saveEvent() {
+  const payload = {
+    title:       document.getElementById('eventTitle').value.trim(),
+    event_date:  document.getElementById('eventDate').value,
+    event_time:  document.getElementById('eventTime').value.trim(),
+    location:    document.getElementById('eventLocation').value.trim(),
+    description: document.getElementById('eventDescription').value.trim(),
+    link:        document.getElementById('eventLink').value.trim(),
+  };
+  if (!payload.title) return toast('Title is required', 'error');
+  if (!payload.event_date) return toast('Date is required', 'error');
+  const btn = document.getElementById('eventSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const res = await fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(`"${data.event?.title}" added`, 'success');
+      closeEventModal();
+      loadEvents();
+    } else { toast(data.error || 'Save failed', 'error'); }
+  } catch { toast('Connection error', 'error'); }
+  btn.disabled = false; btn.textContent = 'Save Event';
+}
+
+function confirmEventDelete(id, title) {
+  pendingDelete = { type: 'event', id, title };
+  document.getElementById('confirmTitle').textContent = 'Delete Event';
+  document.getElementById('confirmMsg').textContent = `Permanently delete "${title}"? This cannot be undone.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executeEventDelete;
+}
+async function executeEventDelete() {
+  if (!pendingDelete) return;
+  const { id, title } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch(`/api/events?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    res.ok ? (toast(`"${title}" deleted`, 'success'), loadEvents()) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
+}
+
+/* ══════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════ */
+let testimonialsFilter = 'all';
+
+async function loadTestimonials() {
+  document.getElementById('testimonialsLoading').style.display = 'block';
+  document.getElementById('testimonialsTableWrap').style.display = 'none';
+  const params = testimonialsFilter !== 'all' ? `?status=${testimonialsFilter}` : '';
+  try {
+    const res = await fetch(`/api/testimonials${params}`, { headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    renderTestimonialsTable(data.testimonials || []);
+  } catch { document.getElementById('testimonialsLoading').textContent = 'Failed to load.'; }
+}
+
+function renderTestimonialsTable(items) {
+  document.getElementById('testimonialsLoading').style.display = 'none';
+  document.getElementById('testimonialsTableWrap').style.display = 'block';
+  if (!items.length) {
+    document.getElementById('testimonialsBody').innerHTML = '';
+    document.getElementById('noTestimonials').style.display = 'block';
+    return;
+  }
+  document.getElementById('noTestimonials').style.display = 'none';
+  document.getElementById('testimonialsBody').innerHTML = items.map(t => {
+    const preview = t.message.length > 90 ? t.message.slice(0, 90) + '…' : t.message;
+    const statusBadge = t.approved
+      ? '<span class="type-badge" style="border-color:rgba(100,180,130,.35);color:#80c0a0;">Approved</span>'
+      : '<span class="type-badge" style="border-color:rgba(200,150,62,.3);color:var(--gold-d);">Pending</span>';
+    const approveBtn = t.approved
+      ? `<button class="btn btn-sm btn-danger" style="margin-right:.3rem;" onclick="setTestimonialApproval('${esc(t.id)}',false,'${esc(t.name).replace(/'/g,"&#39;")}')">Revoke</button>`
+      : `<button class="btn btn-sm btn-green" style="margin-right:.3rem;" onclick="setTestimonialApproval('${esc(t.id)}',true,'${esc(t.name).replace(/'/g,"&#39;")}')">Approve</button>`;
+    return `<tr>
+      <td style="color:var(--cream-d);">${esc(t.name)}</td>
+      <td style="color:var(--muted);font-size:.75rem;">${esc(t.location || '—')}</td>
+      <td style="color:var(--body);font-size:.8rem;font-style:italic;">"${esc(preview)}"</td>
+      <td>${statusBadge}</td>
+      <td>
+        ${approveBtn}
+        <button class="btn btn-sm btn-danger" onclick="confirmTestimonialDelete('${esc(t.id)}','${esc(t.name).replace(/'/g,"&#39;")}')">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function setTestimonialsFilter(f, el) {
+  testimonialsFilter = f;
+  document.querySelectorAll('#testimonialsFilterTabs .ftab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadTestimonials();
+}
+
+async function setTestimonialApproval(id, approved, name) {
+  try {
+    const res = await fetch(`/api/testimonials?id=${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify({ approved })
+    });
+    const data = await res.json();
+    res.ok
+      ? (toast(`${name}: ${approved ? 'approved' : 'revoked'}`, 'success'), loadTestimonials())
+      : toast(data.error || 'Update failed', 'error');
+  } catch { toast('Connection error', 'error'); }
+}
+
+function confirmTestimonialDelete(id, name) {
+  pendingDelete = { type: 'testimonial', id, name };
+  document.getElementById('confirmTitle').textContent = 'Delete Testimonial';
+  document.getElementById('confirmMsg').textContent = `Permanently delete the testimonial from "${name}"? This cannot be undone.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executeTestimonialDelete;
+}
+async function executeTestimonialDelete() {
+  if (!pendingDelete) return;
+  const { id, name } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch(`/api/testimonials?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    res.ok ? (toast(`Testimonial from "${name}" deleted`, 'success'), loadTestimonials()) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
 }
 </script>
 </body>

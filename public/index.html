@@ -820,6 +820,50 @@ h2 {
 }
 .about-link:hover { border-color: var(--gold-dim); color: var(--gold-pale); }
 
+/* ── EVENTS ── */
+#events { background: var(--deep); }
+.events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2px; background: var(--border); margin-top: 2rem; }
+.event-card { background: var(--mid); padding: 1.75rem; display: flex; flex-direction: column; gap: .75rem; }
+.event-date-block { display: flex; align-items: baseline; gap: .6rem; margin-bottom: .25rem; }
+.event-month { font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-dim); }
+.event-day { font-family: var(--serif); font-size: 2rem; font-weight: 300; color: var(--gold); line-height: 1; }
+.event-title { font-family: var(--serif); font-size: 1.15rem; font-weight: 400; color: var(--cream-dim); line-height: 1.3; }
+.event-meta { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.event-desc { font-size: .88rem; color: var(--body); line-height: 1.75; }
+.event-link { display: inline-block; margin-top: auto; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-dim); text-decoration: none; border-bottom: 1px solid var(--border-mid); padding-bottom: 2px; transition: color .2s, border-color .2s; }
+.event-link:hover { color: var(--gold); border-color: var(--gold); }
+.events-empty { text-align: center; padding: 4rem 2rem; border: 1px solid var(--border); margin-top: 2rem; }
+.events-empty p { font-family: var(--serif); font-size: 1.25rem; font-style: italic; color: var(--muted); }
+
+/* ── COURSES ── */
+#courses { background: var(--navy); }
+.courses-coming { margin-top: 2.5rem; display: flex; flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+.coming-badge { display: inline-block; padding: .38rem 1rem; border: 1px solid var(--gold-dim); color: var(--gold-dim); font-size: .66rem; letter-spacing: .2em; text-transform: uppercase; }
+.coming-text { font-size: 1rem; color: var(--muted); line-height: 1.8; max-width: 540px; }
+.coming-text a { color: var(--gold-dim); text-decoration: none; border-bottom: 1px solid var(--border-mid); transition: color .2s; }
+.coming-text a:hover { color: var(--gold); }
+
+/* ── TESTIMONIALS ── */
+#testimonials { background: var(--dark); }
+.testimonials-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
+.testimonial-card { padding: 1.75rem; background: var(--surface); border: 1px solid var(--border); position: relative; display: flex; flex-direction: column; gap: 1rem; }
+.testimonial-card::before { content: '\201C'; position: absolute; top: .9rem; left: 1.4rem; font-family: var(--serif); font-size: 3.5rem; color: var(--gold-dim); opacity: .35; line-height: 1; pointer-events: none; }
+.testimonial-text { font-family: var(--serif); font-size: 1.05rem; font-style: italic; color: var(--cream-dim); line-height: 1.85; padding-top: 1.5rem; }
+.testimonial-attr { font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-dim); margin-top: auto; }
+.testimonial-form-wrap { margin-top: 3.5rem; padding-top: 3rem; border-top: 1px solid var(--border); max-width: 680px; }
+.testimonial-form-intro { font-family: var(--serif); font-size: 1.25rem; font-style: italic; color: var(--gold-pale); margin-bottom: 1.75rem; }
+.tform-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.tform-group { margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: .4rem; }
+.tform-group label { font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.tform-req { color: var(--gold-dim); }
+.tform-opt { font-size: .6rem; letter-spacing: .04em; text-transform: none; color: var(--faint); font-style: italic; }
+.tform-group input, .tform-group textarea { width: 100%; padding: .7rem .9rem; background: var(--mid); border: 1px solid var(--border); color: var(--cream-dim); font-family: var(--sans); font-size: .9rem; outline: none; transition: border-color .2s; font-weight: 300; resize: vertical; }
+.tform-group input:focus, .tform-group textarea:focus { border-color: var(--gold-dim); }
+.tform-status { margin-bottom: 1rem; font-size: .85rem; line-height: 1.6; padding: .75rem 1rem; display: none; border: 1px solid; }
+.tform-status.success { color: #80c0a0; border-color: rgba(100,180,130,.3); }
+.tform-status.error   { color: #e09090; border-color: rgba(220,100,100,.3); }
+.tform-note { margin-top: .9rem; font-size: .72rem; color: var(--muted); }
+
 /* ── FOOTER ── */
 footer {
   background: var(--void); border-top: 1px solid var(--border);
@@ -900,6 +944,7 @@ footer {
   .story-card-title { font-size: 1rem; }
   .book-card { flex-direction: column; }
   .book-cover { width: 100%; max-width: 80px; }
+  .tform-row { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -917,6 +962,9 @@ footer {
     <li><a href="#books">Books</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#glossary">Glossary</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#courses">Courses</a></li>
+    <li><a href="#testimonials">Testimonials</a></li>
   </ul>
   <div class="hamburger" id="hamburger" onclick="toggleNav()">
     <span></span><span></span><span></span>
@@ -1333,6 +1381,61 @@ footer {
   </div>
 </section>
 
+<!-- EVENTS -->
+<section id="events">
+  <div class="inner">
+    <p class="eyebrow fade-in">Live &amp; In Person</p>
+    <h2 class="fade-in">Upcoming Events</h2>
+    <p class="section-lead fade-in">Join Seán in person — workshops, retreats, and conversations.</p>
+    <div id="eventsContainer" class="fade-in"></div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section id="courses">
+  <div class="inner">
+    <p class="eyebrow fade-in">Deep Dives</p>
+    <h2 class="fade-in">Courses</h2>
+    <p class="section-lead fade-in">Structured journeys through Seán's teaching — at your own pace, in your own time.</p>
+    <div class="courses-coming fade-in">
+      <span class="coming-badge">Coming Soon</span>
+      <p class="coming-text">Courses are in development. In the meantime, explore the <a href="#videos">video archive</a> and <a href="#teachings">teachings</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="inner">
+    <p class="eyebrow fade-in">Voices</p>
+    <h2 class="fade-in">What People Say</h2>
+    <p class="section-lead fade-in">Seán's teaching has touched people across the world. Share your experience below.</p>
+    <div id="testimonialsContainer" class="fade-in"></div>
+    <div class="testimonial-form-wrap fade-in">
+      <p class="testimonial-form-intro">Has Seán's work made a difference in your life?</p>
+      <form id="testimonialForm" onsubmit="submitTestimonial(event)">
+        <div class="tform-row">
+          <div class="tform-group">
+            <label>Your Name <span class="tform-req">*</span></label>
+            <input type="text" id="tName" placeholder="e.g. Mary" autocomplete="given-name">
+          </div>
+          <div class="tform-group">
+            <label>Location <span class="tform-opt">optional</span></label>
+            <input type="text" id="tLocation" placeholder="e.g. Dublin, Ireland" autocomplete="off">
+          </div>
+        </div>
+        <div class="tform-group">
+          <label>Your Testimonial <span class="tform-req">*</span></label>
+          <textarea id="tMessage" rows="4" placeholder="Share how Seán's teaching has touched your life…"></textarea>
+        </div>
+        <div id="tStatus" class="tform-status"></div>
+        <button type="submit" class="btn-gold" id="tSubmitBtn" style="border:none;cursor:pointer;">Share Your Story →</button>
+        <p class="tform-note">Testimonials are reviewed before appearing here.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
@@ -1345,6 +1448,9 @@ footer {
       <li><a href="#books">Books</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#glossary">Glossary</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#courses">Courses</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
     </ul>
   </div>
   <div class="footer-copy">
@@ -2019,6 +2125,107 @@ function toggleGloss(i) {
 }
 
 /* ══════════════════════════════════════
+   EVENTS
+══════════════════════════════════════ */
+async function loadEvents() {
+  const container = document.getElementById('eventsContainer');
+  if (!container) return;
+  try {
+    const res = await fetch('/api/events');
+    const data = await res.json();
+    const events = data.events || [];
+    if (!events.length) {
+      container.innerHTML = '<div class="events-empty"><p>Future events coming soon.</p></div>';
+      return;
+    }
+    container.className = 'events-grid';
+    container.innerHTML = events.map(e => {
+      const d = new Date(e.event_date + 'T00:00:00');
+      const month = d.toLocaleString('en-US', { month: 'long' });
+      const day = d.getDate();
+      const year = d.getFullYear();
+      return `<div class="event-card">
+        <div class="event-date-block">
+          <span class="event-day">${day}</span>
+          <span class="event-month">${month} ${year}</span>
+        </div>
+        <div class="event-title">${escapeHtml(e.title)}</div>
+        ${e.event_time || e.location ? `<div class="event-meta">${[e.event_time, e.location].filter(Boolean).map(escapeHtml).join(' · ')}</div>` : ''}
+        ${e.description ? `<div class="event-desc">${escapeHtml(e.description)}</div>` : ''}
+        ${e.link ? `<a href="${escapeHtml(e.link)}" target="_blank" rel="noopener" class="event-link">More Information →</a>` : ''}
+      </div>`;
+    }).join('');
+  } catch {
+    container.innerHTML = '<div class="events-empty"><p>Unable to load events.</p></div>';
+  }
+}
+
+/* ══════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════ */
+async function loadTestimonials() {
+  const container = document.getElementById('testimonialsContainer');
+  if (!container) return;
+  try {
+    const res = await fetch('/api/testimonials');
+    const data = await res.json();
+    const items = data.testimonials || [];
+    if (!items.length) { container.innerHTML = ''; return; }
+    container.className = 'testimonials-grid';
+    container.innerHTML = items.map(t => `
+      <div class="testimonial-card">
+        <p class="testimonial-text">${escapeHtml(t.message)}</p>
+        <div class="testimonial-attr">${escapeHtml(t.name)}${t.location ? ' · ' + escapeHtml(t.location) : ''}</div>
+      </div>`).join('');
+  } catch {}
+}
+
+async function submitTestimonial(e) {
+  e.preventDefault();
+  const name    = document.getElementById('tName').value.trim();
+  const location = document.getElementById('tLocation').value.trim();
+  const message = document.getElementById('tMessage').value.trim();
+  const status  = document.getElementById('tStatus');
+  const btn     = document.getElementById('tSubmitBtn');
+
+  if (!name || !message) {
+    status.className = 'tform-status error';
+    status.textContent = 'Please fill in your name and testimonial.';
+    status.style.display = 'block';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  status.style.display = 'none';
+  try {
+    const res = await fetch('/api/testimonials', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, location, message })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      status.className = 'tform-status success';
+      status.textContent = 'Thank you — your testimonial has been received and will appear here once reviewed.';
+      status.style.display = 'block';
+      document.getElementById('tName').value = '';
+      document.getElementById('tLocation').value = '';
+      document.getElementById('tMessage').value = '';
+    } else {
+      status.className = 'tform-status error';
+      status.textContent = data.error || 'Something went wrong. Please try again.';
+      status.style.display = 'block';
+    }
+  } catch {
+    status.className = 'tform-status error';
+    status.textContent = 'Connection error. Please try again.';
+    status.style.display = 'block';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Share Your Story →';
+}
+
+/* ══════════════════════════════════════
    INIT
 ══════════════════════════════════════ */
 renderGlossary();
@@ -2026,6 +2233,8 @@ renderTodayStory();
 loadStories(true);
 loadModels();
 loadVideos();
+loadEvents();
+loadTestimonials();
 setTimeout(() => {
   document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
 }, 200);
