@@ -46,20 +46,16 @@ body {
   font-family: var(--sans); background: var(--dark);
   color: var(--body); font-size: 17px; line-height: 1.75;
   font-weight: 300; overflow-x: hidden;
+  padding-bottom: 62px;
 }
 
 /* ── NAV ── */
 nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 3rem; height: 62px;
-  background: rgba(6,9,15,0); backdrop-filter: blur(0px);
-  border-bottom: 1px solid rgba(200,150,62,0);
-  transition: background .4s, border-color .4s, backdrop-filter .4s;
-}
-nav.scrolled {
-  background: rgba(6,9,15,.92); backdrop-filter: blur(16px);
-  border-color: var(--border);
+  background: rgba(6,9,15,.95); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
 }
 .nav-logo {
   font-family: var(--serif); font-size: 1.05rem; font-weight: 400;
@@ -842,6 +838,13 @@ h2 {
 .coming-text { font-size: 1rem; color: var(--muted); line-height: 1.8; max-width: 540px; }
 .coming-text a { color: var(--gold-dim); text-decoration: none; border-bottom: 1px solid var(--border-mid); transition: color .2s; }
 .coming-text a:hover { color: var(--gold); }
+.courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.75rem; margin-top: 1rem; }
+.course-card { background: var(--surface); border: 1px solid var(--border); padding: 1.75rem; display: flex; flex-direction: column; gap: .75rem; }
+.course-card:hover { border-color: var(--border-mid); }
+.course-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; margin-bottom: .5rem; }
+.course-title { font-family: var(--serif); font-size: 1.2rem; color: var(--gold-pale); font-weight: 400; line-height: 1.35; }
+.course-subtitle { font-size: .82rem; color: var(--muted); font-style: italic; }
+.badge-available { display: inline-block; padding: .38rem 1rem; border: 1px solid rgba(100,180,130,.4); color: #80c0a0; font-size: .66rem; letter-spacing: .2em; text-transform: uppercase; }
 
 /* ── TESTIMONIALS ── */
 #testimonials { background: var(--dark); }
@@ -940,7 +943,7 @@ footer {
   .about-layout { grid-template-columns: 1fr; gap: 2rem; }
   .about-photo { max-width: 280px; }
   nav { padding: 0 1.25rem; }
-  .nav-links { display: none; flex-direction: column; position: absolute; top: 62px; left: 0; right: 0; background: rgba(6,9,15,.97); padding: 1.5rem; gap: 1.5rem; border-bottom: 1px solid var(--border); }
+  .nav-links { display: none; flex-direction: column; position: absolute; bottom: 62px; top: auto; left: 0; right: 0; background: rgba(6,9,15,.97); backdrop-filter: blur(24px); padding: 1.5rem; gap: 1.5rem; border-top: 1px solid var(--border); }
   .nav-links.open { display: flex; }
   .nav-links a { font-size: .9rem; }
   .hamburger { display: flex; }
@@ -976,6 +979,7 @@ footer {
   .tnav-item { min-height: 44px; display: inline-flex; align-items: center; padding: .5rem .9rem; }
 }
 @media (max-width: 768px) {
+  nav#nav { display: none; }
   #bottomNav { display: block; }
   body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
   footer { padding-bottom: 1rem; }
@@ -1341,78 +1345,7 @@ footer {
     <p class="eyebrow fade-in">The Written Word</p>
     <h2 class="fade-in">Books by Seán</h2>
     <p class="section-lead fade-in">Six books spanning forty years — theology, psychology, mysticism, and the science of prayer.</p>
-    <div class="books-grid fade-in">
-      <div class="book-card featured">
-        <div class="book-cover"><img src="/books/setting-god-free.jpg" alt="Setting God Free"></div>
-        <div>
-          <span class="book-badge">Latest</span>
-          <p class="book-title">Setting God Free</p>
-          <p class="book-subtitle">Moving Beyond the Caricature We've Created in Our Own Image</p>
-          <p class="book-desc">A priest, scientist, and psychologist examine how mainstream religion handed down a God only a sadomasochist could love — and what comes after.</p>
-          <div class="book-links">
-            <a href="https://www.amazon.com/Setting-God-Free-Caricature-Created-ebook/dp/B098TRFN2C/" target="_blank" rel="noopener" class="book-link">Amazon</a>
-            <a href="https://www.audible.com/pd/Setting-God-Free-Audiobook/B0C6NFFWVH" target="_blank" rel="noopener" class="book-link">Audible</a>
-          </div>
-        </div>
-      </div>
-      <div class="book-card featured">
-        <div class="book-cover"><img src="/books/spirits-in-spacesuits.jpg" alt="Spirits in Spacesuits"></div>
-        <div>
-          <span class="book-badge">Foundational</span>
-          <p class="book-title">Spirits in Spacesuits</p>
-          <p class="book-subtitle">A Manual for Everyday Mystics</p>
-          <p class="book-desc">A spiritual guide to the mystical core of ancient traditions — weaving East and West, science and soul, through the voice of a storyteller-priest steeped in Irish and African mythology.</p>
-          <div class="book-links">
-            <a href="https://www.amazon.com/Spirits-Spacesuits-Manual-Everyday-Mystics/dp/1553955056/" target="_blank" rel="noopener" class="book-link">Amazon</a>
-          </div>
-        </div>
-      </div>
-      <div class="book-card">
-        <div class="book-cover"><img src="/books/why.jpg" alt="Why?"></div>
-        <div>
-          <p class="book-title">Why?</p>
-          <p class="book-subtitle">What Your Life Is Telling You About Who You Are and Why You're Here</p>
-          <p class="book-desc">Co-authored with Matt McKay and Ralph Metzner. Dismantles old cosmologies and offers practical exercises for aligning with your soul's actual mission.</p>
-          <div class="book-links">
-            <a href="https://www.amazon.com/Why-What-Telling-about-Youre/dp/1608827755/" target="_blank" rel="noopener" class="book-link">Amazon</a>
-          </div>
-        </div>
-      </div>
-      <div class="book-card">
-        <div class="book-cover"><img src="/books/souls-on-safari.jpg" alt="Souls on Safari"></div>
-        <div>
-          <p class="book-title">Souls on Safari</p>
-          <p class="book-subtitle">A Guided Tour of Mystical Wisdom</p>
-          <p class="book-desc">A safari into the mystical wisdom that has sustained the search of all peoples through all time — told through the oral tradition of Ireland and Africa.</p>
-          <div class="book-links">
-            <a href="https://www.amazon.com/Souls-Safari-Sean-OLaoire/dp/1587366118/" target="_blank" rel="noopener" class="book-link">Amazon</a>
-          </div>
-        </div>
-      </div>
-      <div class="book-card">
-        <div class="book-cover"><img src="/books/a-sensible-god.jpg" alt="A Sensible God"></div>
-        <div>
-          <p class="book-title">A Sensible God</p>
-          <p class="book-subtitle">Stories and Scriptures of Science and Psychology</p>
-          <p class="book-desc">Theology, wisdom, poetry and passion from a Celtic soul, a scientific mind, and a poetic heart. The Big Bang as the sound of God laughing.</p>
-          <div class="book-links">
-            <a href="https://www.amazon.com/Sensible-God-Sean-OLaoire/dp/1436371376/" target="_blank" rel="noopener" class="book-link">Amazon</a>
-          </div>
-        </div>
-      </div>
-      <div class="book-card">
-        <div class="book-cover"><img src="/books/different-paths.jpg" alt="Different Paths to Source"></div>
-        <div>
-          <span class="book-badge">2025 · Contributed Chapter</span>
-          <p class="book-title">Different Paths to Source</p>
-          <p class="book-subtitle">Universal Consciousness of God</p>
-          <p class="book-desc">Seán contributes "Developing Your Personal Cosmology — GPS for This Incarnation" to this ten-author anthology on how diverse traditions arrive at the same ground.</p>
-          <div class="book-links">
-            <a href="https://www.amazon.com/Different-Paths-Source-Universal-Consciousness/dp/B0GDTVXX4W" target="_blank" rel="noopener" class="book-link">Amazon</a>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="booksGrid" class="books-grid fade-in"></div>
   </div>
 </section>
 
@@ -1476,10 +1409,7 @@ footer {
     <p class="eyebrow fade-in">Deep Dives</p>
     <h2 class="fade-in">Courses</h2>
     <p class="section-lead fade-in">Structured journeys through Seán's teaching — at your own pace, in your own time.</p>
-    <div class="courses-coming fade-in">
-      <span class="coming-badge">Coming Soon</span>
-      <p class="coming-text">Courses are in development. In the meantime, explore the <a href="#videos">video archive</a> and <a href="#teachings">teachings</a>.</p>
-    </div>
+    <div id="coursesContainer" class="fade-in"></div>
   </div>
 </section>
 
@@ -2145,10 +2075,6 @@ document.querySelectorAll('#navLinks a').forEach(a => {
   a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
 });
 
-window.addEventListener('scroll', () => {
-  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
-});
-
 /* ══════════════════════════════════════
    SCROLL ANIMATIONS
 ══════════════════════════════════════ */
@@ -2179,59 +2105,10 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeVideo
 /* ══════════════════════════════════════
    GLOSSARY
 ══════════════════════════════════════ */
-var glossaryTerms = [
-  {t: 'Anam Chara', d: 'A soul friend; a soul with whom one has contracted to walk closely across multiple incarnations for mutual growth.'},
-  {t: 'Auto-telicity', d: 'The love of activities for their own sake.'},
-  {t: 'Christ Consciousness', d: 'The permanent awareness of the inner divinity of all beings, creatures, and everything that exists.'},
-  {t: 'Christa Consciousness', d: 'The feminine face of the Divine; the ability to believe, receive, and conceive the Word of God in the heart and womb and presentation of that gift to the world.'},
-  {t: 'Compassion', d: 'Derived from the Aramaic word for "womb" (Rachamim), it is the act of being womb-like — conceiving, carrying, and giving birth to new life or perspectives sequentially. It is also the mystical art of leaving what is to give birth to what seeks to be.'},
-  {t: 'Consciousness', d: 'Source-saturated self-awareness; the remembrance of our God-nature rather than a byproduct of the brain.'},
-  {t: 'Conspiracy', d: 'When two or more people make a decision affecting others who are neither consulted nor informed.'},
-  {t: 'Education', d: '(Latin EduCare) To lead out from inside; it is the unveiling of innate soul wisdom rather than the filling of an empty vessel with facts.'},
-  {t: 'Ego', d: 'The CEO of a particular state of consciousness or a reducing valve designed to protect the mind from being overwhelmed by the totality of non-local consciousness.'},
-  {t: 'Evil', d: 'A cosmic conspiracy using human intermediaries to separate souls from Source. It is an emergent phenomenon created when beings with free will choose selfishness (service-to-self), eventually coagulating into a dark force or "global tulpa".'},
-  {t: 'Fantasy', d: 'The ability to make up stuff that is not real.'},
-  {t: 'Father', d: '(Aramaic Ab/Abba/Abwoon) The birthing principle of the cosmos; a gender-neutral term for the Source that manifests all that is.'},
-  {t: 'Free Will', d: 'The ability to do as I please; the control over spiritual "input" or choices rather than outcomes.'},
-  {t: 'Freedom', d: 'The ability to do as pleases God; acting from a radical, instinctive alignment with love.'},
-  {t: 'Heaven', d: 'A state of consciousness based on unity rather than separation.'},
-  {t: 'Hell', d: 'A psychological state created by fear or a sociological reality created by unjust systems, but not an ontological reality of eternal separation.'},
-  {t: 'History', d: 'The "tracks of humanity" on the beaches of time; the footprints of spirit as it revolves through complexity to rediscover its divine origins.'},
-  {t: 'Holy Spirit', d: 'The divine womb in which embryonic Christ Consciousness is marinated in the amniotic fluid of pure love. It acts as the receiver/transmitter between Source and manifestation.'},
-  {t: 'Imagination', d: 'The human faculty allowing one to volitionally shift states of consciousness to visit other dimensions, interact with entities, and bring insights back to waking life.'},
-  {t: 'Integrity', d: 'Wholeness; the incorporation of every facet of incarnation into light.'},
-  {t: 'Knowledge', d: 'Information gleaned by the sensorium and processed by the physical brain, primarily used to manipulate the external environment.'},
-  {t: 'Logos', d: 'The morphological agent or "Potter" that creates forms for matter. It is the creative principle, primordial sound, or vibration of creation.'},
-  {t: 'Maya', d: 'The illusion of believing or acting as if only the physical world is real.'},
-  {t: 'Meaning', d: 'The "aha" experience of harvesting evidence of how well one aligns with their mission. It is data to which meaning has been assigned.'},
-  {t: 'Mercy', d: 'The ability to feel as somebody else, walking fully in their being rather than just knowing what they think.'},
-  {t: 'Mythish', d: 'Mystical teaching in story form; the sacred language used to transmit soul-level truths.'},
-  {t: 'Namaste', d: 'The Hindu greeting meaning "The God in me recognizes and honors the God in you".'},
-  {t: 'Perfection', d: '(Greek Telos) Radical commitment to the purpose or mission for which one incarnated, rather than a state of sinlessness.'},
-  {t: 'Preconception Contract', d: 'Agreements souls make before incarnating to choose the time, place, and specific mission of their arrival.'},
-  {t: 'Reality', d: 'An artifact of a state of consciousness; everything that can be sensed, thought, remembered, or imagined is real at different levels.'},
-  {t: 'Ritual', d: 'Dramatized storytelling or a technology for shifting states of consciousness to move through different self-identifications.'},
-  {t: 'Role Self', d: 'The temporary character or "mask" one plays in a particular life or incarnation.'},
-  {t: 'Sacrament', d: 'The mindful ritualizing of significant shifts in status and obligation within a community.'},
-  {t: 'Sacrifice', d: '(Latin Sacrificare) To make holy; recognizing inherent sanctity rather than foregoing pleasure or killing something.'},
-  {t: 'Salvation', d: 'Waking up to one\'s true nature rather than being "bought back" from a devil.'},
-  {t: 'Signs', d: 'One physical reality standing for another.'},
-  {t: 'Sin', d: 'The conscious, deliberate decision not to grow or the refusal to wake up. In archery terms, it means to "miss the mark," providing vital feedback for spiritual growth.'},
-  {t: 'Son of Man', d: 'The truly awake human being who identifies with divinity while in a human spacesuit.'},
-  {t: 'Soul Self', d: 'The eternal essence that volunteered for incarnation and remains connected to Source.'},
-  {t: 'Source Self', d: 'The ultimate unity where everything that exists is realized as "God in drag".'},
-  {t: 'Symbols', d: 'That which has one foot in the physical and the other foot in the metaphysical e.g., a kiss or a hug. Both signs and symbols can be made to lie e.g., Judas betrays Jesus with a kiss.'},
-  {t: 'Thin Place', d: '(Caol Áit) A location or time where the veil between the mystical and the mundane is diaphanous.'},
-  {t: 'Tikkun Olam', d: 'The mystical rectification or healing of the world.'},
-  {t: 'Tonglen', d: 'The Buddhist practice of breathing in the pain of the world, transmuting it in the heart, and breathing out compassion.'},
-  {t: 'Truth', d: 'That which transforms an individual and aligns them with Source, Love, or God.'},
-  {t: 'Wisdom', d: 'Data generated by the soul and processed by the heart; the ability to align with the laws of the metaphysical universe. It is also memory without the emotional baggage.'}
-];
-
-function renderGlossary() {
+function renderGlossaryTerms(terms) {
   var grid = document.getElementById('glossaryGrid');
   if (!grid) return;
-  grid.innerHTML = glossaryTerms.map(function(item, i) {
+  grid.innerHTML = terms.map(function(item, i) {
     return '<div class="gloss-card" id="gc-' + i + '" onclick="toggleGloss(' + i + ')">' +
       '<div class="gloss-head"><span class="gloss-term">' + item.t + '</span><div class="gloss-chevron"></div></div>' +
       '<div class="gloss-body">' + item.d + '</div>' +
@@ -2242,6 +2119,131 @@ function renderGlossary() {
 function toggleGloss(i) {
   var card = document.getElementById('gc-' + i);
   if (card) card.classList.toggle('open');
+}
+
+async function loadGlossary() {
+  try {
+    const res = await fetch('/api/glossary');
+    const data = await res.json();
+    const terms = (data.terms || []).map(function(t) { return { t: t.term, d: t.definition }; });
+    if (terms.length) { renderGlossaryTerms(terms); return; }
+  } catch(e) {}
+  // Fallback: hardcoded terms (used before DB is seeded)
+  renderGlossaryTerms([
+    {t:'Anam Chara',d:'A soul friend; a soul with whom one has contracted to walk closely across multiple incarnations for mutual growth.'},
+    {t:'Auto-telicity',d:'The love of activities for their own sake.'},
+    {t:'Christ Consciousness',d:'The permanent awareness of the inner divinity of all beings, creatures, and everything that exists.'},
+    {t:'Christa Consciousness',d:'The feminine face of the Divine; the ability to believe, receive, and conceive the Word of God in the heart and womb and presentation of that gift to the world.'},
+    {t:'Compassion',d:'Derived from the Aramaic word for "womb" (Rachamim), it is the act of being womb-like — conceiving, carrying, and giving birth to new life or perspectives sequentially. It is also the mystical art of leaving what is to give birth to what seeks to be.'},
+    {t:'Consciousness',d:'Source-saturated self-awareness; the remembrance of our God-nature rather than a byproduct of the brain.'},
+    {t:'Conspiracy',d:'When two or more people make a decision affecting others who are neither consulted nor informed.'},
+    {t:'Education',d:'(Latin EduCare) To lead out from inside; it is the unveiling of innate soul wisdom rather than the filling of an empty vessel with facts.'},
+    {t:'Ego',d:'The CEO of a particular state of consciousness or a reducing valve designed to protect the mind from being overwhelmed by the totality of non-local consciousness.'},
+    {t:'Evil',d:'A cosmic conspiracy using human intermediaries to separate souls from Source. It is an emergent phenomenon created when beings with free will choose selfishness (service-to-self), eventually coagulating into a dark force or "global tulpa".'},
+    {t:'Fantasy',d:'The ability to make up stuff that is not real.'},
+    {t:'Father',d:'(Aramaic Ab/Abba/Abwoon) The birthing principle of the cosmos; a gender-neutral term for the Source that manifests all that is.'},
+    {t:'Free Will',d:'The ability to do as I please; the control over spiritual "input" or choices rather than outcomes.'},
+    {t:'Freedom',d:'The ability to do as pleases God; acting from a radical, instinctive alignment with love.'},
+    {t:'Heaven',d:'A state of consciousness based on unity rather than separation.'},
+    {t:'Hell',d:'A psychological state created by fear or a sociological reality created by unjust systems, but not an ontological reality of eternal separation.'},
+    {t:'History',d:'The "tracks of humanity" on the beaches of time; the footprints of spirit as it revolves through complexity to rediscover its divine origins.'},
+    {t:'Holy Spirit',d:'The divine womb in which embryonic Christ Consciousness is marinated in the amniotic fluid of pure love. It acts as the receiver/transmitter between Source and manifestation.'},
+    {t:'Imagination',d:'The human faculty allowing one to volitionally shift states of consciousness to visit other dimensions, interact with entities, and bring insights back to waking life.'},
+    {t:'Integrity',d:'Wholeness; the incorporation of every facet of incarnation into light.'},
+    {t:'Knowledge',d:'Information gleaned by the sensorium and processed by the physical brain, primarily used to manipulate the external environment.'},
+    {t:'Logos',d:'The morphological agent or "Potter" that creates forms for matter. It is the creative principle, primordial sound, or vibration of creation.'},
+    {t:'Maya',d:'The illusion of believing or acting as if only the physical world is real.'},
+    {t:'Meaning',d:'The "aha" experience of harvesting evidence of how well one aligns with their mission. It is data to which meaning has been assigned.'},
+    {t:'Mercy',d:'The ability to feel as somebody else, walking fully in their being rather than just knowing what they think.'},
+    {t:'Mythish',d:'Mystical teaching in story form; the sacred language used to transmit soul-level truths.'},
+    {t:'Namaste',d:'The Hindu greeting meaning "The God in me recognizes and honors the God in you".'},
+    {t:'Perfection',d:'(Greek Telos) Radical commitment to the purpose or mission for which one incarnated, rather than a state of sinlessness.'},
+    {t:'Preconception Contract',d:'Agreements souls make before incarnating to choose the time, place, and specific mission of their arrival.'},
+    {t:'Reality',d:'An artifact of a state of consciousness; everything that can be sensed, thought, remembered, or imagined is real at different levels.'},
+    {t:'Ritual',d:'Dramatized storytelling or a technology for shifting states of consciousness to move through different self-identifications.'},
+    {t:'Role Self',d:'The temporary character or "mask" one plays in a particular life or incarnation.'},
+    {t:'Sacrament',d:'The mindful ritualizing of significant shifts in status and obligation within a community.'},
+    {t:'Sacrifice',d:'(Latin Sacrificare) To make holy; recognizing inherent sanctity rather than foregoing pleasure or killing something.'},
+    {t:'Salvation',d:'Waking up to one\'s true nature rather than being "bought back" from a devil.'},
+    {t:'Signs',d:'One physical reality standing for another.'},
+    {t:'Sin',d:'The conscious, deliberate decision not to grow or the refusal to wake up. In archery terms, it means to "miss the mark," providing vital feedback for spiritual growth.'},
+    {t:'Son of Man',d:'The truly awake human being who identifies with divinity while in a human spacesuit.'},
+    {t:'Soul Self',d:'The eternal essence that volunteered for incarnation and remains connected to Source.'},
+    {t:'Source Self',d:'The ultimate unity where everything that exists is realized as "God in drag".'},
+    {t:'Symbols',d:'That which has one foot in the physical and the other foot in the metaphysical e.g., a kiss or a hug. Both signs and symbols can be made to lie e.g., Judas betrays Jesus with a kiss.'},
+    {t:'Thin Place',d:'(Caol Áit) A location or time where the veil between the mystical and the mundane is diaphanous.'},
+    {t:'Tikkun Olam',d:'The mystical rectification or healing of the world.'},
+    {t:'Tonglen',d:'The Buddhist practice of breathing in the pain of the world, transmuting it in the heart, and breathing out compassion.'},
+    {t:'Truth',d:'That which transforms an individual and aligns them with Source, Love, or God.'},
+    {t:'Wisdom',d:'Data generated by the soul and processed by the heart; the ability to align with the laws of the metaphysical universe. It is also memory without the emotional baggage.'}
+  ]);
+}
+
+/* ══════════════════════════════════════
+   BOOKS
+══════════════════════════════════════ */
+async function loadBooks() {
+  const grid = document.getElementById('booksGrid');
+  if (!grid) return;
+  try {
+    const res = await fetch('/api/books');
+    const data = await res.json();
+    const books = data.books || [];
+    if (books.length) {
+      grid.innerHTML = books.map(function(b) {
+        const featured = b.sort_order <= 2 ? ' featured' : '';
+        const badge = b.badge_text ? '<span class="book-badge">' + escapeHtml(b.badge_text) + '</span>' : '';
+        const subtitle = b.subtitle ? '<p class="book-subtitle">' + escapeHtml(b.subtitle) + '</p>' : '';
+        const cover = b.cover_url
+          ? '<div class="book-cover"><img src="' + escapeHtml(b.cover_url) + '" alt="' + escapeHtml(b.title) + '"></div>'
+          : '<div class="book-cover book-cover-text">' + escapeHtml(b.title) + '</div>';
+        const links = (b.links || []).map(function(l) {
+          return '<a href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener" class="book-link">' + escapeHtml(l.label) + '</a>';
+        }).join('');
+        return '<div class="book-card' + featured + '">' + cover + '<div>' + badge +
+          '<p class="book-title">' + escapeHtml(b.title) + '</p>' + subtitle +
+          (b.description ? '<p class="book-desc">' + escapeHtml(b.description) + '</p>' : '') +
+          (links ? '<div class="book-links">' + links + '</div>' : '') +
+          '</div></div>';
+      }).join('');
+      return;
+    }
+  } catch(e) {}
+  // Empty state
+  grid.innerHTML = '<p style="color:var(--muted);font-style:italic;">Books coming soon.</p>';
+}
+
+/* ══════════════════════════════════════
+   COURSES
+══════════════════════════════════════ */
+async function loadCourses() {
+  const container = document.getElementById('coursesContainer');
+  if (!container) return;
+  try {
+    const res = await fetch('/api/courses');
+    const data = await res.json();
+    const courses = data.courses || [];
+    if (courses.length) {
+      container.innerHTML = '<div class="courses-grid">' + courses.map(function(c) {
+        const statusLabel = c.status === 'available' ? 'Available Now' : c.status === 'in_progress' ? 'In Development' : 'Coming Soon';
+        const statusClass = c.status === 'available' ? 'badge-available' : 'coming-badge';
+        const img = c.image_url ? '<img src="' + escapeHtml(c.image_url) + '" alt="' + escapeHtml(c.title) + '" class="course-img">' : '';
+        const link = (c.status === 'available' && c.link)
+          ? '<a href="' + escapeHtml(c.link) + '" target="_blank" rel="noopener" class="btn-gold" style="display:inline-block;margin-top:1rem;padding:.65rem 1.5rem;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;">Enrol Now</a>'
+          : '';
+        return '<div class="course-card fade-in">' + img +
+          '<span class="' + statusClass + '">' + statusLabel + '</span>' +
+          '<h3 class="course-title">' + escapeHtml(c.title) + '</h3>' +
+          (c.subtitle ? '<p class="course-subtitle">' + escapeHtml(c.subtitle) + '</p>' : '') +
+          (c.description ? '<p class="coming-text">' + escapeHtml(c.description) + '</p>' : '') +
+          link + '</div>';
+      }).join('') + '</div>';
+      return;
+    }
+  } catch(e) {}
+  // Default "coming soon" state
+  container.innerHTML = '<div class="courses-coming"><span class="coming-badge">Coming Soon</span>' +
+    '<p class="coming-text">Courses are in development. In the meantime, explore the <a href="#videos">video archive</a> and <a href="#teachings">teachings</a>.</p></div>';
 }
 
 /* ══════════════════════════════════════
@@ -2348,7 +2350,9 @@ async function submitTestimonial(e) {
 /* ══════════════════════════════════════
    INIT
 ══════════════════════════════════════ */
-renderGlossary();
+loadGlossary();
+loadBooks();
+loadCourses();
 renderTodayStory();
 loadStories(true);
 loadModels();

@@ -36,7 +36,7 @@
   --sans:  'Jost', system-ui, sans-serif;
 }
 html, body { height: 100%; }
-body { font-family: var(--sans); background: var(--dark); color: var(--body); font-size: 15px; line-height: 1.6; font-weight: 300; }
+body { font-family: var(--sans); background: var(--dark); color: var(--body); font-size: 16px; line-height: 1.65; font-weight: 300; }
 
 /* LOGIN */
 #loginScreen { position: fixed; inset: 0; background: var(--void); display: flex; align-items: center; justify-content: center; z-index: 1000; }
@@ -49,19 +49,25 @@ body { font-family: var(--sans); background: var(--dark); color: var(--body); fo
 .login-error { font-size: .78rem; color: #e06060; margin-bottom: .75rem; display: none; }
 
 /* BUTTONS */
-.btn { display: inline-block; padding: .65rem 1.5rem; border: 1px solid var(--gold-d); background: transparent; color: var(--gold); font-family: var(--sans); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: all .2s; font-weight: 400; }
+.btn { display: inline-block; padding: .75rem 1.75rem; border: 1px solid var(--gold-d); background: transparent; color: var(--gold); font-family: var(--sans); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: all .2s; font-weight: 400; }
 .btn:hover { background: var(--gold); color: var(--dark); }
 .btn:disabled { opacity: .4; cursor: not-allowed; }
 .btn-full { width: 100%; }
 .btn-danger { border-color: var(--red); color: #e06060; }
 .btn-danger:hover { background: var(--red); color: var(--cream); }
-.btn-sm { padding: .35rem .75rem; font-size: .65rem; }
+.btn-sm { padding: .45rem .9rem; font-size: .7rem; }
 .btn-green { border-color: #2a6a40; color: #70c090; }
 .btn-green:hover { background: #1a4a2c; color: var(--cream); }
 
 /* LAYOUT */
-#app { display: none; height: 100vh; overflow: hidden; }
-#app.show { display: grid; grid-template-columns: 220px 1fr; }
+#app { display: none; overflow: hidden; }
+#app.show { display: grid; grid-template-columns: 220px 1fr; height: 100vh; }
+@media (max-width: 768px) {
+  #app.show { grid-template-columns: 1fr; height: auto; min-height: 100vh; }
+}
+
+/* HINT BOX */
+.hint-box { border-radius: 0; }
 
 /* SIDEBAR */
 .sidebar { background: var(--void); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 0; overflow-y: auto; }
@@ -79,11 +85,11 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
 .sidebar-footer button:hover { color: var(--gold-d); }
 
 /* MAIN */
-.main { overflow-y: auto; background: var(--dark); }
+.main { overflow-y: auto; background: var(--dark); display: flex; flex-direction: column; }
 .page { display: none; padding: 2.5rem 3rem; max-width: 1000px; }
 .page.active { display: block; }
-.page-title { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; color: var(--gold-p); margin-bottom: .4rem; }
-.page-lead { font-size: .85rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.7; max-width: 640px; }
+.page-title { font-family: var(--serif); font-size: 1.9rem; font-weight: 300; color: var(--gold-p); margin-bottom: .4rem; }
+.page-lead { font-size: .92rem; color: var(--body); margin-bottom: 2rem; line-height: 1.75; max-width: 680px; }
 
 /* STATS */
 .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); margin-bottom: 2.5rem; }
@@ -124,13 +130,13 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
 /* UPLOAD FORM */
 .upload-form { max-width: 580px; }
 .form-group { margin-bottom: 1.4rem; }
-.form-group label { display: block; font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
-.form-group input, .form-group select, .form-group textarea { width: 100%; padding: .7rem .9rem; background: var(--mid); border: 1px solid var(--border); color: var(--cream-d); font-family: var(--sans); font-size: .88rem; outline: none; transition: border-color .2s; font-weight: 300; }
+.form-group label { display: block; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--cream-d); margin-bottom: .55rem; font-weight: 400; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: .8rem 1rem; background: var(--mid); border: 1px solid var(--border); color: var(--cream-d); font-family: var(--sans); font-size: .95rem; outline: none; transition: border-color .2s; font-weight: 300; }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold-d); }
 .form-group select { cursor: pointer; }
 .form-group select option { background: var(--mid); }
-.form-group textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
-.form-hint { font-size: .72rem; color: var(--muted); margin-top: .4rem; line-height: 1.5; }
+.form-group textarea { resize: vertical; min-height: 120px; line-height: 1.65; }
+.form-hint { font-size: .8rem; color: var(--muted); margin-top: .5rem; line-height: 1.6; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .dropzone { border: 1px dashed var(--bm); padding: 2rem; text-align: center; cursor: pointer; transition: all .2s; background: var(--mid); margin-bottom: .75rem; }
 .dropzone:hover, .dropzone.drag-over { border-color: var(--gold-d); background: var(--glow); }
@@ -191,14 +197,31 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: var(--border); }
 
+/* MOBILE TOPBAR */
+.mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: .9rem 1.25rem; background: var(--void); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+.mobile-topbar-name { font-family: var(--serif); font-size: .95rem; color: var(--gold-p); font-weight: 300; }
+.mobile-menu-btn { background: none; border: 1px solid var(--border); color: var(--gold-d); width: 38px; height: 38px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+.mobile-menu-btn:hover { border-color: var(--bm); color: var(--gold-p); }
+
+/* MOBILE SIDEBAR OVERLAY */
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(3,6,9,.78); z-index: 155; }
+.sidebar-overlay.open { display: block; }
+.sidebar.mobile-open { display: flex !important; position: fixed; inset: 0 auto 0 0; width: 260px; z-index: 160; }
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   #app.show { grid-template-columns: 1fr; }
   .sidebar { display: none; }
-  .page { padding: 1.5rem; }
+  .mobile-topbar { display: flex; }
+  .page { padding: 1.25rem 1rem; }
   .stats-row { grid-template-columns: 1fr 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .modal { max-width: 100%; }
+  .modal-body { padding: 1.25rem; }
+  .modal-header { padding: 1.25rem; }
+  .modal-footer { padding: 1rem 1.25rem; }
+  .data-table th, .data-table td { padding: .5rem .6rem; font-size: .78rem; }
+  .btn-sm { padding: .4rem .7rem; font-size: .68rem; }
 }
 </style>
 </head>
@@ -216,9 +239,12 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
   </div>
 </div>
 
+<!-- Sidebar overlay for mobile (outside #app so it overlays everything) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
 <!-- APP -->
 <div id="app">
-  <div class="sidebar">
+  <div class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-name">Spirits in Spacesuits</div>
       <div class="sidebar-logo-sub">Admin Panel</div>
@@ -227,10 +253,15 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <div class="snav-section">AI Knowledge Base</div>
       <button class="snav-item active" onclick="showPage('corpus', this)">Corpus Stats</button>
       <button class="snav-item" onclick="showPage('upload', this)">Add to Corpus</button>
-      <div class="snav-section">Site Content</div>
+      <div class="snav-section">Written Content</div>
       <button class="snav-item" onclick="showPage('content', this)">Stories, Essays & Poems</button>
+      <button class="snav-item" onclick="showPage('books', this)">Books</button>
       <button class="snav-item" onclick="showPage('models', this)">Models of Reality</button>
+      <div class="snav-section">Seán's Lexicon</div>
+      <button class="snav-item" onclick="showPage('glossary', this)">Glossary</button>
+      <div class="snav-section">Events & Engagement</div>
       <button class="snav-item" onclick="showPage('events', this)">Events</button>
+      <button class="snav-item" onclick="showPage('courses', this)">Courses</button>
       <button class="snav-item" onclick="showPage('testimonials', this)">Testimonials</button>
     </nav>
     <div class="sidebar-footer">
@@ -240,6 +271,11 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
   </div>
 
   <div class="main">
+    <!-- Mobile top bar (only visible on small screens) -->
+    <div class="mobile-topbar">
+      <div class="mobile-topbar-name">Spirits in Spacesuits — Admin</div>
+      <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Open menu">☰</button>
+    </div>
 
     <!-- ── CORPUS PAGE ── -->
     <div class="page active" id="page-corpus">
@@ -403,6 +439,71 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
           <tbody id="testimonialsBody"></tbody>
         </table>
         <div class="empty-state" id="noTestimonials" style="display:none;">No testimonials found.</div>
+      </div>
+    </div>
+
+    <!-- ── BOOKS PAGE ── -->
+    <div class="page" id="page-books">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1 class="page-title">Books</h1>
+          <p class="page-lead">Manage the books displayed on the website. Add a new book when one is published, or update details of an existing book. Changes appear on the site immediately.</p>
+        </div>
+        <button class="btn btn-green" onclick="openBookModal()">+ Add Book</button>
+      </div>
+      <div class="loading" id="booksLoading">Loading…</div>
+      <div id="booksTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th style="width:50px">Order</th><th>Title</th><th>Badge</th><th style="width:150px"></th></tr></thead>
+          <tbody id="booksBody"></tbody>
+        </table>
+        <div class="empty-state" id="noBooks" style="display:none;">No books yet. Click "+ Add Book" to get started.</div>
+      </div>
+      <div class="page-lead" style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:.82rem;">
+        <strong style="color:var(--gold-d);">Tip:</strong> Book cover images should be uploaded to the <code style="font-family:monospace;font-size:.82rem;background:var(--mid);padding:.15rem .35rem;">/public/books/</code> folder and referenced as <code style="font-family:monospace;font-size:.82rem;background:var(--mid);padding:.15rem .35rem;">/books/your-image.jpg</code>. If you need to upload a new cover, contact your developer.
+      </div>
+    </div>
+
+    <!-- ── GLOSSARY PAGE ── -->
+    <div class="page" id="page-glossary">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1 class="page-title">Glossary</h1>
+          <p class="page-lead">Seán's personal definitions — words stripped of cultural assumption and returned to their roots. Add new terms or update existing ones. Changes appear on the site immediately.</p>
+        </div>
+        <button class="btn btn-green" onclick="openGlossaryModal()">+ Add Term</button>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-search">
+          <input type="text" id="glossarySearch" placeholder="Search by term…" oninput="debounceGlossarySearch(this.value)">
+        </div>
+      </div>
+      <div class="loading" id="glossaryLoading">Loading…</div>
+      <div id="glossaryTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th>Term</th><th>Definition (preview)</th><th style="width:130px"></th></tr></thead>
+          <tbody id="glossaryBody"></tbody>
+        </table>
+        <div class="empty-state" id="noGlossary" style="display:none;">No terms yet. Click "+ Add Term" to get started.</div>
+      </div>
+    </div>
+
+    <!-- ── COURSES PAGE ── -->
+    <div class="page" id="page-courses">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1 class="page-title">Courses</h1>
+          <p class="page-lead">Manage structured learning courses. You can list upcoming courses as "Coming Soon" before they are ready, then mark them "Available" when they launch. Add a link so visitors can enrol.</p>
+        </div>
+        <button class="btn btn-green" onclick="openCourseModal()">+ Add Course</button>
+      </div>
+      <div class="loading" id="coursesLoading">Loading…</div>
+      <div id="coursesTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th style="width:110px">Status</th><th>Title</th><th style="width:130px"></th></tr></thead>
+          <tbody id="coursesBody"></tbody>
+        </table>
+        <div class="empty-state" id="noCourses" style="display:none;">No courses yet. Click "+ Add Course" to get started.</div>
       </div>
     </div>
 
@@ -578,6 +679,137 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
   </div>
 </div>
 
+<!-- BOOK EDIT MODAL -->
+<div class="modal-overlay" id="bookModal" onclick="closeBookModalBg(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="bookModalTitle">Add Book</div>
+      <button class="modal-close" onclick="closeBookModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="bookId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Sort Order <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — lower numbers appear first</span></label>
+          <input type="number" id="bookOrder" placeholder="e.g. 1" min="0">
+          <div class="form-hint">Use 1 for the first book, 2 for the second, and so on.</div>
+        </div>
+        <div class="form-group">
+          <label>Badge Text <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — optional</span></label>
+          <input type="text" id="bookBadge" placeholder='e.g. Latest, Foundational, 2025'>
+          <div class="form-hint">Small label shown on the book card. Leave blank for no badge.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Title <span style="color:#e06060">*</span></label>
+        <input type="text" id="bookTitle" placeholder="Full title of the book">
+      </div>
+      <div class="form-group">
+        <label>Subtitle <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — optional</span></label>
+        <input type="text" id="bookSubtitle" placeholder="e.g. A Manual for Everyday Mystics">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="bookDescription" style="min-height:90px;" placeholder="2–3 sentences describing the book. Plain text."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Cover Image URL</label>
+        <input type="text" id="bookCoverUrl" placeholder="/books/your-image.jpg or https://…">
+        <div class="form-hint">Use <code style="font-family:monospace;background:var(--mid);padding:.1rem .3rem;">/books/filename.jpg</code> if the cover is already uploaded to the site, or paste a full URL from the web.</div>
+      </div>
+      <div class="form-group">
+        <label>Purchase Links</label>
+        <div class="hint-box" style="background:var(--mid);border:1px solid var(--border);padding:.75rem 1rem;margin-bottom:.75rem;font-size:.82rem;color:var(--muted);line-height:1.6;">
+          Add one link per row. The label is what the button says (e.g. "Amazon", "Audible"). The URL is the full web address where people can buy or listen.
+        </div>
+        <div id="bookLinksEditor"></div>
+        <button class="add-key-btn" onclick="addBookLinkRow()" style="margin-top:.5rem;">+ Add Purchase Link</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closeBookModal()">Cancel</button>
+      <button class="btn btn-sm btn-green" id="bookSaveBtn" onclick="saveBook()">Save Book</button>
+    </div>
+  </div>
+</div>
+
+<!-- GLOSSARY EDIT MODAL -->
+<div class="modal-overlay" id="glossaryModal" onclick="closeGlossaryModalBg(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="glossaryModalTitle">Add Glossary Term</div>
+      <button class="modal-close" onclick="closeGlossaryModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="glossaryId">
+      <div class="form-group">
+        <label>Term <span style="color:#e06060">*</span></label>
+        <input type="text" id="glossaryTerm" placeholder="e.g. Anam Chara">
+        <div class="form-hint">The word or phrase being defined. It will appear alphabetically in the glossary.</div>
+      </div>
+      <div class="form-group">
+        <label>Definition <span style="color:#e06060">*</span></label>
+        <textarea id="glossaryDefinition" style="min-height:140px;" placeholder="Seán's definition of this term. Plain text — no HTML."></textarea>
+        <div class="form-hint">Write the full definition. You can include etymology or context, as Seán often does (e.g. "Latin X means…").</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closeGlossaryModal()">Cancel</button>
+      <button class="btn btn-sm btn-green" id="glossarySaveBtn" onclick="saveGlossary()">Save Term</button>
+    </div>
+  </div>
+</div>
+
+<!-- COURSE EDIT MODAL -->
+<div class="modal-overlay" id="courseModal" onclick="closeCourseModalBg(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="courseModalTitle">Add Course</div>
+      <button class="modal-close" onclick="closeCourseModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="courseId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Status <span style="color:#e06060">*</span></label>
+          <select id="courseStatus">
+            <option value="coming_soon">Coming Soon</option>
+            <option value="in_progress">In Development</option>
+            <option value="available">Available Now</option>
+          </select>
+          <div class="form-hint">"Coming Soon" shows a teaser. "Available" shows an enrol button.</div>
+        </div>
+        <div class="form-group">
+          <label>Sort Order</label>
+          <input type="number" id="courseOrder" placeholder="e.g. 1" min="0">
+          <div class="form-hint">Lower numbers appear first.</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Course Title <span style="color:#e06060">*</span></label>
+        <input type="text" id="courseTitle" placeholder="e.g. The Soul's Journey — A 6-Week Course">
+      </div>
+      <div class="form-group">
+        <label>Subtitle <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — optional</span></label>
+        <input type="text" id="courseSubtitle" placeholder="A short descriptor shown beneath the title">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="courseDescription" style="min-height:100px;" placeholder="2–4 sentences about what the course covers and who it is for."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Enrolment Link <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — optional, used when status is "Available"</span></label>
+        <input type="url" id="courseLink" placeholder="https://…">
+        <div class="form-hint">The full web address where people can sign up. Only shown when status is "Available Now".</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closeCourseModal()">Cancel</button>
+      <button class="btn btn-sm btn-green" id="courseSaveBtn" onclick="saveCourse()">Save Course</button>
+    </div>
+  </div>
+</div>
+
 <!-- CONFIRM DIALOG -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-box">
@@ -644,8 +876,11 @@ function showPage(name, el) {
   el.classList.add('active');
   if (name === 'corpus')       loadCorpus();
   if (name === 'content')      loadContent();
+  if (name === 'books')        loadBooks();
   if (name === 'models')       loadModels();
+  if (name === 'glossary')     loadGlossary();
   if (name === 'events')       loadEvents();
+  if (name === 'courses')      loadCourses();
   if (name === 'testimonials') loadTestimonials();
 }
 
@@ -1170,10 +1405,422 @@ document.addEventListener('keydown', e => {
     closeContentModal();
     closeModelModal();
     closeEventModal();
+    closeBookModal();
+    closeGlossaryModal();
+    closeCourseModal();
     closeConfirm();
   }
 });
 
+
+/* ══════════════════════════════════════
+   MOBILE SIDEBAR
+══════════════════════════════════════ */
+function toggleMobileSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('mobile-open');
+  overlay.classList.toggle('open');
+}
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+// Close sidebar after nav item click on mobile
+document.querySelectorAll('.snav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (window.innerWidth <= 768) closeMobileSidebar();
+  });
+});
+
+/* ══════════════════════════════════════
+   BOOKS
+══════════════════════════════════════ */
+let _booksMap = {};
+
+async function loadBooks() {
+  document.getElementById('booksLoading').style.display = 'block';
+  document.getElementById('booksTableWrap').style.display = 'none';
+  try {
+    const res = await fetch('/api/books');
+    const data = await res.json();
+    renderBooksTable(data.books || []);
+  } catch { document.getElementById('booksLoading').textContent = 'Failed to load. Check your connection.'; }
+}
+
+function renderBooksTable(items) {
+  document.getElementById('booksLoading').style.display = 'none';
+  document.getElementById('booksTableWrap').style.display = 'block';
+  _booksMap = {};
+  items.forEach(b => { _booksMap[b.id] = b; });
+  if (!items.length) {
+    document.getElementById('booksBody').innerHTML = '';
+    document.getElementById('noBooks').style.display = 'block';
+    return;
+  }
+  document.getElementById('noBooks').style.display = 'none';
+  document.getElementById('booksBody').innerHTML = items.map(b => `
+    <tr>
+      <td style="color:var(--gold-d);font-family:var(--serif);">${esc(b.sort_order ?? '—')}</td>
+      <td style="color:var(--cream-d);">${esc(b.title)}</td>
+      <td style="color:var(--muted);font-size:.78rem;">${esc(b.badge_text || '—')}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editBook('${esc(b.id)}')" style="margin-right:.4rem;">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmBookDelete('${esc(b.id)}','${esc(b.title).replace(/'/g,"&#39;")}')">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ── Book Link Rows (purchase links inside modal)
+function renderBookLinksEditor(links) {
+  document.getElementById('bookLinksEditor').innerHTML = '';
+  (links || []).forEach(l => addBookLinkRow(l.label, l.url));
+}
+
+function addBookLinkRow(label = '', url = '') {
+  const editor = document.getElementById('bookLinksEditor');
+  const row = document.createElement('div');
+  row.className = 'key-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Label (e.g. Amazon)" value="${esc(label)}" data-link-label style="flex:1;">
+    <input type="url" placeholder="https://amazon.com/…" value="${esc(url)}" data-link-url style="flex:2;">
+    <button class="key-remove" onclick="this.closest('.key-row').remove()" title="Remove this link">×</button>`;
+  editor.appendChild(row);
+}
+
+function getBookLinks() {
+  return Array.from(document.querySelectorAll('#bookLinksEditor .key-row')).map(row => ({
+    label: row.querySelector('[data-link-label]').value.trim(),
+    url:   row.querySelector('[data-link-url]').value.trim()
+  })).filter(l => l.label || l.url);
+}
+
+// ── Book Modal
+function openBookModal(prefill) {
+  document.getElementById('bookId').value = '';
+  document.getElementById('bookOrder').value = '';
+  document.getElementById('bookBadge').value = '';
+  document.getElementById('bookTitle').value = '';
+  document.getElementById('bookSubtitle').value = '';
+  document.getElementById('bookDescription').value = '';
+  document.getElementById('bookCoverUrl').value = '';
+  document.getElementById('bookModalTitle').textContent = 'Add Book';
+  document.getElementById('bookSaveBtn').textContent = 'Save Book';
+  renderBookLinksEditor([]);
+  if (prefill) {
+    document.getElementById('bookId').value = prefill.id || '';
+    document.getElementById('bookOrder').value = prefill.sort_order ?? '';
+    document.getElementById('bookBadge').value = prefill.badge_text || '';
+    document.getElementById('bookTitle').value = prefill.title || '';
+    document.getElementById('bookSubtitle').value = prefill.subtitle || '';
+    document.getElementById('bookDescription').value = prefill.description || '';
+    document.getElementById('bookCoverUrl').value = prefill.cover_url || '';
+    document.getElementById('bookModalTitle').textContent = 'Edit Book';
+    renderBookLinksEditor(prefill.links || []);
+  }
+  document.getElementById('bookModal').classList.add('open');
+}
+
+function editBook(id) {
+  const b = _booksMap[id];
+  if (b) openBookModal(b);
+}
+
+function closeBookModal() { document.getElementById('bookModal').classList.remove('open'); }
+function closeBookModalBg(e) { if (e.target === document.getElementById('bookModal')) closeBookModal(); }
+
+async function saveBook() {
+  const id = document.getElementById('bookId').value;
+  const payload = {
+    title:       document.getElementById('bookTitle').value.trim(),
+    subtitle:    document.getElementById('bookSubtitle').value.trim(),
+    badge_text:  document.getElementById('bookBadge').value.trim(),
+    description: document.getElementById('bookDescription').value.trim(),
+    cover_url:   document.getElementById('bookCoverUrl').value.trim(),
+    links:       getBookLinks(),
+    sort_order:  parseInt(document.getElementById('bookOrder').value) || 0,
+  };
+  if (!payload.title) return toast('Title is required', 'error');
+  const btn = document.getElementById('bookSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/books?id=${id}` : '/api/books';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(id ? 'Book saved!' : `"${data.book?.title}" added`, 'success');
+      closeBookModal();
+      loadBooks();
+    } else { toast(data.error || 'Save failed', 'error'); }
+  } catch { toast('Connection error — please try again', 'error'); }
+  btn.disabled = false; btn.textContent = 'Save Book';
+}
+
+function confirmBookDelete(id, title) {
+  pendingDelete = { type: 'book', id, title };
+  document.getElementById('confirmTitle').textContent = 'Remove Book';
+  document.getElementById('confirmMsg').textContent = `Remove "${title}" from the website? This only removes it from the site — it does not affect the actual book.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executeBookDelete;
+}
+async function executeBookDelete() {
+  if (!pendingDelete) return;
+  const { id, title } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch(`/api/books?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    res.ok ? (toast(`"${title}" removed`, 'success'), loadBooks()) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
+}
+
+/* ══════════════════════════════════════
+   GLOSSARY
+══════════════════════════════════════ */
+let _glossaryMap = {};
+let _glossarySearchVal = '';
+let _glossarySearchTimer = null;
+let _allGlossaryTerms = [];
+
+async function loadGlossary() {
+  document.getElementById('glossaryLoading').style.display = 'block';
+  document.getElementById('glossaryTableWrap').style.display = 'none';
+  try {
+    const res = await fetch('/api/glossary');
+    const data = await res.json();
+    _allGlossaryTerms = data.terms || [];
+    renderGlossaryTable(_allGlossaryTerms);
+  } catch { document.getElementById('glossaryLoading').textContent = 'Failed to load. Check your connection.'; }
+}
+
+function renderGlossaryTable(items) {
+  document.getElementById('glossaryLoading').style.display = 'none';
+  document.getElementById('glossaryTableWrap').style.display = 'block';
+  _glossaryMap = {};
+  items.forEach(t => { _glossaryMap[t.id] = t; });
+  const q = _glossarySearchVal.toLowerCase();
+  const filtered = q ? items.filter(t => t.term.toLowerCase().includes(q) || t.definition.toLowerCase().includes(q)) : items;
+  if (!filtered.length) {
+    document.getElementById('glossaryBody').innerHTML = '';
+    document.getElementById('noGlossary').style.display = 'block';
+    return;
+  }
+  document.getElementById('noGlossary').style.display = 'none';
+  document.getElementById('glossaryBody').innerHTML = filtered.map(t => {
+    const preview = t.definition.length > 100 ? t.definition.slice(0, 100) + '…' : t.definition;
+    return `<tr>
+      <td style="color:var(--cream-d);font-weight:400;">${esc(t.term)}</td>
+      <td style="color:var(--muted);font-size:.82rem;font-style:italic;">${esc(preview)}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editGlossary('${esc(t.id)}')" style="margin-right:.4rem;">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmGlossaryDelete('${esc(t.id)}','${esc(t.term).replace(/'/g,"&#39;")}')">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function debounceGlossarySearch(val) {
+  _glossarySearchVal = val;
+  clearTimeout(_glossarySearchTimer);
+  _glossarySearchTimer = setTimeout(() => renderGlossaryTable(_allGlossaryTerms), 250);
+}
+
+// ── Glossary Modal
+function openGlossaryModal(prefill) {
+  document.getElementById('glossaryId').value = '';
+  document.getElementById('glossaryTerm').value = '';
+  document.getElementById('glossaryDefinition').value = '';
+  document.getElementById('glossaryModalTitle').textContent = 'Add Glossary Term';
+  document.getElementById('glossarySaveBtn').textContent = 'Save Term';
+  if (prefill) {
+    document.getElementById('glossaryId').value = prefill.id || '';
+    document.getElementById('glossaryTerm').value = prefill.term || '';
+    document.getElementById('glossaryDefinition').value = prefill.definition || '';
+    document.getElementById('glossaryModalTitle').textContent = 'Edit Term';
+  }
+  document.getElementById('glossaryModal').classList.add('open');
+}
+
+function editGlossary(id) {
+  const t = _glossaryMap[id];
+  if (t) openGlossaryModal(t);
+}
+
+function closeGlossaryModal() { document.getElementById('glossaryModal').classList.remove('open'); }
+function closeGlossaryModalBg(e) { if (e.target === document.getElementById('glossaryModal')) closeGlossaryModal(); }
+
+async function saveGlossary() {
+  const id = document.getElementById('glossaryId').value;
+  const payload = {
+    term:       document.getElementById('glossaryTerm').value.trim(),
+    definition: document.getElementById('glossaryDefinition').value.trim(),
+  };
+  if (!payload.term) return toast('Term is required', 'error');
+  if (!payload.definition) return toast('Definition is required', 'error');
+  const btn = document.getElementById('glossarySaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/glossary?id=${id}` : '/api/glossary';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(id ? 'Term updated!' : `"${payload.term}" added to glossary`, 'success');
+      closeGlossaryModal();
+      loadGlossary();
+    } else { toast(data.error || 'Save failed', 'error'); }
+  } catch { toast('Connection error — please try again', 'error'); }
+  btn.disabled = false; btn.textContent = 'Save Term';
+}
+
+function confirmGlossaryDelete(id, term) {
+  pendingDelete = { type: 'glossary', id, term };
+  document.getElementById('confirmTitle').textContent = 'Remove Glossary Term';
+  document.getElementById('confirmMsg').textContent = `Remove the definition for "${term}"? It will no longer appear on the website.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executeGlossaryDelete;
+}
+async function executeGlossaryDelete() {
+  if (!pendingDelete) return;
+  const { id, term } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch(`/api/glossary?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    res.ok ? (toast(`"${term}" removed from glossary`, 'success'), loadGlossary()) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
+}
+
+/* ══════════════════════════════════════
+   COURSES
+══════════════════════════════════════ */
+let _coursesMap = {};
+
+async function loadCourses() {
+  document.getElementById('coursesLoading').style.display = 'block';
+  document.getElementById('coursesTableWrap').style.display = 'none';
+  try {
+    const res = await fetch('/api/courses');
+    const data = await res.json();
+    renderCoursesTable(data.courses || []);
+  } catch { document.getElementById('coursesLoading').textContent = 'Failed to load. Check your connection.'; }
+}
+
+function renderCoursesTable(items) {
+  document.getElementById('coursesLoading').style.display = 'none';
+  document.getElementById('coursesTableWrap').style.display = 'block';
+  _coursesMap = {};
+  items.forEach(c => { _coursesMap[c.id] = c; });
+  if (!items.length) {
+    document.getElementById('coursesBody').innerHTML = '';
+    document.getElementById('noCourses').style.display = 'block';
+    return;
+  }
+  document.getElementById('noCourses').style.display = 'none';
+  document.getElementById('coursesBody').innerHTML = items.map(c => {
+    const statusLabel = c.status === 'available' ? 'Available' : c.status === 'in_progress' ? 'In Development' : 'Coming Soon';
+    const statusColor = c.status === 'available' ? '#80c0a0' : c.status === 'in_progress' ? '#7ab0d0' : 'var(--gold-d)';
+    return `<tr>
+      <td><span style="font-size:.72rem;color:${statusColor};">${esc(statusLabel)}</span></td>
+      <td style="color:var(--cream-d);">${esc(c.title)}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editCourse('${esc(c.id)}')" style="margin-right:.4rem;">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmCourseDelete('${esc(c.id)}','${esc(c.title).replace(/'/g,"&#39;")}')">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Course Modal
+function openCourseModal(prefill) {
+  document.getElementById('courseId').value = '';
+  document.getElementById('courseStatus').value = 'coming_soon';
+  document.getElementById('courseOrder').value = '';
+  document.getElementById('courseTitle').value = '';
+  document.getElementById('courseSubtitle').value = '';
+  document.getElementById('courseDescription').value = '';
+  document.getElementById('courseLink').value = '';
+  document.getElementById('courseModalTitle').textContent = 'Add Course';
+  document.getElementById('courseSaveBtn').textContent = 'Save Course';
+  if (prefill) {
+    document.getElementById('courseId').value = prefill.id || '';
+    document.getElementById('courseStatus').value = prefill.status || 'coming_soon';
+    document.getElementById('courseOrder').value = prefill.sort_order ?? '';
+    document.getElementById('courseTitle').value = prefill.title || '';
+    document.getElementById('courseSubtitle').value = prefill.subtitle || '';
+    document.getElementById('courseDescription').value = prefill.description || '';
+    document.getElementById('courseLink').value = prefill.link || '';
+    document.getElementById('courseModalTitle').textContent = 'Edit Course';
+  }
+  document.getElementById('courseModal').classList.add('open');
+}
+
+function editCourse(id) {
+  const c = _coursesMap[id];
+  if (c) openCourseModal(c);
+}
+
+function closeCourseModal() { document.getElementById('courseModal').classList.remove('open'); }
+function closeCourseModalBg(e) { if (e.target === document.getElementById('courseModal')) closeCourseModal(); }
+
+async function saveCourse() {
+  const id = document.getElementById('courseId').value;
+  const payload = {
+    title:       document.getElementById('courseTitle').value.trim(),
+    subtitle:    document.getElementById('courseSubtitle').value.trim(),
+    description: document.getElementById('courseDescription').value.trim(),
+    link:        document.getElementById('courseLink').value.trim(),
+    status:      document.getElementById('courseStatus').value,
+    sort_order:  parseInt(document.getElementById('courseOrder').value) || 0,
+  };
+  if (!payload.title) return toast('Title is required', 'error');
+  const btn = document.getElementById('courseSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/courses?id=${id}` : '/api/courses';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(id ? 'Course updated!' : `"${data.course?.title}" added`, 'success');
+      closeCourseModal();
+      loadCourses();
+    } else { toast(data.error || 'Save failed', 'error'); }
+  } catch { toast('Connection error — please try again', 'error'); }
+  btn.disabled = false; btn.textContent = 'Save Course';
+}
+
+function confirmCourseDelete(id, title) {
+  pendingDelete = { type: 'course', id, title };
+  document.getElementById('confirmTitle').textContent = 'Delete Course';
+  document.getElementById('confirmMsg').textContent = `Permanently delete "${title}"? This cannot be undone.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executeCourseDelete;
+}
+async function executeCourseDelete() {
+  if (!pendingDelete) return;
+  const { id, title } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch(`/api/courses?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    res.ok ? (toast(`"${title}" deleted`, 'success'), loadCourses()) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
+}
 
 /* ══════════════════════════════════════
    CONTENT FILE IMPORT (docx / pdf / txt)
