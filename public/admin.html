@@ -553,8 +553,13 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
         <div class="form-hint">.txt, .docx (Word), or .pdf — text is extracted and placed in Body. Title is filled from the filename if empty.</div>
       </div>
       <div class="form-group">
-        <label>Body <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — HTML allowed (use &lt;p&gt;, &lt;em&gt;, &lt;strong&gt;)</span></label>
-        <textarea id="contentBody" style="min-height:220px;" placeholder="Full text. You can use HTML tags like <p>, <em>, <strong>, <ol>, <li>."></textarea>
+        <label>Body</label>
+        <textarea id="contentBody" style="min-height:220px;font-family:monospace;font-size:.82rem;" placeholder="Full text. Import a file above and it will appear here, already formatted. You can also type or paste plain text — it will be formatted automatically on save."></textarea>
+        <div style="margin-top:.6rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+          <button class="btn btn-sm" type="button" onclick="toggleBodyPreview()" id="previewToggleBtn">&#128065; Preview</button>
+          <span style="font-size:.78rem;color:var(--muted);">Click Preview to see exactly how readers will see this before you save.</span>
+        </div>
+        <div id="bodyPreview" style="display:none;margin-top:.75rem;background:var(--mid);border:1px solid var(--border);padding:1.5rem 1.75rem;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.05rem;color:#d4c8b8;line-height:1.85;max-height:320px;overflow-y:auto;"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -1107,17 +1112,41 @@ function editContent(jsonStr) {
   try { openContentModal(JSON.parse(jsonStr)); } catch {}
 }
 
-function closeContentModal() { document.getElementById('contentModal').classList.remove('open'); }
+function closeContentModal() {
+  document.getElementById('contentModal').classList.remove('open');
+  document.getElementById('bodyPreview').style.display = 'none';
+  document.getElementById('previewToggleBtn').textContent = '👁 Preview';
+}
 function closeContentModalBg(e) { if (e.target === document.getElementById('contentModal')) closeContentModal(); }
+
+function toggleBodyPreview() {
+  const preview = document.getElementById('bodyPreview');
+  const btn = document.getElementById('previewToggleBtn');
+  const raw = document.getElementById('contentBody').value;
+  const title = document.getElementById('contentTitle').value.trim();
+  if (preview.style.display === 'none') {
+    const html = sanitizeBody(raw, title);
+    // Style paragraphs and line breaks nicely
+    preview.innerHTML = html
+      || '<em style="color:var(--muted);">Nothing to preview yet — add some body text first.</em>';
+    preview.style.display = 'block';
+    btn.textContent = '✕ Close Preview';
+  } else {
+    preview.style.display = 'none';
+    btn.textContent = '👁 Preview';
+  }
+}
 
 async function saveContent() {
   const id = document.getElementById('contentId').value;
+  const rawBody = document.getElementById('contentBody').value;
+  const title   = document.getElementById('contentTitle').value.trim();
   const payload = {
     content_type: document.getElementById('contentType').value,
-    title:        document.getElementById('contentTitle').value.trim(),
+    title,
     story_date:   document.getElementById('contentDate').value.trim(),
     excerpt:      document.getElementById('contentExcerpt').value.trim(),
-    body:         document.getElementById('contentBody').value,
+    body:         sanitizeBody(rawBody, title),
   };
   if (!payload.title) return toast('Title is required', 'error');
   const btn = document.getElementById('contentSaveBtn');
@@ -1852,9 +1881,11 @@ async function importContentFile(e) {
   }
 
   try {
+    const titleHint = document.getElementById('contentTitle').value.trim();
+
     if (file.name.endsWith('.txt')) {
       const text = await file.text();
-      document.getElementById('contentBody').value = textToSimpleHtml(text);
+      document.getElementById('contentBody').value = textToSimpleHtml(text, titleHint);
       status.style.color = '#90d0a8';
       status.textContent = `Imported ${file.name} ✓`;
 
@@ -1862,12 +1893,11 @@ async function importContentFile(e) {
       await loadMammoth();
       const arrayBuffer = await file.arrayBuffer();
       const result = await mammoth.convertToHtml({ arrayBuffer });
-      document.getElementById('contentBody').value = result.value;
+      document.getElementById('contentBody').value = cleanDocxHtml(result.value);
       status.style.color = '#90d0a8';
       status.textContent = `Imported ${file.name} ✓`;
 
     } else if (file.name.endsWith('.pdf')) {
-      // Load PDF.js from CDN
       if (!window.pdfjsLib) {
         await new Promise((resolve, reject) => {
           const s = document.createElement('script');
@@ -1876,19 +1906,32 @@ async function importContentFile(e) {
           s.onload = resolve; s.onerror = reject;
           document.head.appendChild(s);
         });
-        // Use importmap fallback approach for PDF.js
         window.pdfjsLib = await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs');
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
       }
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let fullText = '';
+      let pages = [];
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
-        fullText += content.items.map(item => item.str).join(' ') + '\n\n';
+        // Group items into lines by vertical position, then paragraphs
+        const items = content.items;
+        let lines = [], curY = null, curLine = [];
+        items.forEach(item => {
+          const y = Math.round(item.transform[5]);
+          if (curY === null || Math.abs(y - curY) > 3) {
+            if (curLine.length) lines.push(curLine.join(''));
+            curLine = [item.str];
+            curY = y;
+          } else {
+            curLine.push(item.str);
+          }
+        });
+        if (curLine.length) lines.push(curLine.join(''));
+        pages.push(lines.join('\n'));
       }
-      document.getElementById('contentBody').value = textToSimpleHtml(fullText);
+      document.getElementById('contentBody').value = textToSimpleHtml(pages.join('\n\n'), titleHint);
       status.style.color = '#90d0a8';
       status.textContent = `Imported ${pdf.numPages}-page PDF ✓`;
 
@@ -1904,11 +1947,64 @@ async function importContentFile(e) {
   e.target.value = '';
 }
 
-function textToSimpleHtml(text) {
-  // Remove Word-style PAGE markers
-  text = text.replace(/\s*PAGE\s+\d+\s*/gi, '');
-  const paras = text.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
-  return paras.map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`).join('\n');
+function textToSimpleHtml(text, titleHint) {
+  // 1. Normalise all line endings to \n
+  text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+  // 2. Convert any literal \n escape sequences (two chars: backslash + n)
+  text = text.replace(/\\n/g, '\n');
+
+  // 3. Strip common file-import artefacts
+  text = text.replace(/\s*PAGE\s+\d+\s*/gi, '');                         // Word page markers
+  text = text.replace(/^[A-Za-z]:[\/\\][\S ]+\.(txt|docx|pdf|doc)\s*$/gim, ''); // Windows file paths
+  text = text.replace(/^\/[\S]+\.(txt|docx|pdf|doc)\s*$/gim, '');        // Unix file paths
+
+  // 4. Strip title from first non-empty line if it matches the title field
+  if (titleHint) {
+    const tClean = titleHint.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    const lines = text.split('\n');
+    const firstNonempty = lines.findIndex(l => l.trim());
+    if (firstNonempty >= 0) {
+      const firstClean = lines[firstNonempty].trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (firstClean === tClean) {
+        lines.splice(firstNonempty, 1);
+        text = lines.join('\n').replace(/^\n+/, '');
+      }
+    }
+  }
+
+  // 5. Split on blank lines into paragraph blocks
+  const blocks = text.split(/\n{2,}/).map(b => b.trim()).filter(Boolean);
+
+  // 6. Convert each block — prose joins soft-wrapped lines; poetry keeps line breaks
+  return blocks.map(block => {
+    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    if (!lines.length) return '';
+    // Heuristic: if average line < 55 chars it's poetry — keep line breaks
+    const avgLen = lines.reduce((s, l) => s + l.length, 0) / lines.length;
+    const inner = avgLen < 55
+      ? lines.join('<br>')     // poetry: preserve each line
+      : lines.join(' ');       // prose: re-join soft-wrapped lines
+    return `<p>${inner}</p>`;
+  }).filter(Boolean).join('\n');
+}
+
+function cleanDocxHtml(html) {
+  return html
+    .replace(/<p>\s*<\/p>/g, '')          // remove empty paragraphs
+    .replace(/ class="[^"]*"/g, '')        // strip mammoth class attributes
+    .replace(/ style="[^"]*"/g, '')        // strip inline styles
+    .replace(/<b>(.*?)<\/b>/g, '<strong>$1</strong>') // normalise bold
+    .replace(/<i>(.*?)<\/i>/g, '<em>$1</em>');        // normalise italic
+}
+
+function sanitizeBody(body, titleHint) {
+  if (!body.trim()) return body;
+  // If there are no HTML tags at all, convert plain text → HTML
+  if (!/<[a-z][\s\S]*>/i.test(body)) {
+    return textToSimpleHtml(body, titleHint);
+  }
+  return body;
 }
 
 /* ══════════════════════════════════════
