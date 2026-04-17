@@ -68,12 +68,15 @@ export default async function handler(req) {
     // 1. Embed the question
     const queryEmbedding = await embedQuery(cleanQuestion);
 
-    // 2. Retrieve the 8 most relevant chunks from Supabase
-    const chunks = await findRelevantChunks(queryEmbedding, 8);
+    // 2. Retrieve the 12 most relevant chunks from Supabase, then filter by quality
+    const rawChunks = await findRelevantChunks(queryEmbedding, 12);
+    const chunks = rawChunks.filter(c => c.similarity > 0.35).slice(0, 8);
 
     if (chunks.length === 0) {
       return new Response(JSON.stringify({
-        answer: "I don't have enough material in the archive yet to answer that well. As more of Seán's transcripts are added, this will improve. In the meantime, you might find relevant teaching in his video archive.",
+        answer: rawChunks.length === 0
+          ? "I don't have enough material in the archive yet to answer that well. As more of Seán's transcripts are added, this will improve. In the meantime, you might find relevant teaching in his video archive."
+          : "I can't find a clear answer to that in Seán's archive. The question may not have been addressed directly in the recorded material I have access to. You might explore related topics or ask Seán directly.",
         sources: [],
         remaining
       }), {
@@ -97,7 +100,7 @@ export default async function handler(req) {
       content: turn.content.slice(0, 800) // Cap each turn
     }));
 
-    // 5. Call Claude — capped at 600 tokens to control costs
+    // 5. Call Claude — 1200 tokens allows full, nuanced answers for layered spiritual questions
     const messages = [
       ...recentHistory,
       {
@@ -107,8 +110,8 @@ export default async function handler(req) {
     ];
 
     const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 600,
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1200,
       temperature: 0,
       system: SEAN_SYSTEM,
       messages

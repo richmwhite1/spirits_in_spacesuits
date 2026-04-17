@@ -459,9 +459,6 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
         </table>
         <div class="empty-state" id="noBooks" style="display:none;">No books yet. Click "+ Add Book" to get started.</div>
       </div>
-      <div class="page-lead" style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:.82rem;">
-        <strong style="color:var(--gold-d);">Tip:</strong> Book cover images should be uploaded to the <code style="font-family:monospace;font-size:.82rem;background:var(--mid);padding:.15rem .35rem;">/public/books/</code> folder and referenced as <code style="font-family:monospace;font-size:.82rem;background:var(--mid);padding:.15rem .35rem;">/books/your-image.jpg</code>. If you need to upload a new cover, contact your developer.
-      </div>
     </div>
 
     <!-- ── GLOSSARY PAGE ── -->
@@ -646,10 +643,11 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
 <div class="modal-overlay" id="eventModal" onclick="closeEventModalBg(event)">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">Add Event</div>
+      <div class="modal-title" id="eventModalTitle">Add Event</div>
       <button class="modal-close" onclick="closeEventModal()">✕</button>
     </div>
     <div class="modal-body">
+      <input type="hidden" id="eventId">
       <div class="form-row">
         <div class="form-group">
           <label>Date <span style="color:#e06060">*</span></label>
@@ -718,9 +716,25 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
         <textarea id="bookDescription" style="min-height:90px;" placeholder="2–3 sentences describing the book. Plain text."></textarea>
       </div>
       <div class="form-group">
-        <label>Cover Image URL</label>
-        <input type="text" id="bookCoverUrl" placeholder="/books/your-image.jpg or https://…">
-        <div class="form-hint">Use <code style="font-family:monospace;background:var(--mid);padding:.1rem .3rem;">/books/filename.jpg</code> if the cover is already uploaded to the site, or paste a full URL from the web.</div>
+        <label>Cover Image</label>
+        <div style="display:flex;gap:.5rem;align-items:flex-start;flex-wrap:wrap;margin-bottom:.5rem;">
+          <div class="dropzone" id="bookImgDropzone" onclick="document.getElementById('bookImgInput').click()"
+               style="flex:1;min-width:160px;padding:1rem;margin-bottom:0;"
+               ondragover="handleBookImgDragOver(event)" ondrop="handleBookImgDrop(event)" ondragleave="handleBookImgDragLeave()">
+            <div class="dropzone-icon" style="font-size:1rem;margin-bottom:.2rem;">↑</div>
+            <div class="dropzone-label" style="font-size:.78rem;">Click or drop cover image</div>
+            <div class="dropzone-hint">JPEG · PNG · WebP</div>
+            <input type="file" id="bookImgInput" accept="image/jpeg,image/png,image/gif,image/webp" onchange="handleBookImgSelect(event)">
+          </div>
+          <div id="bookImgPreviewWrap" style="display:none;position:relative;">
+            <img id="bookImgPreview" alt="" style="max-height:100px;max-width:70px;border:1px solid var(--border);object-fit:cover;">
+            <button onclick="clearBookImage()" title="Remove image" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);border:none;color:#e06060;cursor:pointer;width:20px;height:20px;font-size:.75rem;line-height:1;">×</button>
+          </div>
+        </div>
+        <div id="bookImgUploadStatus" style="font-size:.75rem;color:var(--muted);margin-bottom:.35rem;"></div>
+        <div class="form-hint">Or enter a URL directly:</div>
+        <input type="text" id="bookCoverUrl" placeholder="/books/your-image.jpg or https://…" oninput="onBookCoverUrlInput(this.value)" style="margin-top:.4rem;">
+        <div class="form-hint">Upload a cover above, or paste a URL from the web.</div>
       </div>
       <div class="form-group">
         <label>Purchase Links</label>
@@ -1534,6 +1548,10 @@ function openBookModal(prefill) {
   document.getElementById('bookSubtitle').value = '';
   document.getElementById('bookDescription').value = '';
   document.getElementById('bookCoverUrl').value = '';
+  document.getElementById('bookImgPreviewWrap').style.display = 'none';
+  document.getElementById('bookImgPreview').src = '';
+  document.getElementById('bookImgInput').value = '';
+  document.getElementById('bookImgUploadStatus').textContent = '';
   document.getElementById('bookModalTitle').textContent = 'Add Book';
   document.getElementById('bookSaveBtn').textContent = 'Save Book';
   renderBookLinksEditor([]);
@@ -1545,6 +1563,10 @@ function openBookModal(prefill) {
     document.getElementById('bookSubtitle').value = prefill.subtitle || '';
     document.getElementById('bookDescription').value = prefill.description || '';
     document.getElementById('bookCoverUrl').value = prefill.cover_url || '';
+    if (prefill.cover_url) {
+      document.getElementById('bookImgPreview').src = prefill.cover_url;
+      document.getElementById('bookImgPreviewWrap').style.display = 'block';
+    }
     document.getElementById('bookModalTitle').textContent = 'Edit Book';
     renderBookLinksEditor(prefill.links || []);
   }
@@ -1607,6 +1629,71 @@ async function executeBookDelete() {
     const data = await res.json();
     res.ok ? (toast(`"${title}" removed`, 'success'), loadBooks()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
+}
+
+/* ══════════════════════════════════════
+   BOOK IMAGE UPLOAD
+══════════════════════════════════════ */
+function handleBookImgDragOver(e) { e.preventDefault(); document.getElementById('bookImgDropzone').classList.add('drag-over'); }
+function handleBookImgDragLeave() { document.getElementById('bookImgDropzone').classList.remove('drag-over'); }
+function handleBookImgDrop(e) {
+  e.preventDefault();
+  document.getElementById('bookImgDropzone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) uploadBookImage(file);
+}
+function handleBookImgSelect(e) {
+  const file = e.target.files[0];
+  if (file) uploadBookImage(file);
+}
+
+function onBookCoverUrlInput(val) {
+  const wrap = document.getElementById('bookImgPreviewWrap');
+  const img = document.getElementById('bookImgPreview');
+  if (val.trim()) {
+    img.src = val.trim();
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function clearBookImage() {
+  document.getElementById('bookCoverUrl').value = '';
+  document.getElementById('bookImgPreview').src = '';
+  document.getElementById('bookImgPreviewWrap').style.display = 'none';
+  document.getElementById('bookImgInput').value = '';
+  document.getElementById('bookImgUploadStatus').textContent = '';
+}
+
+async function uploadBookImage(file) {
+  const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowed.includes(file.type)) {
+    const s = document.getElementById('bookImgUploadStatus');
+    s.style.color = '#e09090'; s.textContent = 'Only JPEG, PNG, GIF, or WebP allowed.'; return;
+  }
+  const status = document.getElementById('bookImgUploadStatus');
+  status.style.color = 'var(--muted)'; status.textContent = 'Uploading…';
+  const formData = new FormData();
+  formData.append('file', file);
+  try {
+    const res = await fetch('/api/upload-image', {
+      method: 'POST',
+      headers: { 'x-admin-secret': adminSecret },
+      body: formData,
+    });
+    const data = await res.json();
+    if (res.ok && data.url) {
+      document.getElementById('bookCoverUrl').value = data.url;
+      document.getElementById('bookImgPreview').src = data.url;
+      document.getElementById('bookImgPreviewWrap').style.display = 'block';
+      status.style.color = '#90d0a8'; status.textContent = 'Cover uploaded ✓';
+    } else {
+      status.style.color = '#e09090'; status.textContent = data.error || 'Upload failed.';
+    }
+  } catch {
+    status.style.color = '#e09090'; status.textContent = 'Upload error — check connection.';
+  }
 }
 
 /* ══════════════════════════════════════
@@ -2029,31 +2116,59 @@ function renderEventsTable(items) {
     return;
   }
   document.getElementById('noEvents').style.display = 'none';
+  // Store for edit lookups
+  _eventsMap = {};
+  items.forEach(e => { _eventsMap[e.id] = e; });
+  const now = new Date().toISOString().split('T')[0];
   document.getElementById('eventsBody').innerHTML = items.map(e => {
     const d = new Date(e.event_date + 'T00:00:00');
     const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    return `<tr>
-      <td style="color:var(--gold-d);font-size:.78rem;">${esc(dateStr)}</td>
+    const isPast = e.event_date < now;
+    return `<tr${isPast ? ' style="opacity:.55;"' : ''}>
+      <td style="color:var(--gold-d);font-size:.78rem;">${esc(dateStr)}${isPast ? ' <span style="font-size:.6rem;color:var(--muted);">(past)</span>' : ''}</td>
       <td style="color:var(--cream-d);">${esc(e.title)}</td>
       <td style="color:var(--muted);font-size:.78rem;">${esc(e.location || '—')}</td>
       <td>
+        <button class="btn btn-sm" onclick="editEvent('${esc(e.id)}')" style="margin-right:.4rem;">Edit</button>
         <button class="btn btn-sm btn-danger" onclick="confirmEventDelete('${esc(e.id)}','${esc(e.title).replace(/'/g,"&#39;")}')">Delete</button>
       </td>
     </tr>`;
   }).join('');
 }
 
-function openEventModal() {
+let _eventsMap = {};
+
+function openEventModal(prefill) {
+  document.getElementById('eventId').value = '';
   ['eventDate','eventTime','eventTitle','eventLocation','eventDescription','eventLink'].forEach(id => {
     document.getElementById(id).value = '';
   });
+  document.getElementById('eventModalTitle').textContent = 'Add Event';
   document.getElementById('eventSaveBtn').textContent = 'Save Event';
+  if (prefill) {
+    document.getElementById('eventId').value = prefill.id || '';
+    document.getElementById('eventDate').value = prefill.event_date || '';
+    document.getElementById('eventTime').value = prefill.event_time || '';
+    document.getElementById('eventTitle').value = prefill.title || '';
+    document.getElementById('eventLocation').value = prefill.location || '';
+    document.getElementById('eventDescription').value = prefill.description || '';
+    document.getElementById('eventLink').value = prefill.link || '';
+    document.getElementById('eventModalTitle').textContent = 'Edit Event';
+    document.getElementById('eventSaveBtn').textContent = 'Update Event';
+  }
   document.getElementById('eventModal').classList.add('open');
 }
+
+function editEvent(id) {
+  const e = _eventsMap[id];
+  if (e) openEventModal(e);
+}
+
 function closeEventModal() { document.getElementById('eventModal').classList.remove('open'); }
 function closeEventModalBg(e) { if (e.target === document.getElementById('eventModal')) closeEventModal(); }
 
 async function saveEvent() {
+  const id = document.getElementById('eventId').value;
   const payload = {
     title:       document.getElementById('eventTitle').value.trim(),
     event_date:  document.getElementById('eventDate').value,
@@ -2067,19 +2182,21 @@ async function saveEvent() {
   const btn = document.getElementById('eventSaveBtn');
   btn.disabled = true; btn.textContent = 'Saving…';
   try {
-    const res = await fetch('/api/events', {
-      method: 'POST',
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/events?id=${id}` : '/api/events';
+    const res = await fetch(url, {
+      method,
       headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
     if (res.ok) {
-      toast(`"${data.event?.title}" added`, 'success');
+      toast(id ? 'Event updated!' : `"${data.event?.title}" added`, 'success');
       closeEventModal();
       loadEvents();
     } else { toast(data.error || 'Save failed', 'error'); }
   } catch { toast('Connection error', 'error'); }
-  btn.disabled = false; btn.textContent = 'Save Event';
+  btn.disabled = false; btn.textContent = id ? 'Update Event' : 'Save Event';
 }
 
 function confirmEventDelete(id, title) {
@@ -2140,7 +2257,7 @@ function renderTestimonialsTable(items) {
       <td>${statusBadge}</td>
       <td>
         ${approveBtn}
-        <button class="btn btn-sm btn-danger" onclick="confirmTestimonialDelete('${esc(t.id)}','${esc(t.name).replace(/'/g,"&#39;")}')">Delete</button>
+        <button class="btn btn-sm" style="border-color:rgba(180,80,80,.3);color:var(--muted);margin-top:.2rem;" onclick="confirmTestimonialDelete('${esc(t.id)}','${esc(t.name).replace(/'/g,"&#39;")}','${t.approved}')">Delete…</button>
       </td>
     </tr>`;
   }).join('');
@@ -2167,10 +2284,11 @@ async function setTestimonialApproval(id, approved, name) {
   } catch { toast('Connection error', 'error'); }
 }
 
-function confirmTestimonialDelete(id, name) {
+function confirmTestimonialDelete(id, name, isApproved) {
   pendingDelete = { type: 'testimonial', id, name };
   document.getElementById('confirmTitle').textContent = 'Delete Testimonial';
-  document.getElementById('confirmMsg').textContent = `Permanently delete the testimonial from "${name}"? This cannot be undone.`;
+  const warning = isApproved === 'true' ? ' This testimonial is currently published on the site.' : '';
+  document.getElementById('confirmMsg').textContent = `Permanently delete the testimonial from "${name}"?${warning} This cannot be undone.`;
   document.getElementById('confirmOverlay').classList.add('open');
   document.getElementById('confirmOkBtn').onclick = executeTestimonialDelete;
 }

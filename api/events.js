@@ -2,6 +2,7 @@
 // GET              → public: upcoming events (today onwards), sorted by date ASC
 // GET ?all=1       → admin: all events including past
 // POST             → admin: create event
+// PUT  ?id=UUID    → admin: update event
 // DELETE ?id=UUID  → admin: delete event
 
 import { createClient } from '@supabase/supabase-js';
@@ -57,6 +58,29 @@ export default async function handler(req) {
       .select().single();
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
     return new Response(JSON.stringify({ event: data }), { status: 201, headers: JSON_HEADERS });
+  }
+
+  if (req.method === 'PUT') {
+    const id = url.searchParams.get('id');
+    if (!id) return new Response(JSON.stringify({ error: 'id required' }), { status: 400, headers: JSON_HEADERS });
+    const body = await req.json();
+    const { title, event_date, event_time, location, description, link } = body;
+    if (!title?.trim() || !event_date) {
+      return new Response(JSON.stringify({ error: 'title and event_date are required' }), { status: 400, headers: JSON_HEADERS });
+    }
+    const { data, error } = await supabase
+      .from('events')
+      .update({
+        title: title.trim(),
+        event_date,
+        event_time: event_time?.trim() || null,
+        location:   location?.trim()   || null,
+        description: description?.trim() || null,
+        link:       link?.trim()        || null,
+      })
+      .eq('id', id).select().single();
+    if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
+    return new Response(JSON.stringify({ event: data }), { headers: JSON_HEADERS });
   }
 
   if (req.method === 'DELETE') {
