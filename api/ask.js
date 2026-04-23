@@ -151,7 +151,8 @@ export default async function handler(req) {
     console.error('/api/ask error:', err.message);
     return new Response(JSON.stringify({
       error: 'Something went wrong',
-      message: 'The archive is temporarily unavailable. Please try again in a moment.'
+      message: 'The archive is temporarily unavailable. Please try again in a moment.',
+      _debug: err.message
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
