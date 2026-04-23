@@ -11,7 +11,7 @@
 // Returns: { ok: true, title, chunks: N } or { error: '...' }
 
 import { createClient } from '@supabase/supabase-js';
-import OpenAI from 'openai';
+import { embedBatch } from '../../lib/embed.js';
 import { cleanTranscript, chunkText } from '../../lib/parse.js';
 
 function auth(req) {
@@ -20,7 +20,6 @@ function auth(req) {
 
 const CHUNK_SIZE  = 400;
 const OVERLAP     = 80;
-const BATCH_SIZE  = 50;
 
 export default async function handler(req) {
   if (req.method === 'OPTIONS') return new Response(null, { status: 200 });
@@ -47,7 +46,6 @@ export default async function handler(req) {
   }
 
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
-  const openai   = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   // Dedup check
   const { data: existing } = await supabase
@@ -71,19 +69,8 @@ export default async function handler(req) {
     return new Response(JSON.stringify({ error: 'No usable text found after cleaning.' }), { status: 400 });
   }
 
-  // Embed in batches
-  const allEmbeddings = [];
-  for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
-    const batch = chunks.slice(i, i + BATCH_SIZE);
-    const response = await openai.embeddings.create({
-      model: 'text-embedding-3-small',
-      input: batch.map(c => c.slice(0, 8000))
-    });
-    allEmbeddings.push(...response.data.map(d => d.embedding));
-    if (i + BATCH_SIZE < chunks.length) {
-      await new Promise(r => setTimeout(r, 200));
-    }
-  }
+  // Embed in batches using Gemini text-embedding-004
+  const allEmbeddings = await embedBatch(chunks);
 
   // Store in Supabase (batches of 100)
   const rows = chunks.map((content, idx) => ({

@@ -1,10 +1,37 @@
 // /api/videos — YouTube Data API proxy
 // Returns latest videos, latest appearances (interviews), or search results
 // Caches for 1 hour via Vercel edge cache — keeps API usage well under 10k/day
+// AI sorting: Gemini 2.0 Flash Lite re-ranks by title/content richness
+
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID || 'UCSEABr_YYaS6MLSAXE6Tuzw';
 const YT_API_KEY = process.env.YOUTUBE_API_KEY;
 const YT_BASE = 'https://www.googleapis.com/youtube/v3';
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+async function aiSortVideos(videos) {
+  if (videos.length <= 1) return videos;
+  try {
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.0-flash-lite',
+      generationConfig: { maxOutputTokens: 300, temperature: 0 }
+    });
+    const list = videos.map((v, i) => `${i}. ${v.title} — ${(v.description || '').slice(0, 120)}`).join('\n');
+    const result = await model.generateContent(
+      `These are YouTube videos from a spiritual teacher. Sort them by depth and richness of spiritual/philosophical content, most substantive first. Return ONLY a JSON array of the original indices, e.g. [3,0,2,1]. Titles:\n${list}`
+    );
+    const text = result.response.text().trim();
+    const match = text.match(/\[[\d,\s]+\]/);
+    if (!match) return videos;
+    const indices = JSON.parse(match[0]);
+    if (indices.length !== videos.length || !indices.every(i => Number.isInteger(i) && i >= 0 && i < videos.length)) return videos;
+    return indices.map(i => videos[i]);
+  } catch {
+    return videos; // Fall back to original order on error
+  }
+}
 
 // Keywords that indicate a podcast/interview appearance (not a standalone homily)
 const INTERVIEW_KEYWORDS = [
@@ -57,6 +84,7 @@ export default async function handler(req) {
 
       nextPageToken = data.nextPageToken || null;
       videos = (data.items || []).map(formatSearchItem);
+      videos = await aiSortVideos(videos);
 
     } else {
       // Get channel uploads playlist ID first (cached via edge)
@@ -87,12 +115,14 @@ export default async function handler(req) {
       const allVideos = (data.items || []).map(formatPlaylistItem);
 
       if (type === 'appearances') {
-        // Filter to just interviews/podcasts, return latest 6
-        videos = allVideos
+        // Filter to just interviews/podcasts, then AI-sort by content richness
+        const filtered = allVideos
           .filter(v => isInterview(v.title, v.description))
-          .slice(0, 6);
+          .slice(0, 12);
+        videos = await aiSortVideos(filtered.slice(0, 6));
       } else {
-        videos = allVideos;
+        // AI-sort latest videos by spiritual/content depth
+        videos = await aiSortVideos(allVideos);
       }
     }
 
