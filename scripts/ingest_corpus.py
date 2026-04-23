@@ -9,7 +9,7 @@ Usage: python3 scripts/ingest_corpus.py
 import re, time, sys
 from pathlib import Path
 from supabase import create_client
-from openai import OpenAI
+import urllib.request, json as _json
 
 # ── Config ──────────────────────────────────────────────────────────────────
 REPO_ROOT   = Path(__file__).parent.parent
@@ -18,7 +18,8 @@ BASE_DIR    = Path('/Users/richardwhite/Downloads/drive-download-20260404T033635
 YEARS       = ['2007','2008','2019','2020','2021','2022','2023','2024','2025']
 CHUNK_SIZE  = 400   # words
 OVERLAP     = 80    # words
-BATCH_SIZE  = 50    # embeddings per OpenAI call
+BATCH_SIZE  = 50    # embeddings per Gemini call
+EMBED_DIM   = 768   # gemini-embedding-2 output dimensions
 
 # ── Load env ─────────────────────────────────────────────────────────────────
 def load_env(path):
@@ -30,9 +31,9 @@ def load_env(path):
             env[k.strip()] = v.strip()
     return env
 
-env     = load_env(ENV_FILE)
-sb      = create_client(env['SUPABASE_URL'], env['SUPABASE_SERVICE_KEY'])
-openai  = OpenAI(api_key=env['OPENAI_API_KEY'])
+env         = load_env(ENV_FILE)
+sb          = create_client(env['SUPABASE_URL'], env['SUPABASE_SERVICE_KEY'])
+GEMINI_KEY  = env['GEMINI_API_KEY']
 
 # ── Text pipeline (mirrors lib/parse.js) ────────────────────────────────────
 def clean_transcript(text: str) -> str:
@@ -90,18 +91,34 @@ def parse_filename(stem: str) -> tuple[str, str | None]:
 
     return title or stem, date_str
 
-# ── Embed a batch of text chunks ─────────────────────────────────────────────
+# ── Embed a batch of text chunks via Gemini ───────────────────────────────────
+BATCH_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:batchEmbedContents?key={GEMINI_KEY}'
+
 def embed_chunks(chunks: list[str]) -> list[list[float]]:
     embeddings = []
     for start in range(0, len(chunks), BATCH_SIZE):
         batch = chunks[start:start + BATCH_SIZE]
-        resp = openai.embeddings.create(
-            model='text-embedding-3-small',
-            input=[c[:8000] for c in batch]
+        payload = _json.dumps({
+            'requests': [
+                {
+                    'model': 'models/gemini-embedding-2',
+                    'content': {'parts': [{'text': c[:8000]}]},
+                    'outputDimensionality': EMBED_DIM
+                }
+                for c in batch
+            ]
+        }).encode()
+        req = urllib.request.Request(
+            BATCH_URL,
+            data=payload,
+            headers={'Content-Type': 'application/json'},
+            method='POST'
         )
-        embeddings.extend([d.embedding for d in resp.data])
+        with urllib.request.urlopen(req) as r:
+            data = _json.loads(r.read())
+        embeddings.extend([e['values'] for e in data['embeddings']])
         if start + BATCH_SIZE < len(chunks):
-            time.sleep(0.2)   # avoid rate limits
+            time.sleep(0.2)
     return embeddings
 
 # ── Supabase insert with retry ────────────────────────────────────────────────
