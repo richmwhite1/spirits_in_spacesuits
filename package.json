@@ -2,7 +2,9 @@
   "name": "spirits-in-spacesuits",
   "version": "1.0.0",
   "description": "Spirits in Spacesuits — Fr. Seán Ó'Laoire, PhD",
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "echo 'Run: vercel dev (not npm run dev)' && exit 1",
     "ingest": "node scripts/ingest.js",
@@ -10,7 +12,7 @@
     "ingest:books": "node scripts/ingest.js --source=books"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
+    "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.49.0",
     "openai": "^4.85.0"
   },

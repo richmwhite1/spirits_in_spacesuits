@@ -42,8 +42,15 @@ export default async function handler(req) {
     });
   }
 
-  const secret = req.headers.get('x-admin-secret');
-  if (!secret || secret !== process.env.ADMIN_SECRET) {
+  const secret = req.headers.get('x-admin-secret') || '';
+  const expected = process.env.ADMIN_SECRET || '';
+  // Constant-time comparison to prevent timing attacks
+  const enc = new TextEncoder();
+  const a = enc.encode(secret.padEnd(256));
+  const b = enc.encode(expected.padEnd(256));
+  let match = secret.length === expected.length ? 1 : 0;
+  for (let i = 0; i < a.length; i++) match &= a[i] === b[i] ? 1 : 0;
+  if (!secret || !match) {
     return new Response(JSON.stringify({ error: 'Invalid password' }), {
       status: 401,
       headers: JSON_HEADERS

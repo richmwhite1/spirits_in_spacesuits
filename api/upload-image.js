@@ -40,6 +40,13 @@ export default async function handler(req) {
       });
     }
 
+    const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+    if (file.size > MAX_SIZE) {
+      return new Response(JSON.stringify({ error: 'Image must be under 5 MB' }), {
+        status: 400, headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     // Ensure bucket exists (create if needed)
     await fetch(`${SUPABASE_URL}/storage/v1/bucket`, {
       method: 'POST',

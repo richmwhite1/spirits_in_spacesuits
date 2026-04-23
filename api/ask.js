@@ -1,13 +1,13 @@
 // /api/ask — the Ask Seán RAG endpoint
-// Flow: question → embed → vector search → Claude with retrieved context → answer + citations
+// Flow: question → embed → vector search → Gemini with retrieved context → answer + citations
 // Rate limited: 50 questions/IP/day (configurable via RATE_LIMIT_DAILY env var)
 
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { embedQuery } from '../lib/embed.js';
 import { findRelevantChunks } from '../lib/supabase.js';
 import { checkRateLimit, getIP, rateLimitResponse } from '../lib/rateLimit.js';
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Seán's system prompt — strict grounding, his voice, honest about limits
 const SEAN_SYSTEM = `You are an AI built on Fr. Seán Ó'Laoire's complete body of work — his books, recorded teachings, and transcribed homilies. You speak in his voice and answer only from the material provided to you in each conversation.
@@ -100,24 +100,24 @@ export default async function handler(req) {
       content: turn.content.slice(0, 800) // Cap each turn
     }));
 
-    // 5. Call Claude — 1200 tokens allows full, nuanced answers for layered spiritual questions
-    const messages = [
-      ...recentHistory,
-      {
-        role: 'user',
-        content: `Here are the most relevant passages from Seán's archive for this question:\n\n${context}\n\n---\n\nQuestion: ${cleanQuestion}`
-      }
-    ];
-
-    const response = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1200,
-      temperature: 0,
-      system: SEAN_SYSTEM,
-      messages
+    // 5. Call Gemini — 1200 tokens allows full, nuanced answers for layered spiritual questions
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      systemInstruction: SEAN_SYSTEM,
+      generationConfig: { maxOutputTokens: 1200, temperature: 0 }
     });
 
-    const answer = response.content[0]?.text || 'Something went wrong. Please try again.';
+    const geminiHistory = recentHistory.map(turn => ({
+      role: turn.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: turn.content }]
+    }));
+
+    const chat = model.startChat({ history: geminiHistory });
+    const result = await chat.sendMessage(
+      `Here are the most relevant passages from Seán's archive for this question:\n\n${context}\n\n---\n\nQuestion: ${cleanQuestion}`
+    );
+
+    const answer = result.response.text() || 'Something went wrong. Please try again.';
 
     // 6. Build source citations for the UI
     const sources = chunks

@@ -5,12 +5,22 @@
 // DELETE ?id=UUID    → admin: permanently delete
 
 import { createClient } from '@supabase/supabase-js';
+import { checkRateLimit } from '../lib/rateLimit.js';
+
+const TESTIMONIAL_DAILY_LIMIT = 3;
 
 function auth(req) {
   return req.headers.get('x-admin-secret') === process.env.ADMIN_SECRET;
 }
 function db() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+}
+function getIP(req) {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('x-real-ip') ||
+    'unknown'
+  );
 }
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
@@ -44,6 +54,14 @@ export default async function handler(req) {
   }
 
   if (req.method === 'POST') {
+    // Rate limit public submissions: 3 per IP per day
+    const ip = getIP(req);
+    const { count } = await checkRateLimit(`testimonial::${ip}`);
+    if (count > TESTIMONIAL_DAILY_LIMIT) {
+      return new Response(JSON.stringify({ error: 'You have already submitted testimonials today. Please try again tomorrow.' }), {
+        status: 429, headers: JSON_HEADERS
+      });
+    }
     const body = await req.json();
     const { name, location, message } = body;
     if (!name?.trim() || !message?.trim()) {

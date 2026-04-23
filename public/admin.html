@@ -859,6 +859,7 @@ async function login() {
     if (res.ok) {
       adminSecret = pw;
       sessionStorage.setItem('adminSecret', pw);
+      sessionStorage.setItem('adminLoginTime', Date.now().toString());
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('app').classList.add('show');
       loadCorpus();
@@ -869,11 +870,19 @@ async function login() {
   btn.disabled = false; btn.textContent = 'Sign In';
 }
 
-function logout() { sessionStorage.removeItem('adminSecret'); location.reload(); }
+function logout() { sessionStorage.removeItem('adminSecret'); sessionStorage.removeItem('adminLoginTime'); location.reload(); }
+
+const SESSION_MAX_AGE = 8 * 60 * 60 * 1000; // 8 hours
 
 (function() {
   const saved = sessionStorage.getItem('adminSecret');
   if (!saved) return;
+  const loginTime = parseInt(sessionStorage.getItem('adminLoginTime') || '0');
+  if (Date.now() - loginTime > SESSION_MAX_AGE) {
+    sessionStorage.removeItem('adminSecret');
+    sessionStorage.removeItem('adminLoginTime');
+    return;
+  }
   fetch('/api/admin/auth', { method: 'POST', headers: { 'x-admin-secret': saved } })
     .then(r => {
       if (r.ok) {
