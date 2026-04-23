@@ -1,7 +1,7 @@
 // /api/videos — YouTube Data API proxy
 // Returns latest videos, latest appearances (interviews), or search results
 // Caches for 1 hour via Vercel edge cache — keeps API usage well under 10k/day
-// AI sorting: Gemini 2.0 Flash Lite re-ranks by title/content richness
+// AI sorting: Gemini 2.5 Flash Lite re-ranks by title/content richness
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
@@ -15,12 +15,12 @@ async function aiSortVideos(videos) {
   if (videos.length <= 1) return videos;
   try {
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash-lite',
+      model: 'gemini-2.5-flash-lite',
       generationConfig: { maxOutputTokens: 300, temperature: 0 }
     });
     const list = videos.map((v, i) => `${i}. ${v.title} — ${(v.description || '').slice(0, 120)}`).join('\n');
     const result = await model.generateContent(
-      `These are YouTube videos from a spiritual teacher. Sort them by depth and richness of spiritual/philosophical content, most substantive first. Return ONLY a JSON array of the original indices, e.g. [3,0,2,1]. Titles:\n${list}`
+      `These are YouTube videos from a spiritual teacher. Analyse the title and any mentioned topics in the description. Sort by depth and richness of spiritual/philosophical content, most substantive first. Return ONLY a JSON array of the original indices, e.g. [3,0,2,1].\n${list}`
     );
     const text = result.response.text().trim();
     const match = text.match(/\[[\d,\s]+\]/);
