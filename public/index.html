@@ -203,6 +203,80 @@ h2 {
 }
 .rule { width: 100%; height: 1px; background: var(--border); }
 
+/* ── LITURGY ── */
+#liturgy { background: var(--void); }
+.liturgy-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem 3.5rem; margin-top: 3rem;
+}
+.liturgy-video-wrap {
+  position: relative; width: 100%; padding-bottom: 56.25%;
+  height: 0; overflow: hidden; border: 1px solid var(--border-mid);
+  margin-bottom: 1.4rem;
+}
+.liturgy-video-wrap iframe {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
+}
+.liturgy-video-title {
+  font-family: var(--serif); font-size: 1.35rem; font-weight: 300;
+  color: var(--gold-pale); letter-spacing: .02em;
+  margin-bottom: 1.2rem; padding-bottom: .75rem; border-bottom: 1px solid var(--border);
+}
+.liturgy-docs { display: flex; flex-direction: column; gap: .5rem; }
+.liturgy-doc {
+  border: 1px solid var(--border); background: rgba(255,255,255,.015);
+}
+.liturgy-doc summary {
+  list-style: none; display: flex; align-items: center;
+  justify-content: space-between; padding: .9rem 1.3rem;
+  font-family: var(--sans); font-size: .73rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--cream-dim);
+  cursor: pointer; transition: color .2s, background .2s;
+}
+.liturgy-doc summary::-webkit-details-marker { display: none; }
+.liturgy-doc summary::after {
+  content: '+'; font-size: 1.1rem; color: var(--gold-dim);
+  flex-shrink: 0; margin-left: 1rem; line-height: 1;
+}
+.liturgy-doc[open] > summary {
+  color: var(--gold-pale); background: rgba(200,150,62,.06);
+  border-bottom: 1px solid var(--border);
+}
+.liturgy-doc[open] > summary::after { content: '−'; }
+.liturgy-doc summary:hover { color: var(--gold-pale); background: rgba(200,150,62,.04); }
+.liturgy-text {
+  padding: 2rem 1.5rem; max-height: 560px; overflow-y: auto;
+  font-family: var(--serif); font-size: 1rem; line-height: 1.9;
+  color: var(--cream-dim);
+}
+.liturgy-text::-webkit-scrollbar { width: 3px; }
+.liturgy-text::-webkit-scrollbar-thumb { background: var(--border-strong); }
+.liturgy-text h4 {
+  font-family: var(--sans); font-size: .63rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gold-dim); margin: 1.8rem 0 .8rem;
+  font-weight: 400; border-top: 1px solid var(--border); padding-top: 1.2rem;
+}
+.liturgy-text h4:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+.liturgy-text h4 + h4 { border-top: none; padding-top: 0; margin-top: .3rem; }
+.liturgy-text p { margin-bottom: .6rem; }
+.liturgy-text p:last-child { margin-bottom: 0; }
+.lit-intro {
+  font-style: italic; color: var(--body); font-size: .95rem;
+  margin-bottom: 1.4rem; padding-bottom: 1.2rem; border-bottom: 1px solid var(--border);
+  line-height: 1.8;
+}
+.lit-role {
+  font-family: var(--sans); font-size: .6rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--gold-dim); margin-right: .5rem;
+  font-style: normal; font-weight: 400;
+}
+.lit-c { color: var(--muted); padding-left: .75rem; }
+.lit-a { color: var(--gold-pale); font-style: italic; }
+.lit-note { font-size: .85rem; color: var(--muted); font-style: italic; margin-bottom: 1rem !important; }
+@media (max-width: 820px) {
+  .liturgy-grid { grid-template-columns: 1fr; gap: 3rem; }
+}
+
 /* ── ASK SEÁN ── */
 #ask { background: var(--void); padding: 0; }
 .ask-shell {
@@ -1156,6 +1230,498 @@ footer {
     </div>
   </div>
   <div class="scroll-cue">Explore</div>
+</section>
+
+<!-- LITURGY -->
+<section id="liturgy">
+  <div class="inner">
+    <p class="eyebrow fade-in">Sacred Celebrations</p>
+    <h2 class="fade-in">The Liturgies</h2>
+    <p class="section-lead fade-in">Cosmic liturgies written by Seán for the Companions on the Journey community — honoring God's 13-billion-year love affair with the universe.</p>
+
+    <div class="liturgy-grid">
+
+      <!-- VIDEO 1 -->
+      <div class="liturgy-col">
+        <div class="liturgy-video-wrap">
+          <iframe src="https://www.youtube.com/embed/ffp7BdN2fIw" title="Eucharistic Prayer of the Cosmos" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <h3 class="liturgy-video-title">Eucharistic Prayer of the Cosmos</h3>
+        <div class="liturgy-docs">
+
+          <details class="liturgy-doc">
+            <summary>A Liturgy Celebrating Christ Consciousness</summary>
+            <div class="liturgy-text">
+              <p class="lit-intro">This booklet contains a revision of the mass which I have written as a result of the questionnaire, community meetings and homilies dealing with the topic of bringing our liturgy and our theology into alignment with each other. In doing this, I have tried to combine elegance and tradition, and to prune bad theology and bad psychology. I wanted to create a liturgy that celebrates 13 billion years of God's love affair with the entire universe, and not simply a sectarian, anthropocentric ritual that focuses only on human frailty. The Eucharistic Prayer of the Cosmos, which is the core of the liturgy, seeks to portray this in poetic metaphors.<br><em>— Seán Ó'Laoire, Tír na nÓg, December 26, 2008</em></p>
+              <p class="lit-note">P = Priest/Presider · C = Community/Congregation · A = All</p>
+
+              <h4>Section 1 — Introductory Rites</h4>
+              <h4>Initial Blessing</h4>
+              <p class="lit-p"><span class="lit-role">P</span> Let us begin our celebration in the name of a God whom we experience as Father and Mother and whom we experience as Word and as Spirit.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen</p>
+              <p class="lit-p"><span class="lit-role">P</span> God is within us and God is among us.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen. Indeed, it is so.</p>
+
+              <h4>Prayer for Alignment</h4>
+              <p class="lit-p"><span class="lit-role">P</span> As we bring ourselves into alignment with God let us be aware of the ways in which we live in the shadow-land of unmindfulness. Here we pause to reflect silently on the ways in which we are unaligned as individuals and as communities.</p>
+              <p class="lit-a"><span class="lit-role">A</span> I acknowledge to you, my sisters and my brothers that I have been unaware of the God-in-all-beings. I have been unmindful in my thoughts and in my words, in what I have done and in what I have neglected to do. So, I ask Mother Mary all the angels and saints and you, my sisters and my brothers to help reawaken me.</p>
+              <p class="lit-p"><span class="lit-role">P</span> May we realign ourselves with the God-in-all-beings, may we forgive each other's transgressions and may we commit to the journey into enlightenment.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen</p>
+
+              <h4>Prayer for Compassion</h4>
+              <p class="lit-p"><span class="lit-role">P</span> May we be compassionate to ourselves.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen.</p>
+              <p class="lit-p"><span class="lit-role">P</span> May we be compassionate to all humans.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen.</p>
+              <p class="lit-p"><span class="lit-role">P</span> May we be compassionate to all beings.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen.</p>
+
+              <h4>Hymn of Praise</h4>
+              <p>Typically we will sing some version of the Gloria here.</p>
+
+              <h4>Focusing Prayer</h4>
+              <p class="lit-p"><span class="lit-role">P</span> Let us pray: God, our Father and our Mother, keep before us the wisdom and love you have revealed in Christ Jesus. Help us to be like him, in word and deed, for he lives and reigns with you and the Holy Spirit, one God, for ever and ever.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen</p>
+
+              <h4>Section 2 — Liturgy of the Word</h4>
+              <h4>Readings</h4>
+              <p>We will use readings from: The Judeo-Christian scriptures, The Apocryphal writings, Other scriptural traditions, Other inspirational writings. At the end the reader will say, "This is a reading inspired by God." and we will respond, "Thanks be to God." We will, typically, have three readings, separated by hymns or chants. Such a chant is the one that Seán sings in Gaelic before he reads the gospel:</p>
+              <p style="font-style:italic;color:var(--body);">A Íosa glan mo chroí-se gu glayglon gok law<br>
+              is a Íosa cuir m'intinn faoi léir-smacht do ghrá<br>
+              Déan mo smaointe go fíor-ghlan agus briathra mo bhéil<br>
+              is a thiarna, a Dhé dhílis, stiúraigh coíche mo shaol</p>
+              <p class="lit-note">(Jesus cleanse my heart sparklingly clean each day / And Jesus put my intellect under the full control of your love / Make my thoughts truly clean, and the words of my mouth / And Lord, faithful God, always direct my life.)</p>
+
+              <h4>Homily</h4>
+              <p>After the final reading there will be a homily. Following the homily, there will be a brief period of silence.</p>
+
+              <h4>General Intercessions</h4>
+              <p>A prayer-leader will invite the community to pray aloud for our needs. At the end of each petition, the prayer-leader will say, "For this we pray to our God." and the community will respond, "Loving God, hear our prayer." The prayer-leader or presider will end these prayers by saying, "God, our Father and our Mother we offer you these and all our needs in confidence through Jesus the Christ." and the community responds, "Amen."</p>
+
+              <h4>Section 3 — The Offertory Rite</h4>
+              <h4>Procession with Gifts</h4>
+              <p>Two or three members of the community will process with the elements of the Eucharist: bread, wine, grape-juice and water, which they will present to the presider. This will normally be accompanied by an offertory hymn.</p>
+
+              <h4>Preparation of the Gifts</h4>
+              <p class="lit-p"><span class="lit-role">P</span> Blessed are you, God of all creation. Through your goodness we have this bread to offer, which earth has given and human hands have made. It will become for us the bread of life.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Blessed be God forever.</p>
+              <p class="lit-note">The presider pours some water into the wine and into the grape-juice, saying:</p>
+              <p class="lit-p"><span class="lit-role">P</span> By the mystery of this water and wine may we come to share in the divinity of Christ, who humbled himself to share in our humanity.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Blessed are you, God of all creation. Through your goodness we have this cup to offer, fruit of the vine and work of human hands. It will become our spiritual drink.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Blessed be God forever.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Loving God, We realize that everything is of you; and so we offer you these gifts as a symbol of ourselves that we may move into the fullness of enlightenment.</p>
+              <p class="lit-note">Then, while washing his hands:</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, Help me to awaken from the shadow-land and to come into the light of mindfulness.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Pray my brothers and sisters, that this ritual may awaken us to our true nature.</p>
+              <p class="lit-c"><span class="lit-role">C</span> May we fully recognize God as transcendent Other / as immanent creation / as community / and as the image within us.</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, our Mother and our Father, may the bread and the cup we offer bring your people the unity and the peace they signify. We ask this in the name of Jesus the Christ.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen.</p>
+
+              <h4>Section 4 — The Eucharistic Prayer</h4>
+              <h4>Preface</h4>
+              <p class="lit-p"><span class="lit-role">P</span> God is within us and God is among us.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen. Indeed it is so.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Let us lift up our hearts.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We lift them into the mystery.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Let us be thankful for all the ways in which we feel God's presence.</p>
+              <p class="lit-c"><span class="lit-role">C</span> It is good to be grateful.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Father all-powerful and Mother ever-living God, we do well always and everywhere to give you thanks. All things are of your making, all times and seasons obey your laws. You created us in your own image, making us responsible for the planet and its wonders. As stewards of creation we recognize and honor you in all of your other creatures. And so, with angels and archangels, with saints and sages of all traditions, and with all sentient beings, we cry out in gratitude.</p>
+              <p class="lit-note">[Community sings some version of the Holy, Holy.]</p>
+
+              <h4>Eucharistic Prayer of the Cosmos</h4>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Cosmic Dancer, we honor you. You who choreograph the solar flares, the orbits of the planets and the wild careening of comets and meteors. You who can name every ancient rock in the Asteroid Belt, you who can tango with typhoons and twisters and tornadoes, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Ultimate Artist, we honor you. You who paint sunrises and sunsets, the plumage of birds and the camouflage of insects. You, who with your finest brushes, watercolor the wings of butterflies and the costumes of flowers, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Sculptor, we honor you. You who chisel out rocks and mountain ranges, and cup your hands to form sand dunes, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Writer, we honor you. You who leave traces of your penmanship everywhere; holographically concealing your entire Magnum Opus in every line of the text. You whose mystical meaning is often misunderstood by the scriptures of the world, scriptures in which Unity Consciousness is fragmented into sectarian separation. You who secreted, in the winking of a distant star, the Rosetta Stone which would allow us to translate every experience into a Christ-consciousness moment of 'Eureka', we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Musician, we honor you. You who make flutes of the willows by the lakeside and of the reeds on the river bank; you whose bass-baritone reverberates in the thunder and whose soprano trills in the morning music of the blackbird; you who drum ecstatically with your raindrops on the sun-parched plains; and you who hold all of these sounds in the silence of a star-studded night sky, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Mathematician, we honor you. You who love to play with binary codes with base four and six and eight; with rational numbers and with irrational numbers, with real numbers and with imaginary numbers; you who from nothing created the One and from the One, created the partnership of the Two; and from the Two created the Many; and, then, from the Many collapsed all, mystically, back to the One, which vanishes into the womb of No-thing-ness awaiting rebirth, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Physicist, we honor you. Quantum-leaping from the impossible to the possible; from the improbable to the probable; and from the potential to the actual, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Biologist, we honor you. You who whirl ecstatically around your own image in the double helix of life-making, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Architect, we honor you. You who silently whisper the secrets of home-building in the hearts of weaver-birds and ants; in the hearts of spiders and mice; in the sacred geometry of the temple-makers and in the wombs of mammal mothers, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Awakener, we honor you. You who patiently call forth more-and-more-complete images of Yourself, until a species is born that remembers fully. You who send avatars into every age to nudge religion towards spirituality and to move us from mere belief-in-gods to experiences of the God-within and the God-among-us. You who are the Sender of Siddharta and the Commissioner of the Christ; you who continue to send countless others to awaken us from illusion. You who are the Gentle Mother watching while the great crises of our times are understood for what they really are: great opportunities for seeing beyond the separation into the Oneness of Isness, our origin, our mission and our home, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you</p>
+              <p class="lit-p"><span class="lit-role">P</span> Are you a creator God?</p>
+              <p class="lit-c"><span class="lit-role">C</span> You are.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Do you design things intelligently?</p>
+              <p class="lit-c"><span class="lit-role">C</span> You do.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Is it by evolution?</p>
+              <p class="lit-c"><span class="lit-role">C</span> It is.</p>
+              <p class="lit-p"><span class="lit-role">P</span> And so, since infinity is contained in a single grain of sand, we choose bread and we choose the blood of the vine, symbols offered us by the avatar, the God-man Jesus. And, with altered vision, we see back into his lifetime as a carpenter-mystic to the mystical core of his message, and beyond that into the purpose of his coming.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Even at the greatest crisis-time of that incarnation, on the night before he was cruelly killed, even then, he could reach into the core of his own being, and, using the food of his last meal with his friends, say:</p>
+              <p class="lit-a"><span class="lit-role">A</span> Take this all of you and eat it. This is my body; the body which I accepted at my incarnation, the body that I needed for my mission, the body which is the visible sign of the Word-made-flesh. And you, also, have done the same. Remember that.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Then, reaching for the cup, he told them:</p>
+              <p class="lit-a"><span class="lit-role">A</span> Take this, too, all of you who would aspire to Christ consciousness. For this is the cup of my blood; it binds us together since we all share the blood of being human. Truly, we are blood brothers and sisters. So, it is a covenant between us. It is the final covenant. A covenant to dissolve the illusions of separation; a covenant that opens your eyes to the realization that we are not separate from God; that we are not separate from each other; and that we are not separate from nature. This remembering will take away the sin of living in a state of separation. Whenever you celebrate this ritual, remember that.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Let us proclaim the Mystery of Faith.</p>
+              <p class="lit-note">[Here we will sing an appropriate consecration proclamation to bring to awareness the Christ Consciousness come among us.]</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, You are the Ocean bathing in the waters of your own awareness; we are the fish agreeing that we can feel the wetness but demanding proof that the ocean exists. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, You are the lamb gamboling ecstatically in the meadow of your own mindfulness; we are the sheep peering jadedly through a prison-pen of our own making. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, You are the forest, a miracle of ecological cooperation. You are the oak tree in the forest, a miracle of individual might. You are a single leaf on the oak tree, a miracle of intricate skin-stretching. You are a cell within that leaf, a reminder of how life was four billion years ago. You are an atom within that cell, a reminder of how life was 13 billion years ago. You are the energy within that atom, juggling a multitude of microcosms, each one a hologram of the universe of Hubble. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, You are the Hound of Heaven following us down the years and down the days. You are the tiger prowling patiently in the garden of your delights, and we the prey who fearfully hide from the deadly embrace of being consumed by the mystery. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> And so we acknowledge all of our relations. We acknowledge the Stone People, the first children of the rock we call Earth. We acknowledge the Plant People, whose intelligence invented photosynthesis and Earth-life. We acknowledge the Wingéd People, soaring in the vault of the sky, singing and searching. We acknowledge the Finnéd People, silently visiting the depths of the water world. We acknowledge the four-legged People, who found the forests and the plains, the wilderness and the desert, and learned to be at peace in all those places. We acknowledge the six-legged and the eight-legged, the most ubiquitous of us all, investigating and inhabiting Gaia like nobody before or since. We acknowledge the 100-legged and the 1,000-legged, the lowly ones, taking forever to go nowhere because nowhere is where the present moment always is. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> And we acknowledge the two-legged ones, the human family which you joined through incarnation. We are one family, but we are the twin energies of our race, the feminine and the masculine, which are the two facets of your immanence. We are the intrepid seekers who started in Africa and then discovered Asia and Europe, America and Australia, the Arctic and the Antarctic. And everywhere we traveled, we found your footprints. We are Black and Yellow, we are Brown and White and Red. We are the hues on the palette of your art-working. We have learned to speak 7,000 languages, each one of which can sing of your wonders. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> We have followed the signs of your safari on Gaia, getting occasional glimpses of you in our theologies, and having full-on encounters with you in our mystical moments. We are Buddhists and Bahai, we are Christians and Confucianists, we are Jews and Jains, we are Muslims and Zoroastrians, we are Shintos and Shamanists, we are Sufis and Sikhs, we are Taoists and Hindus. We are Seekers, sometimes sleepy seekers and sometimes awakened ones. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> We do not ask for signs anymore for we are surrounded by miracles. Rather, we ask only that we come fully awake. We ask that we become mindful of our true nature which is Buddha-nature; that we become aware of our core essence, which is Christ-consciousness. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Through this realization, under the guidance of the Holy Spirit, we offer you honor and glory, forever and ever.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen</p>
+
+              <h4>Section 5 — The Communion Rite</h4>
+              <h4>The Lord's Prayer</h4>
+              <p class="lit-p"><span class="lit-role">P</span> Remembering that God is both our Father and Mother we pray:</p>
+              <p class="lit-a"><span class="lit-role">A</span> Our Father and our Mother, who art in heaven hallowed be thy name, thy kingdom come, thy will be done on earth as it is in heaven. Give us this day our daily bread. And forgive us our trespasses as we forgive those who trespass against us. And lead us not into temptation, but deliver us from evil.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Deliver us, oh God, from every evil and grant us peace in our day. In your mercy keep us free from darkness and protect us from all needless anxiety as we wait in joyful hope for the coming of Christ consciousness.</p>
+              <p class="lit-c"><span class="lit-role">C</span> For the kingdom, the power and the glory are yours, now and forever — Amen.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Jesus the Christ, you said to your apostles: I leave you peace, my peace I give you. Look not on our lack of mindfulness, but on the faith of your people, and grant us the peace and unity of your kingdom, where you live and reign forever and ever.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen.</p>
+              <p class="lit-p"><span class="lit-role">P</span> May we always experience the peace of God.</p>
+              <p class="lit-c"><span class="lit-role">C</span> And may we live in such a way that others can experience it too.</p>
+
+              <h4>The Breaking of the Bread</h4>
+              <p class="lit-p"><span class="lit-role">P</span> Lamb of God, you bring your love into our fear-filled world.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Teach us to love.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Lamb of God, you shine your light into the darkness of our times.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us turn to the light.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Lamb of God, you offer life to a world that believes in death.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Re-awaken us to life.</p>
+              <p class="lit-note">The priest/presider breaks off a section of the bread and drops it into the chalice, saying:</p>
+              <p class="lit-p"><span class="lit-role">P</span> May this mingling of the body and blood of Jesus the Christ bring eternal life to us who receive it.</p>
+
+              <h4>Sharing Communion</h4>
+              <p class="lit-p"><span class="lit-role">P</span> Christ Jesus, with faith in your love and mercy we eat your body and drink your blood. May we do this consciously, with awareness that brings health to our minds, to our souls and to our bodies.</p>
+              <p class="lit-p"><span class="lit-role">P</span> This is the lamb of God, this is Jesus the Christ who has come to take away the darkness of the world. Happy are we who are called to his supper.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Christ Jesus, may I be mindful as I receive you. Touch my soul and I shall be healed.</p>
+              <p class="lit-p"><span class="lit-role">P</span> May the body and blood of Jesus the Christ bring eternal life to us who receive it.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen</p>
+              <p class="lit-p"><span class="lit-role">P</span> For any visitors that are with us today — it is the custom in our community to invite everybody to receive communion with us, in recognition of the fact that we are all equally beloved of God. It is food for our souls. Everybody is now invited to come forward and receive communion under the symbols of the consecrated bread and wine (or grape-juice.)</p>
+
+              <h4>Section 6 — Concluding Rite</h4>
+              <h4>Announcements</h4>
+              <p>This is an opportunity to, very briefly, make the congregation aware of activities that build our community and our world.</p>
+
+              <h4>Prayer</h4>
+              <p class="lit-p"><span class="lit-role">P</span> Let us pray: God, our Father and our Mother, by this sacrament you make us one with Christ. By becoming more like him on earth, may we come to share his glory in heaven, where he lives and reigns forever and ever.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen</p>
+
+              <h4>Dismissal</h4>
+              <p class="lit-p"><span class="lit-role">P</span> God is within us and God is among us.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen. Indeed, it is so.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Let us end our celebration in the name of a God whom we experience as Father and Mother and whom we experience as Word and as Spirit.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen</p>
+              <p class="lit-p"><span class="lit-role">P</span> The mass is ended, let us go to bring peace to our world.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Thanks be to God</p>
+
+              <h4>Addendum — Kyrie</h4>
+              <p style="font-style:italic;">Kyrie Eleison · Christe Eleison · Kyrie Eleison</p>
+              <p class="lit-note">(Lord, have mercy · Christ, have mercy · Lord, have mercy)</p>
+
+              <h4>Peruvian Gloria</h4>
+              <p class="lit-p"><span class="lit-role">P</span> Glory to God, Glory to God, Glory to our Father.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Glory to God, Glory to God, Glory to our Father.</p>
+              <p class="lit-p"><span class="lit-role">P</span> To God be glory forever.</p>
+              <p class="lit-c"><span class="lit-role">C</span> To God be glory forever. Alleluia, amen.</p>
+              <p class="lit-note">[Repeated for: Glory to our Mother · Glory to Christ Jesus · Glory to the Spirit]</p>
+
+              <h4>Hebrew Blessing over the Bread</h4>
+              <p style="font-style:italic;color:var(--body);">Baruch atah adonai · Eloheinu, melekh ha 'olam · Hamotzie lechem, min ha-aretz. Amen.</p>
+              <p class="lit-note">(Blessed are you, Lord · our God, king of the universe · who causes bread to come forth from the land.)</p>
+
+              <h4>Hebrew Blessing over the Cup</h4>
+              <p style="font-style:italic;color:var(--body);">Baruch atah adonai · Eloheinu, melekh ha 'olam · Bore p'ri haGafen. Amen.</p>
+              <p class="lit-note">(Blessed are you, Lord · our God, king of the universe · who creates the fruit of the vine.)</p>
+
+              <h4>Sanctus — Latin</h4>
+              <p style="font-style:italic;color:var(--body);">Sanctus, sanctus, sanctus · Dominus, Deus sabaoth · Pleni sunt coeli et terra gloria tua · Hosanna in excelsis · Benedictus qui venit in nomine Domini · Hosanna in excelsis</p>
+              <p class="lit-note">(Holy, holy, holy · Lord, God of hosts · heaven and Earth are full of your glory · hosanna in the highest · Blessed is he who comes in the name of the Lord)</p>
+
+              <h4>Mtakatifu Bwana Mungu — Kiswahili</h4>
+              <p style="font-style:italic;color:var(--body);">Mtakatifu Bwana Mungu, Ee Hosanna juu (x3)</p>
+              <p class="lit-note">(Holy, Lord God, Yes Hosanna on high)</p>
+              <p style="font-style:italic;color:var(--body);">Verse One: Utukuzwe Bwana Mungu, Ee / Mungu Mumbu wetu, Ee / Mbingu na dunia zimejaa utukufu wako, Ee ee mbinguni</p>
+              <p class="lit-note">(May you be blessed Lord God / God our creator / Heaven and earth are full of your glory)</p>
+              <p style="font-style:italic;color:var(--body);">Verse Two: Utukuzwe Bwana Mungu, Ee / Mungu Mkombozi wetu, Ee / Uliangamiza mauti, ukaleta uzima wetu, Ee, ee mbinguni</p>
+              <p class="lit-note">(God our redeemer / You conquered death and you brought us life)</p>
+              <p style="font-style:italic;color:var(--body);">Verse Three: Utukuzwe Bwana Mungu, Ee / Mungu Mfariji wetu, Ee / Ulimtuma roho kwetu tuwe sote mwili mmoja, Ee, ee mbinguni</p>
+              <p class="lit-note">(God our comforter / You sent us the Spirit so that we might be one body)</p>
+
+              <h4>Agnus Dei</h4>
+              <p style="font-style:italic;color:var(--body);">Agnus Dei, qui tolis peccata mundi miserere nobis. (x2)<br>Agnus Dei, qui tolis peccata mundi dona nobis pacem.</p>
+              <p class="lit-note">(Lamb of God, you who take away the sins of world have mercy on us. · …grant us peace.)</p>
+
+              <h4>Alternate Eucharistic Prayer</h4>
+              <p class="lit-p"><span class="lit-role">P</span> Father, Mother, you are holy indeed, and all creation rightly gives you praise. All life, all holiness comes from you through your Son, Jesus Christ, by the working of the Holy Spirit. From age to age you gather a people to yourself, so that from East to West a perfect offering may be made to the glory of your name.</p>
+              <p class="lit-p"><span class="lit-role">P</span> And so we bring you these gifts. We ask you to make them holy by the power of the Spirit, that they may become the body and blood of your Son and our brother Jesus Christ, at whose invitation we celebrate this Eucharist.</p>
+              <p class="lit-p"><span class="lit-role">P</span> On the night he was betrayed, he took bread and gave you thanks and praise. He broke the bread, gave it to his disciples and said:</p>
+              <p class="lit-a"><span class="lit-role">A</span> Take this, all of you, and eat it: this is my body which will be given up for you.</p>
+              <p class="lit-p"><span class="lit-role">P</span> When supper was ended he took the cup. Again he gave you thanks and praise, gave the cup to his disciples and said:</p>
+              <p class="lit-a"><span class="lit-role">A</span> Take this, all of you, and drink from it: this is the cup of my blood, the blood of the new and everlasting covenant. It will be shed for you and for all so that sins may be forgiven. Do this in memory of me.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Let us proclaim the mystery of our faith.</p>
+              <p class="lit-c"><span class="lit-role">C</span> When we eat this bread and drink from this cup we proclaim your life, your death and your resurrection, until you come in glory.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Father, Mother, calling to mind the teaching of Jesus, his glorious resurrection and ascension into heaven, and ready to greet him when he comes again, we offer you in thanksgiving this holy and living sacrifice.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Look with favor on your people's offering. The love of Jesus has reconciled us to you. Grant that we, who are nourished by his body and blood, may be filled with his Holy Spirit, and become one body, one spirit in Christ.</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, our Mother and our Father, may this sacrifice advance the peace and enlightenment of all the world. Strengthen in faith and love your pilgrim people on Earth; we ask you to bless all spiritual travelers, those who seek you through: Judaism or Christianity, Islam or Sufism, Bahai or Zoroastrianism, Jainism or Sikhism, Buddhism or Hinduism, Confucianism or Taoism, Shintoism or Shamanism, Art or Science, or any of the great wisdom traditions of our planet.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Father, Mother, hear the prayers of this family which you have gathered here before you. In mercy and love unite all your children, wherever they may be. Welcome into your kingdom our departed brothers and sisters, and all who have left this world. We hope to enjoy forever the vision of your glory, through Jesus the Christ, from whom all good things come.</p>
+              <p class="lit-a"><span class="lit-role">A</span> Through him, with him and in him in the unity of the Holy Spirit, all glory and honor is yours, almighty God, forever and ever — Amen.</p>
+            </div>
+          </details>
+
+          <details class="liturgy-doc">
+            <summary>The Eucharistic Prayer of the Cosmos</summary>
+            <div class="liturgy-text">
+              <p class="lit-intro">The Eucharistic Prayer of the Cosmos — the cosmic heart of Seán's liturgy, offered as a standalone text for contemplation and celebration.<br><em>— Seán Ó'Laoire, Copyright © 2007. All rights reserved.</em></p>
+              <p class="lit-note">P = Priest/Presider · C = Community/Congregation · A = All</p>
+
+              <p class="lit-p"><span class="lit-role">P</span> God, the Cosmic Dancer, we honor you. You who choreograph the solar flares, the orbits of the planets and the wild careening of comets and meteors. You who can name every ancient rock in the Asteroid Belt, you who can tango with typhoons and twisters and tornadoes, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you!</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Ultimate Artist, we honor you. You who paint sunrises and sunsets, the plumage of birds and the camouflage of insects. You, who with your finest brushes, watercolor the wings of butterflies and the costumes of flowers, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you!</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Sculptor, we honor you. You who chisel out rocks and mountain ranges, and cup your hands to form sand dunes, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you!</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Writer, we honor you. You who leave traces of your penmanship everywhere; holographically concealing your entire Magnum Opus in every line of the text. You whose mystical meaning is often misunderstood by the scriptures of the world, scriptures in which Unity Consciousness is fragmented into sectarian separation. You who secreted, in the winking of a distant star, the Rosetta Stone which would allow us to translate every experience into a Christ-consciousness moment of 'Eureka', we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you!</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Musician, we honor you. You who make flutes of the willows by the lakeside and of the reeds on the river bank; you whose bass-baritone reverberates in the thunder and whose soprano trills in the morning music of the blackbird; you who drum ecstatically with your raindrops on the sun-parched plains; and you who hold all of these sounds in the silence of a star-studded night sky, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you!</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Mathematician, we honor you. You who love to play with binary codes with base 4 and 6 and 8; with rational numbers and with irrational numbers, with real numbers and with imaginary numbers; you who from nothing created the One and from the One, created the partnership of the Two; and from the Two created the Many; and, then, from the Many collapsed all, mystically, back to the One, which vanishes into the womb of No-thing-ness awaiting rebirth, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you!</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Physicist, we honor you. Quantum-leaping from the impossible to the possible; from the improbable to the probable; and from the potential to the actual, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you!</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Biologist, we honor you. You who whirl ecstatically around your own image in the double helix of life-making, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you!</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Architect, we honor you. You who silently whisper the secrets of home-building in the hearts of weaver-birds and ants; in the hearts of spiders and mice; in the sacred geometry of the temple-makers and in the wombs of mammal mothers, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you!</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, the Awakener, we honor you. You who patiently call forth more and more complete images of Yourself, until a species is born that remembers fully. You who send avatars into every age to nudge religion towards spirituality and to move us from mere belief-in-gods to experiences of the God-within and the God-among-us. You who are the Sender of Siddharta and the Commissioner of the Christ; you who continue to send countless others to awaken us from illusion. You who are the Gentle Mother watching while the great crises of our times are understood for what they really are: great opportunities for seeing beyond the separation into the Oneness of Isness, our origin, our mission and our home, we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> We honor you!</p>
+              <p class="lit-p"><span class="lit-role">P</span> Are you a creator God?</p>
+              <p class="lit-c"><span class="lit-role">C</span> You are!</p>
+              <p class="lit-p"><span class="lit-role">P</span> Do you design things intelligently?</p>
+              <p class="lit-c"><span class="lit-role">C</span> You do!</p>
+              <p class="lit-p"><span class="lit-role">P</span> Is it by evolution?</p>
+              <p class="lit-c"><span class="lit-role">C</span> It is!</p>
+              <p class="lit-p"><span class="lit-role">P</span> And so, since infinity is contained in a single grain of sand, we choose bread and we choose the blood of the vine, symbols offered us by the avatar, the God-man Jesus. And, with altered vision, we see back into his lifetime as a carpenter-mystic to the mystical core of his message, and beyond that into the purpose of his coming.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Even at the greatest crisis-time of that incarnation, on the night before he was cruelly killed, even then, he could reach into the core of his own being, and, using the food of his last meal with his friends, say:</p>
+              <p class="lit-a"><span class="lit-role">A</span> Take this all of you and eat it. This is my body; the body which I accepted at my incarnation, the body that I needed for my mission, the body which is the visible sign of the Word made flesh. And you, also, have done the same. Remember that!</p>
+              <p class="lit-p"><span class="lit-role">P</span> Then, reaching for the cup, he told them:</p>
+              <p class="lit-a"><span class="lit-role">A</span> Take this, too, all of you who would aspire to Christ consciousness. For this is the cup of my blood; it binds us together since we all share the blood of being human. Truly, we are blood brothers and sisters. So, it is a covenant between us. It is the final covenant. A covenant to dissolve the illusions of separation; a covenant that opens your eyes to the realization that we are not separate from God; that we are not separate from each other; and that we are not separate from nature. This remembering will take away the sin of living in a state of separation. Whenever you celebrate this ritual, remember that!</p>
+              <p class="lit-p"><span class="lit-role">P</span> Let us proclaim the Mystery of Faith.</p>
+              <p class="lit-note">[Here we will sing an appropriate consecration proclamation to bring to awareness the Christ Consciousness come among us.]</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, You are the Ocean bathing in the waters of your own awareness; we are the fish agreeing that we can feel the wetness but demanding proof that the ocean exists. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, You are the lamb gamboling ecstatically in the meadow of your own mindfulness; we are the sheep peering jadedly through a prison-pen of our own making. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, You are the forest, a miracle of ecological cooperation. You are the oak tree in the forest, a miracle of individual might. You are a single leaf on the oak tree, a miracle of intricate skin-stretching. You are a cell within that leaf, a reminder of how life was 4 billion years ago. You are an atom within that cell, a reminder of how life was 13 billion years ago. You are the energy within that atom, juggling a multitude of microcosms, each one a hologram of the universe of Hubble. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> God, You are the Hound of Heaven following us down the years and down the days. You are the tiger prowling patiently in the garden of your delights, and we the prey who fearfully hide from the deadly embrace of being consumed by the mystery. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> And so we acknowledge all of our relations. We acknowledge the Stone People, the first children of the rock we call Earth. We acknowledge the Plant People, whose intelligence invented photosynthesis and Earth-life. We acknowledge the Wingéd People, soaring in the vault of the sky, singing and searching. We acknowledge the Finnéd People, silently visiting the depths of the water world. We acknowledge the 4-legged People, who found the forests and the plains, the wilderness and the desert, and learned to be at peace in all those places. We acknowledge the 6-legged and the 8-legged, the most ubiquitous of us all, investigating and inhabiting Gaia like nobody before or since. We acknowledge the 100-legged and the 1,000-legged, the lowly ones, taking forever to go nowhere because nowhere is where the present moment always is. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> And we acknowledge the 2-legged ones, the human family which you joined through incarnation. We are one family, but we are the twin energies of our race, the feminine and the masculine, which are the two facets of your immanence. We are the intrepid seekers who started in Africa and then discovered Asia and Europe, America and Australia, the Arctic and the Antarctic. And everywhere we traveled, we found your footprints. We are Black and Yellow, we are Brown and White and Red. We are the hues on the palette of your art-working. We have learned to speak 7,000 languages, and each one can sing of your wonders. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> We have followed the signs of your safari on Gaia, getting occasional glimpses of you in our theologies, and having full-on encounters with you in our mystical moments. We are Buddhists and Bahai, we are Christians and Confucianists, we are Jews and Jains, we are Muslims and Zoroastrians, we are Shintos and Shamanists, we are Sufis and Sikhs, we are Taoists and Hindus. We are Seekers, sometimes sleepy seekers and sometimes awakened ones. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> We do not ask for signs anymore for we are surrounded by miracles. Rather, we ask only that we come fully awake. We ask that we become mindful of our true nature which is Buddha-nature; that we become aware of our core essence, which is Christ consciousness. Help us to awaken.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Help us to awaken.</p>
+              <p class="lit-p"><span class="lit-role">P</span> Through this realization, under the guidance of the Holy Spirit, we offer you honor and glory, forever and ever.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Amen</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+      <!-- VIDEO 2 -->
+      <div class="liturgy-col">
+        <div class="liturgy-video-wrap">
+          <iframe src="https://www.youtube.com/embed/CLRmEbi_7e0" title="Children's Liturgy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <h3 class="liturgy-video-title">Children's Liturgy</h3>
+        <div class="liturgy-docs">
+
+          <details class="liturgy-doc">
+            <summary>A Cosmic Mass for Children</summary>
+            <div class="liturgy-text">
+              <p class="lit-intro">This booklet is a preliminary attempt to create a Eucharist that is suitable for children. I am trying to teach mystical theology in a way that engages both their great imaginations and their personal experiences. Its emphasis is on a cosmic spirituality where all of God's creatures are beloved and which builds upon and further encourages children's innate love of all life forms.<br><em>— Seán Ó'Laoire, Tír na nÓg, September 1, 2010</em></p>
+              <p class="lit-note">R = Reader · C = Children · E = Everybody</p>
+
+              <h4>Section 1 — Introduction</h4>
+              <h4>Getting Ready for the Visit to God</h4>
+              <p>The Mass is like a trip to visit God. It should be an exciting trip. Are you looking forward to it? And, usually, before we visit somebody important, we want to clean up and look our best. But God isn't fussy about what we are wearing, or if our hair is combed. God is only interested in the condition of our souls — whether or not we are loving and forgiving; and kind and compassionate.</p>
+
+              <h4>Quick Checklist</h4>
+              <p>So let's do a quick check inside. Please close your eyes. Think back over the last week and ask yourself these ten questions:</p>
+              <p>1. Did I remember, at the beginning of each day, to thank God for the gifts of life?<br>
+              2. Did I remember, at the end of each day, to thank God for the gifts of life?<br>
+              3. Did I use any bad words?<br>
+              4. Have I been loving to my parents or was I rude to them?<br>
+              5. If I have brothers or sisters, have I been loving to them or was I rude to them?<br>
+              6. Have I been loving to my friends or was I rude to them?<br>
+              7. Have I been loving to the animals I met or was I unkind to them?<br>
+              8. Have I told any lies?<br>
+              9. Have I gossiped about anybody?<br>
+              10. Did I steal anything?</p>
+
+              <h4>Apologies</h4>
+              <p>If I have failed in any of these ways, I now want to say, "I am sorry." And, if I get a chance, I will apologize directly to those whom I have hurt.</p>
+
+              <h4>The Water Slide</h4>
+              <p>Now imagine that you are on a fun water slide that will take you into a great swimming pool. Just before you hit the water, you pinch your nose shut; and as you rush into the water it wipes your soul clean. You come up for breath laughing and then you see God, sitting at the edge of the pool. God is laughing too, and is very, very happy to see you.</p>
+
+              <h4>Singing to God</h4>
+              <p>So, let's sing a song to God; a song that the first peoples of America used to sing. It speaks of life as a river, and of God as the sea. The number four was special to those people, so let's sing it through four times:</p>
+              <p style="font-style:italic;color:var(--body);">The River is flowing, flowing and growing; the river is flowing, down to the sea. Mother carry me, child I will always be; mother carry me down to the sea.</p>
+
+              <h4>Section 2 — Hearing God's Word</h4>
+              <h4>Reading</h4>
+              <p>Now we will read a story. This will be done either by one person or by a group. Use your imagination as the story is being read: Can you see things? What sounds do you hear? What emotions are you feeling? Can you see yourself taking a part in the story; or are you simply watching it?</p>
+
+              <h4>Discussion</h4>
+              <p>· Can you tell the story in your own words?<br>
+              · What did you learn from this story?<br>
+              · If this story could help you to make a change in your life, what change would you make?</p>
+
+              <h4>Praying for the World</h4>
+              <p>Take a moment to think and then tell us what or whom you would like to pray for today. When each person is finished, the rest of us will say, "Loving God, hear our prayer."</p>
+
+              <h4>Section 3 — Giving God Gifts</h4>
+              <h4>Páraic's Six-Penny Shoes</h4>
+              <p>Once, long, long ago, on my mother's birthday, my five-year-old brother, whose name is Páraic — that's the Gaelic form of Patrick — gave her a gift of six pennies (worth about a dime) and told her to buy herself a new pair of shoes! My mother thanked him; then she added another $30 to the dime and bought herself new shoes. Páraic was very happy and was convinced that it was his money that had bought the gift. And, of course, the dime that he gave her was money that my mother had given to him a few days before. And that is precisely what we are going to do now. We are going to give gifts of bread and grape juice to God, so God can turn them into the presence of Jesus.</p>
+
+              <h4>Sharing Our Food with God</h4>
+              <p>When Seán lifts up the bread, we will all say:</p>
+              <p class="lit-a">God, you made everything; / You made the seeds that became the wheat; / You made the farmers that grew the crops; / You made the bakers who turned the wheat into bread. / We bring it to you now, / So that we can eat together. / You use our hands to offer it to yourself; / You use our mouths to eat it on your behalf. / We are your hands; / We are your body. / Thank you so much.</p>
+
+              <h4>Sharing Our Drink with God</h4>
+              <p>When Seán lifts up the cup, we will all say:</p>
+              <p class="lit-a">God, you made everything; / You made the vines that produced the grapes; / You made the farmers that grew the crops; / You made the vintners who turned the grapes into juice. / We bring it to you now, / So that we can drink together. / You use our hands to offer it to yourself; / You use our mouths to drink it on your behalf. / We are your hands; / We are your body. / Thank you so much.</p>
+
+              <h4>Section 4 — A Cosmic Journey</h4>
+              <h4>Honoring God</h4>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a great dancer. You dance with real stars; you dance with big galaxies; you dance with planets; you dance with the wind; and you dance with the rain. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a famous artist. You paint sunrises and sunsets; you paint the feathers of birds; you paint the wings of butterflies; you paint the petals of flowers; and so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a writer. But the leaves in your greatest book are the leaves on the trees; and the exclamation points are the tall redwoods. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are just like a musician. You make music in the wind; you make music in the waves; you make music in the rain; you make music in the thunder. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are brilliant at Math. You can count all of the stars; you can count all of the grains of sand on all of the beaches of the world. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a great scientist. You made everything, and you help us figure out how everything works. Everything, from tiny atoms to huge planets. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like an architect. You teach birds how to make nests; you teach spiders how to make webs; you teach mothers how to make babies; and so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you sent Jesus to teach us; to heal us; and to bring us into communion with you. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-a"><span class="lit-role">E</span> Once, when Jesus was eating with his friends, he wanted to show that planet Earth feeds us from her own body, just like a mother does. So he took some bread and he blessed it and he broke it into pieces for each of them.</p>
+              <p class="lit-a"><span class="lit-role">E</span> Then Jesus said, "I am a gift from God. When you eat with me, you share my life and you share my love. Every time you have a meal together, you should remember that you, also, are a gift from God."</p>
+              <p class="lit-a"><span class="lit-role">E</span> Then Jesus took a cup filled with grape juice and he blessed it. He said, "This grape juice reminds us that we are all sisters and brothers. When we drink it together we must remember that all food comes from God. And so we must share our food with all the people and all the animals of the planet."</p>
+              <p class="lit-p"><span class="lit-role">R</span> Let's sing a song to thank God.</p>
+              <p class="lit-note">[Led by the choir we sing a song to praise God]</p>
+
+              <h4>Remembering</h4>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a great ocean playing with waves and playing with tides. You give food and a home to all kinds of fishes. Help us to remember.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, help us to remember.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a playful little lamb running about with the butterflies, in a meadow filled with flowers. Help us to remember.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, help us to remember.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a mighty forest filled with trees and shrubs and grasses, that give food and shelter to all kinds of birds and animals. Help us to remember.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, help us to remember.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you teach us that everything on the planet is sister and brother to us. The rocks are; the plants are; the birds are; the fish are; the animals are; the insects are; even the slowly moving snails are. And Old Turtle is. Help us to remember.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, help us to remember.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you teach us that all humans are sisters and brothers to us; whatever country they live in; whatever color their skin is; whatever language they speak; whatever religion they follow; help us to remember.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, help us to remember.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, please ask all of these brothers and sisters of ours to help wake us up fully so that we can love without fear; so that we can shine light into the darkness; so that we can bring life out of death. Amen, may it be so.</p>
+              <p class="lit-a"><span class="lit-role">E</span> Amen, may it be so.</p>
+
+              <h4>Section 5 — Feeding Each Other</h4>
+              <h4>The Prayer That Jesus Taught Us</h4>
+              <p>Once, when Jesus was walking along the road, a group of his friends said, "Teach us how to pray." And he did. Here is the prayer he taught them:</p>
+              <p class="lit-a">God, you are our Father and our Mother; you live in heaven. May all people respect your name; may the good things that you want become the way we do things on our planet, Earth, just like they are done in heaven. Help us to make sure that every creature has enough food, today. And allow us to experience your unconditional love, so that we can love each other unconditionally. Help us to not give in to bad suggestions but, instead, to turn our faces to the Light.</p>
+
+              <h4>Sharing Our Food with Each Other</h4>
+              <p>Seán will now break the sacred bread, so that each person, in turn, gets some. When you get your piece, turn to your left and give it to the person on your left, saying, "This is a gift from God." That person will then eat it. We will go around in a clockwise manner until everybody is fed.</p>
+
+              <h4>Sharing Our Drink with Each Other</h4>
+              <p>Seán will now offer the cup of grape juice, so that each person, in turn, gets some. When it's your chance to hold the cup, turn to your right and give it to the person on your right, saying, "This is a gift from God." That person will then drink from it. We will go around in a counter-clockwise manner until everybody has had a drink. Thus each person will give and receive during the meal.</p>
+
+              <h4>A Short Meditation</h4>
+              <p>Seán will then go to offer Communion to the adults. While he is away for a few minutes I want you to close your eyes and imagine some person or some animal, some where in the world, who is very hungry. I want you to visit them and help them.</p>
+
+              <h4>Section 6 — Finishing Up</h4>
+              <h4>Sharing the Meditation with Each Other</h4>
+              <p>When Seán comes back, each person will have a chance to tell us where they went, whom they found and how they helped.</p>
+
+              <h4>Final Blessing</h4>
+              <p>All of us will pray as following for the world. It is an old blessing translated from the Gaelic.</p>
+              <p style="font-style:italic;color:var(--body);">May the road rise up to meet you. May the wind be always at your back. May the sun shine warm upon your face, and rains fall soft upon your fields. And until we meet again, May God hold you tenderly in the palm of Her hand.</p>
+              <p>The Mass is ended; Let us go to bring peace to our world. Thanks be to God.</p>
+            </div>
+          </details>
+
+          <details class="liturgy-doc">
+            <summary>Eucharistic Prayer for Children</summary>
+            <div class="liturgy-text">
+              <p class="lit-intro">The Eucharistic Prayer of the Children's Cosmic Mass — offered as a standalone text for celebration and contemplation. The prayer invites children into the wonder of creation as a doorway to the sacred.<br><em>— Seán Ó'Laoire, Copyright © 2010. All rights reserved.</em></p>
+              <p class="lit-note">R = Reader (one of the children or Seán) · C = Children · E = Everybody</p>
+
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a great dancer. You dance with real stars; you dance with big galaxies; you dance with planets; you dance with the wind; and you dance with the rain. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a famous artist. You paint sunrises and sunsets; you paint the feathers of birds; you paint the wings of butterflies; you paint the petals of flowers; and so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a writer. But the leaves in your greatest book are the leaves on the trees; and the exclamation points are the tall redwoods. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are just like a musician. You make music in the wind; you make music in the waves; you make music in the rain; you make music in the thunder. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are brilliant at Math. You can count all of the stars; you can count all of the grains of sand on all of the beaches of the world. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a great scientist. You made everything, and you help us figure out how everything works. Everything, from tiny atoms to huge planets. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like an architect. You teach birds how to make nests; you teach spiders how to make webs; you teach mothers how to make babies; and so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you sent Jesus to teach us; to heal us; and to bring us into communion with you. And so we honor you.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, we honor you.</p>
+              <p class="lit-a"><span class="lit-role">E</span> Once, when Jesus was eating with his friends, he wanted to show that planet Earth feeds us from her own body, just like a mother does. So he took some bread and he blessed it and he broke it into pieces for each of them.</p>
+              <p class="lit-note">[Here Seán breaks a larger host and gives a piece to each of the children; the children hold the bread in their hands for the rest of the consecration prayer]</p>
+              <p class="lit-a"><span class="lit-role">E</span> Then Jesus said, "I am a gift from God. When you eat with me, you share my life and you share my love. Every time you have a meal together, you should remember that you, also, are a gift from God."</p>
+              <p class="lit-note">[Each one holds their bread up high and then lowers it]</p>
+              <p class="lit-note">[Each child now holds their own cup during the following prayer]</p>
+              <p class="lit-a"><span class="lit-role">E</span> Then Jesus took a cup filled with grape juice and he blessed it. He said, "This grape juice reminds us that we are all sisters and brothers. When we drink it together we must remember that all food comes from God. And so we must share our food with all the people and all the animals of the planet."</p>
+              <p class="lit-note">[Each one holds their cup up high and then lowers it]</p>
+              <p class="lit-p"><span class="lit-role">R</span> Let's sing a song to thank God.</p>
+              <p class="lit-note">[Led by the choir we sing a song to praise God]</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a great ocean playing with waves and playing with tides. You give food and a home to all kinds of fishes. Help us to remember.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, help us to remember.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a playful little lamb running about with the butterflies, in a meadow filled with flowers. Help us to remember.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, help us to remember.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you are like a mighty forest filled with trees and shrubs and grasses, that give food and shelter to all kinds of birds and animals. Help us to remember.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, help us to remember.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you teach us that everything on the planet is sister and brother to us. The rocks are; the plants are; the birds are; the fish are; the animals are; the insects are; even the slowly moving snails are. And Old Turtle is. Help us to remember.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, help us to remember.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, you teach us that all humans are sisters and brothers to us; whatever country they live in; whatever color their skin is; whatever language they speak; whatever religion they follow; help us to remember.</p>
+              <p class="lit-c"><span class="lit-role">C</span> Yes, help us to remember.</p>
+              <p class="lit-p"><span class="lit-role">R</span> God, please ask all of these brothers and sisters of ours to help wake us up fully so that we can love without fear; so that we can shine light into the darkness; so that we can bring life out of death. Amen, may it be so.</p>
+              <p class="lit-a"><span class="lit-role">E</span> Amen, may it be so.</p>
+            </div>
+          </details>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
 </section>
 
 <!-- ASK SEÁN -->
