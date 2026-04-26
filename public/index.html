@@ -115,6 +115,10 @@ nav {
 .hero-content {
   position: relative; z-index: 2;
   padding: 10rem 2rem 7rem; max-width: 780px;
+  background: rgba(3,6,12,.52);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 0 80px 40px rgba(3,6,12,.52);
 }
 .hero-eyebrow {
   font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
@@ -911,6 +915,8 @@ a.source-chip:hover { border-color: var(--border-mid); color: var(--gold-dim); }
   transition: color .2s, border-color .2s;
 }
 .book-link:hover { color: var(--gold); border-color: var(--gold); }
+.book-link-download { color: #7ecfa0; border-color: #3a6b52; }
+.book-link-download:hover { color: #a8e6c1; border-color: #7ecfa0; }
 
 /* ── ABOUT ── */
 #about { background: var(--navy); }
@@ -2932,7 +2938,10 @@ async function loadBooks() {
           ? '<div class="book-cover"><img src="' + escapeHtml(b.cover_url) + '" alt="' + escapeHtml(b.title) + '"></div>'
           : '<div class="book-cover book-cover-text">' + escapeHtml(b.title) + '</div>';
         const links = (b.links || []).map(function(l) {
-          return '<a href="' + escapeHtml(l.url) + '" target="_blank" rel="noopener" class="book-link">' + escapeHtml(l.label) + '</a>';
+          const isFree = l.label === 'Free Download';
+          const cls = 'book-link' + (isFree ? ' book-link-download' : '');
+          const extra = isFree ? ' download' : ' target="_blank" rel="noopener"';
+          return '<a href="' + escapeHtml(l.url) + '"' + extra + ' class="' + cls + '">' + escapeHtml(l.label) + '</a>';
         }).join('');
         return '<div class="book-card' + featured + '">' + cover + '<div>' + badge +
           '<p class="book-title">' + escapeHtml(b.title) + '</p>' + subtitle +
