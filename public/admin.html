@@ -263,6 +263,7 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <button class="snav-item" onclick="showPage('events', this)">Events</button>
       <button class="snav-item" onclick="showPage('courses', this)">Courses</button>
       <button class="snav-item" onclick="showPage('testimonials', this)">Testimonials</button>
+      <button class="snav-item" onclick="showPage('subscribers', this)">Newsletter Subscribers</button>
     </nav>
     <div class="sidebar-footer">
       <a href="/" target="_blank">← View Site</a><br>
@@ -501,6 +502,31 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
           <tbody id="coursesBody"></tbody>
         </table>
         <div class="empty-state" id="noCourses" style="display:none;">No courses yet. Click "+ Add Course" to get started.</div>
+      </div>
+    </div>
+
+    <!-- ── NEWSLETTER SUBSCRIBERS PAGE ── -->
+    <div class="page" id="page-subscribers">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1 class="page-title">Newsletter Subscribers</h1>
+          <p class="page-lead">Everyone who has signed up via the footer. Export or copy the list to use with an email tool.</p>
+        </div>
+        <button class="btn" onclick="exportSubscribersCSV()" id="exportSubsBtn" style="display:none;">↓ Export CSV</button>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-search">
+          <input type="text" id="subsSearch" placeholder="Search by email…" oninput="debounceSubsSearch(this.value)">
+        </div>
+        <div id="subsTotalLabel" style="font-size:.8rem;color:var(--muted);align-self:center;"></div>
+      </div>
+      <div class="loading" id="subsLoading">Loading…</div>
+      <div id="subsTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th>Email</th><th style="width:160px">Signed Up</th><th style="width:80px"></th></tr></thead>
+          <tbody id="subsBody"></tbody>
+        </table>
+        <div class="empty-state" id="noSubs" style="display:none;">No subscribers yet.</div>
       </div>
     </div>
 
@@ -910,6 +936,7 @@ function showPage(name, el) {
   if (name === 'events')       loadEvents();
   if (name === 'courses')      loadCourses();
   if (name === 'testimonials') loadTestimonials();
+  if (name === 'subscribers')  loadSubscribers();
 }
 
 /* ══════════════════════════════════════
@@ -2310,6 +2337,81 @@ async function executeTestimonialDelete() {
     const data = await res.json();
     res.ok ? (toast(`Testimonial from "${name}" deleted`, 'success'), loadTestimonials()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
+}
+
+/* ══════════════════════════════════════
+   NEWSLETTER SUBSCRIBERS
+══════════════════════════════════════ */
+let subsSearchTimer = null;
+let allSubscribers = [];
+
+async function loadSubscribers(search = '') {
+  document.getElementById('subsLoading').style.display = 'block';
+  document.getElementById('subsTableWrap').style.display = 'none';
+  document.getElementById('exportSubsBtn').style.display = 'none';
+  const params = search ? `?search=${encodeURIComponent(search)}` : '';
+  try {
+    const res = await fetch(`/api/admin/subscribers${params}`, { headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    allSubscribers = data.subscribers || [];
+    const total = data.total ?? allSubscribers.length;
+    document.getElementById('subsTotalLabel').textContent = `${total} subscriber${total !== 1 ? 's' : ''}`;
+    renderSubscribersTable(allSubscribers);
+    if (allSubscribers.length) document.getElementById('exportSubsBtn').style.display = '';
+  } catch { document.getElementById('subsLoading').textContent = 'Failed to load.'; }
+}
+
+function renderSubscribersTable(items) {
+  document.getElementById('subsLoading').style.display = 'none';
+  document.getElementById('subsTableWrap').style.display = 'block';
+  if (!items.length) {
+    document.getElementById('subsBody').innerHTML = '';
+    document.getElementById('noSubs').style.display = 'block';
+    return;
+  }
+  document.getElementById('noSubs').style.display = 'none';
+  document.getElementById('subsBody').innerHTML = items.map(s => {
+    const date = new Date(s.created_at).toLocaleDateString('en-IE', { year: 'numeric', month: 'short', day: 'numeric' });
+    return `<tr>
+      <td>${esc(s.email)}</td>
+      <td style="color:var(--muted);font-size:.82rem;">${date}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="confirmSubDelete('${esc(s.id)}','${esc(s.email)}')">Delete</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function debounceSubsSearch(val) {
+  clearTimeout(subsSearchTimer);
+  subsSearchTimer = setTimeout(() => loadSubscribers(val), 300);
+}
+
+function confirmSubDelete(id, email) {
+  pendingDelete = { type: 'subscriber', id, name: email };
+  document.getElementById('confirmTitle').textContent = 'Remove Subscriber';
+  document.getElementById('confirmMsg').textContent = `Remove "${email}" from the newsletter list? This cannot be undone.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executeSubDelete;
+}
+
+async function executeSubDelete() {
+  if (!pendingDelete) return;
+  const { id, name } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch(`/api/admin/subscribers?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    res.ok ? (toast(`${name} removed`, 'success'), loadSubscribers(document.getElementById('subsSearch').value)) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
+}
+
+function exportSubscribersCSV() {
+  if (!allSubscribers.length) return;
+  const lines = ['email,signed_up', ...allSubscribers.map(s => `${s.email},${new Date(s.created_at).toISOString()}`)];
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `newsletter-subscribers-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
 }
 </script>
 </body>
