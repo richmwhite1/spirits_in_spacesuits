@@ -40,10 +40,16 @@ export default async function handler(req) {
   }
 
   if (req.method === 'POST') {
-    const body = await req.json();
+    let body;
+    try { body = await req.json(); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: JSON_HEADERS });
+    }
     const { title, event_date, event_time, location, description, link } = body;
     if (!title?.trim() || !event_date) {
       return new Response(JSON.stringify({ error: 'title and event_date are required' }), { status: 400, headers: JSON_HEADERS });
+    }
+    if (link && !/^https?:\/\//.test(link.trim())) {
+      return new Response(JSON.stringify({ error: 'link must be a valid URL' }), { status: 400, headers: JSON_HEADERS });
     }
     const { data, error } = await supabase
       .from('events')
@@ -63,10 +69,16 @@ export default async function handler(req) {
   if (req.method === 'PUT') {
     const id = url.searchParams.get('id');
     if (!id) return new Response(JSON.stringify({ error: 'id required' }), { status: 400, headers: JSON_HEADERS });
-    const body = await req.json();
+    let body;
+    try { body = await req.json(); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: JSON_HEADERS });
+    }
     const { title, event_date, event_time, location, description, link } = body;
     if (!title?.trim() || !event_date) {
       return new Response(JSON.stringify({ error: 'title and event_date are required' }), { status: 400, headers: JSON_HEADERS });
+    }
+    if (link && !/^https?:\/\//.test(link.trim())) {
+      return new Response(JSON.stringify({ error: 'link must be a valid URL' }), { status: 400, headers: JSON_HEADERS });
     }
     const { data, error } = await supabase
       .from('events')

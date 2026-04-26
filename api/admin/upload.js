@@ -38,6 +38,9 @@ export default async function handler(req) {
   if (!text || typeof text !== 'string' || text.trim().length < 50) {
     return new Response(JSON.stringify({ error: 'text is required (min 50 chars)' }), { status: 400 });
   }
+  if (text.length > 5_000_000) {
+    return new Response(JSON.stringify({ error: 'text is too large (max 5 MB)' }), { status: 400 });
+  }
   if (!title || typeof title !== 'string') {
     return new Response(JSON.stringify({ error: 'title is required' }), { status: 400 });
   }
@@ -92,7 +95,7 @@ export default async function handler(req) {
 
   return new Response(JSON.stringify({ ok: true, title, chunks: chunks.length, sourceType }), {
     status: 200,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
   });
 }
 

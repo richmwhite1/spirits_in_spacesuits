@@ -7,10 +7,16 @@
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin",  "value": "*" },
+        { "key": "Access-Control-Allow-Origin",  "value": "https://spiritsinspacesuits.com" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, PATCH, DELETE, OPTIONS" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type, x-admin-secret" },
         { "key": "Access-Control-Max-Age",       "value": "86400" }
+      ]
+    },
+    {
+      "source": "/api/admin/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" }
       ]
     },
     {
@@ -19,6 +25,12 @@
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options",        "value": "DENY" },
         { "key": "Referrer-Policy",        "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/downloads/(.*)",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment" }
       ]
     }
   ],

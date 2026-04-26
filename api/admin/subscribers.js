@@ -43,7 +43,7 @@ export default async function handler(req) {
     .order('created_at', { ascending: false })
     .range(from, from + limit - 1);
 
-  if (search) query = query.ilike('email', `%${search}%`);
+  if (search && search.length <= 200) query = query.ilike('email', `%${search}%`);
 
   const { data, count, error } = await query;
   if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });

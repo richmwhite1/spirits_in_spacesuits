@@ -25,7 +25,7 @@ async function checkLoginLimit(ip) {
     });
     return (data || 1) <= LOGIN_DAILY_LIMIT;
   } catch {
-    return true; // fail open — don't lock out on DB error
+    return false; // fail closed — block on DB error to prevent brute force
   }
 }
 
@@ -44,13 +44,19 @@ export default async function handler(req) {
 
   const secret = req.headers.get('x-admin-secret') || '';
   const expected = process.env.ADMIN_SECRET || '';
-  // Constant-time comparison to prevent timing attacks
+  // Constant-time comparison via HMAC — prevents timing attacks regardless of input length
   const enc = new TextEncoder();
-  const a = enc.encode(secret.padEnd(256));
-  const b = enc.encode(expected.padEnd(256));
-  let match = secret.length === expected.length ? 1 : 0;
-  for (let i = 0; i < a.length; i++) match &= a[i] === b[i] ? 1 : 0;
-  if (!secret || !match) {
+  const keyData = enc.encode('spirits-auth-compare');
+  const key = await crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const [macA, macB] = await Promise.all([
+    crypto.subtle.sign('HMAC', key, enc.encode(secret)),
+    crypto.subtle.sign('HMAC', key, enc.encode(expected)),
+  ]);
+  const a = new Uint8Array(macA);
+  const b = new Uint8Array(macB);
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+  if (!secret || diff !== 0) {
     return new Response(JSON.stringify({ error: 'Invalid password' }), {
       status: 401,
       headers: JSON_HEADERS
@@ -59,7 +65,7 @@ export default async function handler(req) {
 
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,
-    headers: JSON_HEADERS
+    headers: { ...JSON_HEADERS, 'Cache-Control': 'no-store' }
   });
 }
 

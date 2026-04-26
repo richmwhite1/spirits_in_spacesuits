@@ -40,7 +40,10 @@ export default async function handler(req) {
   }
 
   if (req.method === 'POST') {
-    const body = await req.json();
+    let body;
+    try { body = await req.json(); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: JSON_HEADERS });
+    }
     const { term, definition } = body;
     if (!term?.trim()) return new Response(JSON.stringify({ error: 'term is required' }), { status: 400, headers: JSON_HEADERS });
     if (!definition?.trim()) return new Response(JSON.stringify({ error: 'definition is required' }), { status: 400, headers: JSON_HEADERS });
@@ -55,7 +58,10 @@ export default async function handler(req) {
   if (req.method === 'PUT') {
     const id = url.searchParams.get('id');
     if (!id) return new Response(JSON.stringify({ error: 'id required' }), { status: 400, headers: JSON_HEADERS });
-    const body = await req.json();
+    let body;
+    try { body = await req.json(); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: JSON_HEADERS });
+    }
     const { term, definition } = body;
     const { data, error } = await supabase
       .from('glossary')

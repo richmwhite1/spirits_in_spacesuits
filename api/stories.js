@@ -72,7 +72,7 @@ export default async function handler(req) {
     if (contentType && ['story','essay','poem'].includes(contentType)) {
       query = query.eq('content_type', contentType);
     }
-    if (search) {
+    if (search && search.length <= 200) {
       query = query.ilike('title', `%${search}%`);
     }
 
@@ -91,7 +91,10 @@ export default async function handler(req) {
   }
 
   if (req.method === 'POST') {
-    const body = await req.json();
+    let body;
+    try { body = await req.json(); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: JSON_HEADERS });
+    }
     const { title, excerpt, body: storyBody, story_date, content_type, sort_order } = body;
     if (!title?.trim()) {
       return new Response(JSON.stringify({ error: 'title is required' }), { status: 400, headers: JSON_HEADERS });
@@ -99,7 +102,7 @@ export default async function handler(req) {
     const type = ['story','essay','poem'].includes(content_type) ? content_type : 'story';
     const { data, error } = await supabase
       .from('stories')
-      .insert({ title: title.trim(), excerpt: excerpt?.trim() || null, body: storyBody || null, story_date: story_date?.trim() || null, content_type: type, sort_order: sort_order ?? 0 })
+      .insert({ title: title.trim(), excerpt: excerpt?.trim() || null, body: storyBody || null, story_date: story_date?.trim() || null, content_type: type, sort_order: Math.max(0, Math.min(9999, parseInt(sort_order) || 0)) })
       .select().single();
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
     return new Response(JSON.stringify({ story: data }), { status: 201, headers: JSON_HEADERS });
@@ -108,12 +111,15 @@ export default async function handler(req) {
   if (req.method === 'PUT') {
     const id = url.searchParams.get('id');
     if (!id) return new Response(JSON.stringify({ error: 'id required' }), { status: 400, headers: JSON_HEADERS });
-    const body = await req.json();
+    let body;
+    try { body = await req.json(); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: JSON_HEADERS });
+    }
     const { title, excerpt, body: storyBody, story_date, content_type, sort_order } = body;
     const type = ['story','essay','poem'].includes(content_type) ? content_type : 'story';
     const { data, error } = await supabase
       .from('stories')
-      .update({ title: title?.trim(), excerpt: excerpt?.trim() || null, body: storyBody || null, story_date: story_date?.trim() || null, content_type: type, sort_order: sort_order ?? 0 })
+      .update({ title: title?.trim(), excerpt: excerpt?.trim() || null, body: storyBody || null, story_date: story_date?.trim() || null, content_type: type, sort_order: Math.max(0, Math.min(9999, parseInt(sort_order) || 0)) })
       .eq('id', id).select().single();
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
     return new Response(JSON.stringify({ story: data }), { headers: JSON_HEADERS });

@@ -62,7 +62,10 @@ export default async function handler(req) {
         status: 429, headers: JSON_HEADERS
       });
     }
-    const body = await req.json();
+    let body;
+    try { body = await req.json(); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: JSON_HEADERS });
+    }
     const { name, location, message } = body;
     if (!name?.trim() || !message?.trim()) {
       return new Response(JSON.stringify({ error: 'name and message are required' }), { status: 400, headers: JSON_HEADERS });
@@ -87,7 +90,10 @@ export default async function handler(req) {
   if (req.method === 'PATCH') {
     const id = url.searchParams.get('id');
     if (!id) return new Response(JSON.stringify({ error: 'id required' }), { status: 400, headers: JSON_HEADERS });
-    const body = await req.json();
+    let body;
+    try { body = await req.json(); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: JSON_HEADERS });
+    }
     const { data, error } = await supabase
       .from('testimonials')
       .update({ approved: !!body.approved })

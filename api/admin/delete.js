@@ -37,7 +37,7 @@ export default async function handler(req) {
 
   return new Response(JSON.stringify({ ok: true, deleted: count }), {
     status: 200,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
   });
 }
 

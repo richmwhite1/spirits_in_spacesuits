@@ -56,7 +56,7 @@ export default async function handler(req) {
     sources
   }), {
     status: 200,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
   });
 }
 

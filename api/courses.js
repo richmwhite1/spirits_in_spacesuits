@@ -41,7 +41,10 @@ export default async function handler(req) {
   }
 
   if (req.method === 'POST') {
-    const body = await req.json();
+    let body;
+    try { body = await req.json(); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: JSON_HEADERS });
+    }
     const { title, subtitle, description, image_url, link, status, sort_order } = body;
     if (!title?.trim()) {
       return new Response(JSON.stringify({ error: 'title is required' }), { status: 400, headers: JSON_HEADERS });
@@ -56,7 +59,7 @@ export default async function handler(req) {
         image_url: image_url?.trim() || null,
         link: link?.trim() || null,
         status: validStatuses.includes(status) ? status : 'coming_soon',
-        sort_order: sort_order ?? 0
+        sort_order: Math.max(0, Math.min(9999, parseInt(sort_order) || 0))
       })
       .select().single();
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
@@ -66,7 +69,10 @@ export default async function handler(req) {
   if (req.method === 'PUT') {
     const id = url.searchParams.get('id');
     if (!id) return new Response(JSON.stringify({ error: 'id required' }), { status: 400, headers: JSON_HEADERS });
-    const body = await req.json();
+    let body;
+    try { body = await req.json(); } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: JSON_HEADERS });
+    }
     const { title, subtitle, description, image_url, link, status, sort_order } = body;
     const validStatuses = ['coming_soon', 'available', 'in_progress'];
     const { data, error } = await supabase
@@ -78,7 +84,7 @@ export default async function handler(req) {
         image_url: image_url?.trim() || null,
         link: link?.trim() || null,
         status: validStatuses.includes(status) ? status : 'coming_soon',
-        sort_order: sort_order ?? 0
+        sort_order: Math.max(0, Math.min(9999, parseInt(sort_order) || 0))
       })
       .eq('id', id).select().single();
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
