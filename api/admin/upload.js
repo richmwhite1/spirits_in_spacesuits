@@ -47,6 +47,9 @@ export default async function handler(req) {
   if (!['transcript', 'book', 'essay', 'poem'].includes(sourceType)) {
     return new Response(JSON.stringify({ error: 'sourceType must be transcript, book, essay, or poem' }), { status: 400 });
   }
+  if (sourceType === 'transcript' && (!sourceId || typeof sourceId !== 'string' || sourceId.trim().length < 8)) {
+    return new Response(JSON.stringify({ error: 'sourceId (YouTube video ID) is required for transcripts' }), { status: 400 });
+  }
 
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 

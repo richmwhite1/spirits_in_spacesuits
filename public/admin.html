@@ -341,9 +341,9 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
           </div>
         </div>
         <div class="form-group" id="videoIdGroup">
-          <label>YouTube Video ID (optional)</label>
-          <input type="text" id="videoIdInput" placeholder="e.g. dQw4w9WgXcQ" oninput="previewThumb(this.value)">
-          <div class="form-hint">The ID after /watch?v= — lets the AI surface this video in answers.</div>
+          <label>YouTube Video ID or URL <span style="color:#e06060">*</span></label>
+          <input type="text" id="videoIdInput" placeholder="e.g. dQw4w9WgXcQ or https://youtube.com/watch?v=dQw4w9WgXcQ" oninput="previewThumb(parseVideoId(this.value))">
+          <div class="form-hint">Paste a YouTube URL or video ID — required for transcripts so the AI can link to the source.</div>
           <div id="thumbPreview" style="margin-top:.75rem; display:none;">
             <img id="thumbImg" style="height:56px; border:1px solid var(--border);">
           </div>
@@ -1087,9 +1087,19 @@ function readFile(file) {
   reader.readAsText(file);
 }
 
+function parseVideoId(input) {
+  const s = (input || '').trim();
+  // Try to extract from various YouTube URL formats
+  let m = s.match(/(?:youtube\.com\/watch\?.*v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([A-Za-z0-9_-]{11})/);
+  if (m) return m[1];
+  // If it looks like a bare video ID (11 chars, valid chars)
+  if (/^[A-Za-z0-9_-]{11}$/.test(s)) return s;
+  return s; // return as-is so validation can catch invalid input
+}
+
 function previewThumb(id) {
   const preview = document.getElementById('thumbPreview');
-  const clean = id.trim();
+  const clean = (id || '').trim();
   if (clean.length >= 8) { document.getElementById('thumbImg').src = `https://img.youtube.com/vi/${clean}/mqdefault.jpg`; preview.style.display = 'block'; }
   else { preview.style.display = 'none'; }
 }
@@ -1102,11 +1112,13 @@ async function uploadContent() {
   const text = document.getElementById('textInput').value.trim() || fileText;
   const title = document.getElementById('titleInput').value.trim();
   const sourceType = document.getElementById('sourceTypeInput').value;
-  const sourceId = document.getElementById('videoIdInput').value.trim() || null;
+  const rawVideoInput = document.getElementById('videoIdInput').value.trim();
+  const sourceId = sourceType === 'transcript' ? parseVideoId(rawVideoInput) : (rawVideoInput || null);
   const sourceDate = document.getElementById('dateInput').value || null;
   if (!text) return showUploadStatus('error', 'Provide a file or paste text first.');
   if (!title) return showUploadStatus('error', 'Title is required.');
   if (text.length < 50) return showUploadStatus('error', 'Text is too short (min 50 characters).');
+  if (sourceType === 'transcript' && (!sourceId || sourceId.length < 8)) return showUploadStatus('error', 'YouTube Video ID or URL is required for transcripts.');
   const btn = document.getElementById('uploadBtn');
   btn.disabled = true; btn.textContent = 'Ingesting…';
   showUploadStatus('running', `Processing "${title}"… embedding and storing chunks. This may take 10–30 seconds for large files.`);
