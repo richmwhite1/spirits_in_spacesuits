@@ -1280,9 +1280,9 @@ footer {
   <a href="#hero" class="nav-logo">Spirits in Spacesuits</a>
   <ul class="nav-links" id="navLinks">
     <li><a href="#ask">Ask Seán</a></li>
+    <li><a href="#dream-quotes">Quotes</a></li>
     <li><a href="#latest">Latest</a></li>
     <li><a href="#videos">Videos</a></li>
-    <li><a href="#dream-quotes">Quotes</a></li>
     <li><a href="#stories">Stories</a></li>
     <li><a href="#teachings">Teachings</a></li>
     <li><a href="#books">Books</a></li>
@@ -1903,6 +1903,36 @@ footer {
   </div>
 </section>
 
+<!-- DREAM QUOTES -->
+<section id="dream-quotes">
+  <div class="inner">
+    <p class="eyebrow fade-in">From Seán's Dreams</p>
+    <h2 class="fade-in">Dream Quotes</h2>
+    <p class="section-lead fade-in">Bite-sized wisdom harvested from the dreamtime - a new one surfaces each day.</p>
+    <div class="dq-featured fade-in">
+      <p class="dq-date-label" id="dqDateLabel"></p>
+      <blockquote class="dq-quote" id="dqQuote"></blockquote>
+      <p class="dq-attr">— Fr. Seán Ó'Laoire</p>
+      <div class="dq-browse-btn">
+        <button class="btn-outline" onclick="openDreamQuotes()" style="font-size:.7rem;padding:.5rem 1.2rem;">Browse All Quotes →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dream Quotes modal -->
+<div class="dq-modal-overlay" id="dqModal" onclick="if(event.target===this)closeDreamQuotes()">
+  <div class="dq-modal">
+    <div class="dq-modal-header">
+      <span class="dq-modal-title">All Dream Quotes</span>
+      <button class="dq-modal-close" onclick="closeDreamQuotes()">Close ✕</button>
+    </div>
+    <input type="text" class="dq-modal-search" id="dqSearch" placeholder="Search quotes…" oninput="filterDreamQuotes(this.value)">
+    <div id="dqCount" style="font-size:.7rem;color:var(--muted);margin-bottom:1rem;"></div>
+    <ul class="dq-list" id="dqList"></ul>
+  </div>
+</div>
+
 <!-- LATEST FROM SEÁN -->
 <section id="latest">
   <div class="inner">
@@ -1964,36 +1994,6 @@ footer {
     </div>
   </div>
 </section>
-
-<!-- DREAM QUOTES -->
-<section id="dream-quotes">
-  <div class="inner">
-    <p class="eyebrow fade-in">From Seán's Dreams</p>
-    <h2 class="fade-in">Dream Quotes</h2>
-    <p class="section-lead fade-in">Bite-sized wisdom harvested from the dreamtime - a new one surfaces each day.</p>
-    <div class="dq-featured fade-in">
-      <p class="dq-date-label" id="dqDateLabel"></p>
-      <blockquote class="dq-quote" id="dqQuote"></blockquote>
-      <p class="dq-attr">— Fr. Seán Ó'Laoire</p>
-      <div class="dq-browse-btn">
-        <button class="btn-outline" onclick="openDreamQuotes()" style="font-size:.7rem;padding:.5rem 1.2rem;">Browse All Quotes →</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Dream Quotes modal -->
-<div class="dq-modal-overlay" id="dqModal" onclick="if(event.target===this)closeDreamQuotes()">
-  <div class="dq-modal">
-    <div class="dq-modal-header">
-      <span class="dq-modal-title">All Dream Quotes</span>
-      <button class="dq-modal-close" onclick="closeDreamQuotes()">Close ✕</button>
-    </div>
-    <input type="text" class="dq-modal-search" id="dqSearch" placeholder="Search quotes…" oninput="filterDreamQuotes(this.value)">
-    <div id="dqCount" style="font-size:.7rem;color:var(--muted);margin-bottom:1rem;"></div>
-    <ul class="dq-list" id="dqList"></ul>
-  </div>
-</div>
 
 <!-- STORIES -->
 <section id="stories">
