@@ -2429,9 +2429,18 @@ function appendSeanMessage(answer, sources, relatedVideos) {
 
   const sourcesHtml = sources.length > 0 ? `
     <div class="msg-sources">
-      ${sources.map(s => s.videoId
-        ? `<a class="source-chip" href="https://www.youtube.com/watch?v=${s.videoId}" target="_blank" rel="noopener">${escapeHtml(s.title)}${s.date ? ` · ${s.date}` : ''} ↗</a>`
-        : `<span class="source-chip">${escapeHtml(s.title)}${s.date ? ` · ${s.date}` : ''}</span>`).join('')}
+      ${sources.map(s => {
+        const url = s.videoId
+          ? (s.videoId.startsWith('http') || s.videoId.startsWith('/') || s.videoId.startsWith('#')
+              ? s.videoId
+              : `https://www.youtube.com/watch?v=${s.videoId}`)
+          : null;
+        const label = `${escapeHtml(s.title)}${s.date ? ` · ${s.date}` : ''} ↗`;
+        const isExternal = url && !url.startsWith('/') && !url.startsWith('#');
+        return url
+          ? `<a class="source-chip" href="${url}"${isExternal ? ' target="_blank" rel="noopener"' : ''}>${label}</a>`
+          : `<span class="source-chip">${escapeHtml(s.title)}${s.date ? ` · ${s.date}` : ''}</span>`;
+      }).join('')}
     </div>` : '';
 
   const videosHtml = relatedVideos.length > 0 ? `
