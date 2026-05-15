@@ -133,16 +133,25 @@ def main():
     videos = fetch_all_videos(uploads_id)
     print(f"  Found {len(videos)} videos on channel.\n")
 
-    # 2. Fetch transcript titles with no video ID
+    # 2. Fetch all transcript titles with no video ID (paginated — Supabase has 1000-row default limit)
     print("Fetching transcript titles without video IDs…")
-    result = sb.table('sean_chunks') \
-        .select('source_title') \
-        .eq('source_type', 'transcript') \
-        .is_('source_id', 'null') \
-        .execute()
+    all_titles = set()
+    page_size = 1000
+    offset = 0
+    while True:
+        result = sb.table('sean_chunks') \
+            .select('source_title') \
+            .eq('source_type', 'transcript') \
+            .is_('source_id', 'null') \
+            .range(offset, offset + page_size - 1) \
+            .execute()
+        for r in result.data:
+            all_titles.add(r['source_title'])
+        if len(result.data) < page_size:
+            break
+        offset += page_size
 
-    # Get unique titles
-    titles = sorted(set(r['source_title'] for r in result.data))
+    titles = sorted(all_titles)
     print(f"  Found {len(titles)} transcript titles without video IDs.\n")
 
     if not titles:
