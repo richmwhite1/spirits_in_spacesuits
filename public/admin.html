@@ -254,6 +254,7 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <button class="snav-item active" onclick="showPage('corpus', this)">Corpus Stats</button>
       <button class="snav-item" onclick="showPage('upload', this)">Add to Corpus</button>
       <div class="snav-section">Written Content</div>
+      <button class="snav-item" onclick="showPage('dreamquotes', this)">Dream Quotes</button>
       <button class="snav-item" onclick="showPage('content', this)">Stories, Essays & Poems</button>
       <button class="snav-item" onclick="showPage('books', this)">Books</button>
       <button class="snav-item" onclick="showPage('models', this)">Models of Reality</button>
@@ -281,7 +282,7 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
     <!-- ── CORPUS PAGE ── -->
     <div class="page active" id="page-corpus">
       <h1 class="page-title">AI Corpus</h1>
-      <p class="page-lead">The RAG knowledge base powering "Ask Seán." Add transcripts and books here — not stories or poems, which belong in <em>Stories, Essays & Poems</em>.</p>
+      <p class="page-lead">The RAG knowledge base powering "Ask Seán." Add transcripts, books, essays, and poems here so the AI can cite them. Stories and essays also belong in <em>Stories, Essays & Poems</em> for website display — the two are independent.</p>
       <div class="loading" id="corpusLoading">Loading corpus stats…</div>
       <div id="corpusContent" style="display:none;">
         <div class="stats-row">
@@ -330,6 +331,8 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
             <select id="sourceTypeInput">
               <option value="transcript">Transcript (YouTube lecture)</option>
               <option value="book">Book chapter</option>
+              <option value="essay">Essay</option>
+              <option value="poem">Poem</option>
             </select>
           </div>
           <div class="form-group">
@@ -347,6 +350,30 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
         </div>
         <div class="upload-status" id="uploadStatus"></div>
         <button class="btn" id="uploadBtn" onclick="uploadContent()">Ingest into Corpus →</button>
+      </div>
+    </div>
+
+    <!-- ── DREAM QUOTES PAGE ── -->
+    <div class="page" id="page-dreamquotes">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1 class="page-title">Dream Quotes</h1>
+          <p class="page-lead">Bite-sized wisdom from Seán's dreamtime. Add, edit, or remove quotes — a new one surfaces on the site each day.</p>
+        </div>
+        <button class="btn btn-green" onclick="openDQModal()">+ Add Quote</button>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-search">
+          <input type="text" id="dqAdminSearch" placeholder="Search quotes…" oninput="debounceDQSearch(this.value)">
+        </div>
+      </div>
+      <div class="loading" id="dqLoading">Loading…</div>
+      <div id="dqTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th style="width:50px">#</th><th>Quote</th><th style="width:130px"></th></tr></thead>
+          <tbody id="dqBody"></tbody>
+        </table>
+        <div class="empty-state" id="noDQ" style="display:none;">No dream quotes yet. Click "+ Add Quote" to get started.</div>
       </div>
     </div>
 
@@ -532,6 +559,32 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
 
   </div><!-- .main -->
 </div><!-- #app -->
+
+<!-- DREAM QUOTE EDIT MODAL -->
+<div class="modal-overlay" id="dqModal" onclick="closeDQModalBg(event)">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header">
+      <div class="modal-title" id="dqModalTitle">Add Dream Quote</div>
+      <button class="modal-close" onclick="closeDQModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="dqId">
+      <div class="form-group">
+        <label>Quote <span style="color:#e06060">*</span></label>
+        <textarea id="dqQuote" style="min-height:120px;" placeholder="Enter the dream quote text…"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:0 0 120px;">
+          <label>Sort Order</label>
+          <input type="number" id="dqSortOrder" value="0" min="0" max="9999">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="dqSaveBtn" onclick="saveDQ()">Save</button>
+    </div>
+  </div>
+</div>
 
 <!-- CONTENT EDIT MODAL -->
 <div class="modal-overlay" id="contentModal" onclick="closeContentModalBg(event)">
@@ -929,6 +982,7 @@ function showPage(name, el) {
   document.getElementById('page-' + name).classList.add('active');
   el.classList.add('active');
   if (name === 'corpus')       loadCorpus();
+  if (name === 'dreamquotes')  loadDQ();
   if (name === 'content')      loadContent();
   if (name === 'books')        loadBooks();
   if (name === 'models')       loadModels();
@@ -1080,6 +1134,117 @@ async function uploadContent() {
 function showUploadStatus(type, msg) {
   const el = document.getElementById('uploadStatus');
   el.className = `upload-status ${type}`; el.textContent = msg; el.style.display = 'block';
+}
+
+/* ══════════════════════════════════════
+   DREAM QUOTES
+══════════════════════════════════════ */
+let dqSearchVal = '';
+let dqSearchTimer = null;
+
+async function loadDQ() {
+  document.getElementById('dqLoading').style.display = 'block';
+  document.getElementById('dqTableWrap').style.display = 'none';
+  const params = new URLSearchParams();
+  if (dqSearchVal) params.set('q', dqSearchVal);
+  try {
+    const res = await fetch('/api/dream-quotes?' + params);
+    const data = await res.json();
+    renderDQTable(data.quotes || []);
+  } catch { document.getElementById('dqLoading').textContent = 'Failed to load.'; }
+}
+
+function renderDQTable(items) {
+  document.getElementById('dqLoading').style.display = 'none';
+  document.getElementById('dqTableWrap').style.display = 'block';
+  if (!items.length) {
+    document.getElementById('dqBody').innerHTML = '';
+    document.getElementById('noDQ').style.display = 'block';
+    return;
+  }
+  document.getElementById('noDQ').style.display = 'none';
+  document.getElementById('dqBody').innerHTML = items.map((q, i) => `
+    <tr>
+      <td style="color:var(--muted);font-size:.75rem;">${i + 1}</td>
+      <td style="font-size:.85rem;line-height:1.5;max-width:600px;white-space:normal;">${esc(q.quote.length > 200 ? q.quote.slice(0, 200) + '…' : q.quote)}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editDQ(${JSON.stringify(JSON.stringify(q))})" style="margin-right:.4rem;">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmDQDelete('${esc(q.id)}','${esc(q.quote.slice(0, 40))}')">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+function debounceDQSearch(val) {
+  dqSearchVal = val;
+  clearTimeout(dqSearchTimer);
+  dqSearchTimer = setTimeout(loadDQ, 300);
+}
+
+function openDQModal(prefill) {
+  document.getElementById('dqId').value = '';
+  document.getElementById('dqQuote').value = '';
+  document.getElementById('dqSortOrder').value = '0';
+  document.getElementById('dqModalTitle').textContent = 'Add Dream Quote';
+  document.getElementById('dqSaveBtn').textContent = 'Save';
+  if (prefill) {
+    document.getElementById('dqId').value = prefill.id || '';
+    document.getElementById('dqQuote').value = prefill.quote || '';
+    document.getElementById('dqSortOrder').value = prefill.sort_order ?? 0;
+    document.getElementById('dqModalTitle').textContent = 'Edit Dream Quote';
+  }
+  document.getElementById('dqModal').classList.add('open');
+}
+function editDQ(jsonStr) {
+  try { openDQModal(JSON.parse(jsonStr)); } catch {}
+}
+function closeDQModal() {
+  document.getElementById('dqModal').classList.remove('open');
+}
+function closeDQModalBg(e) { if (e.target === document.getElementById('dqModal')) closeDQModal(); }
+
+async function saveDQ() {
+  const id = document.getElementById('dqId').value;
+  const payload = {
+    quote: document.getElementById('dqQuote').value.trim(),
+    sort_order: parseInt(document.getElementById('dqSortOrder').value) || 0,
+  };
+  if (!payload.quote) return toast('Quote text is required', 'error');
+  const btn = document.getElementById('dqSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/dream-quotes?id=${id}` : '/api/dream-quotes';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(id ? 'Quote saved!' : 'Quote added', 'success');
+      closeDQModal();
+      loadDQ();
+    } else { toast(data.error || 'Save failed', 'error'); }
+  } catch { toast('Connection error', 'error'); }
+  btn.disabled = false; btn.textContent = 'Save';
+}
+
+function confirmDQDelete(id, preview) {
+  pendingDelete = { type: 'dreamquote', id, preview };
+  document.getElementById('confirmTitle').textContent = 'Delete Dream Quote';
+  document.getElementById('confirmMsg').textContent = `Permanently delete "${preview}…"? This cannot be undone.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executeDQDelete;
+}
+async function executeDQDelete() {
+  if (!pendingDelete) return;
+  const { id, preview } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch(`/api/dream-quotes?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    res.ok ? (toast('Quote deleted', 'success'), loadDQ()) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
 }
 
 /* ══════════════════════════════════════

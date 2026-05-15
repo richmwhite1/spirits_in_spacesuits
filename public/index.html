@@ -3299,6 +3299,18 @@ async function subscribeNewsletter(e) {
 let DQ_ALL = [];
 async function loadDreamQuotes() {
   try {
+    // Try API first (Supabase-backed, admin-editable)
+    const res = await fetch('/api/dream-quotes');
+    const data = await res.json();
+    const quotes = data.quotes || [];
+    if (quotes.length) {
+      DQ_ALL = quotes.map(q => q.quote);
+      renderTodayDreamQuote();
+      return;
+    }
+  } catch { /* fall through to static file */ }
+  try {
+    // Fallback to static JSON file
     const res = await fetch('/quotes/dream-quotes.json');
     const data = await res.json();
     DQ_ALL = data.quotes || [];
