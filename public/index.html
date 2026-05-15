@@ -688,6 +688,76 @@ a.source-chip:hover { border-color: var(--border-mid); color: var(--gold-dim); }
 .video-expand-btn:hover { border-color: rgba(200,150,62,.5); color: var(--gold); }
 .video-archive-wrap { display: none; margin-top: 1.5rem; }
 
+/* ── DREAM QUOTES ── */
+#dream-quotes { background: var(--dark); }
+.dq-featured {
+  max-width: 720px; margin: 0 auto; text-align: center; padding: 2rem 0 2.5rem;
+}
+.dq-quote {
+  font-family: var(--serif); font-size: 1.55rem; line-height: 1.6;
+  color: var(--cream); font-weight: 300; font-style: italic;
+  opacity: 0; transition: opacity .6s ease;
+}
+.dq-quote.visible { opacity: 1; }
+.dq-attr {
+  margin-top: 1rem; font-size: .72rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--gold-dim);
+}
+.dq-date-label {
+  font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1.5rem;
+}
+.dq-browse-btn {
+  margin-top: 2rem; display: inline-block;
+}
+.dq-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 600;
+  background: rgba(3,6,9,.92); backdrop-filter: blur(12px);
+  overflow-y: auto; padding: 3rem 1rem 5rem;
+}
+.dq-modal-overlay.open { display: block; }
+.dq-modal {
+  max-width: 700px; margin: 0 auto;
+}
+.dq-modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 2rem; position: sticky; top: 0; z-index: 2;
+  background: rgba(3,6,9,.95); padding: 1rem 0;
+}
+.dq-modal-title {
+  font-family: var(--serif); font-size: 1.3rem; color: var(--cream);
+}
+.dq-modal-close {
+  background: none; border: 1px solid var(--border); color: var(--cream-dim);
+  font-size: .8rem; padding: .4rem .9rem; cursor: pointer; font-family: var(--sans);
+  transition: border-color .2s;
+}
+.dq-modal-close:hover { border-color: var(--gold); color: var(--gold); }
+.dq-modal-search {
+  width: 100%; padding: .6rem 1rem; background: var(--lift);
+  border: 1px solid var(--border); color: var(--cream-dim);
+  font-family: var(--sans); font-size: .85rem; font-weight: 300;
+  outline: none; margin-bottom: 1.5rem;
+}
+.dq-modal-search:focus { border-color: var(--gold-dim); }
+.dq-list { list-style: none; }
+.dq-list li {
+  padding: 1.1rem 0; border-bottom: 1px solid var(--border);
+  font-family: var(--serif); font-size: 1.05rem; line-height: 1.6;
+  color: var(--cream-dim); font-style: italic;
+}
+.dq-list li .dq-num {
+  font-family: var(--sans); font-style: normal; font-size: .6rem;
+  letter-spacing: .14em; color: var(--gold-dim); margin-right: .5rem;
+}
+.dq-empty {
+  text-align: center; color: var(--muted); font-style: italic;
+  padding: 2rem; font-size: .85rem;
+}
+@media (max-width: 600px) {
+  .dq-quote { font-size: 1.2rem; }
+}
+
 /* ── STORIES ── */
 #stories { background: var(--mid); }
 .stories-grid {
@@ -1212,6 +1282,7 @@ footer {
     <li><a href="#ask">Ask Seán</a></li>
     <li><a href="#latest">Latest</a></li>
     <li><a href="#videos">Videos</a></li>
+    <li><a href="#dream-quotes">Quotes</a></li>
     <li><a href="#stories">Stories</a></li>
     <li><a href="#teachings">Teachings</a></li>
     <li><a href="#books">Books</a></li>
@@ -1894,6 +1965,36 @@ footer {
   </div>
 </section>
 
+<!-- DREAM QUOTES -->
+<section id="dream-quotes">
+  <div class="inner">
+    <p class="eyebrow fade-in">From Seán's Dreams</p>
+    <h2 class="fade-in">Dream Quotes</h2>
+    <p class="section-lead fade-in">Bite-sized wisdom harvested from the dreamtime - a new one surfaces each day.</p>
+    <div class="dq-featured fade-in">
+      <p class="dq-date-label" id="dqDateLabel"></p>
+      <blockquote class="dq-quote" id="dqQuote"></blockquote>
+      <p class="dq-attr">— Fr. Seán Ó'Laoire</p>
+      <div class="dq-browse-btn">
+        <button class="btn-outline" onclick="openDreamQuotes()" style="font-size:.7rem;padding:.5rem 1.2rem;">Browse All Quotes →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dream Quotes modal -->
+<div class="dq-modal-overlay" id="dqModal" onclick="if(event.target===this)closeDreamQuotes()">
+  <div class="dq-modal">
+    <div class="dq-modal-header">
+      <span class="dq-modal-title">All Dream Quotes</span>
+      <button class="dq-modal-close" onclick="closeDreamQuotes()">Close ✕</button>
+    </div>
+    <input type="text" class="dq-modal-search" id="dqSearch" placeholder="Search quotes…" oninput="filterDreamQuotes(this.value)">
+    <div id="dqCount" style="font-size:.7rem;color:var(--muted);margin-bottom:1rem;"></div>
+    <ul class="dq-list" id="dqList"></ul>
+  </div>
+</div>
+
 <!-- STORIES -->
 <section id="stories">
   <div class="inner">
@@ -2117,6 +2218,7 @@ footer {
     <ul class="footer-nav">
       <li><a href="#ask">Ask Seán</a></li>
       <li><a href="#videos">Videos</a></li>
+      <li><a href="#dream-quotes">Quotes</a></li>
       <li><a href="#stories">Stories</a></li>
       <li><a href="#teachings">Teachings</a></li>
       <li><a href="#books">Books</a></li>
@@ -3192,8 +3294,64 @@ async function subscribeNewsletter(e) {
 }
 
 /* ══════════════════════════════════════
+   DREAM QUOTES
+══════════════════════════════════════ */
+let DQ_ALL = [];
+async function loadDreamQuotes() {
+  try {
+    const res = await fetch('/quotes/dream-quotes.json');
+    const data = await res.json();
+    DQ_ALL = data.quotes || [];
+    renderTodayDreamQuote();
+  } catch { /* silently fail */ }
+}
+function renderTodayDreamQuote() {
+  if (!DQ_ALL.length) return;
+  const now = new Date();
+  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+  const idx = dayOfYear % DQ_ALL.length;
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('dqDateLabel').textContent =
+    `Today\u2019s Quote \u00B7 ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  const el = document.getElementById('dqQuote');
+  el.textContent = '\u201C' + DQ_ALL[idx] + '\u201D';
+  requestAnimationFrame(() => el.classList.add('visible'));
+}
+function openDreamQuotes() {
+  const modal = document.getElementById('dqModal');
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('dqSearch').value = '';
+  renderDreamQuoteList(DQ_ALL);
+}
+function closeDreamQuotes() {
+  document.getElementById('dqModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('dqModal').classList.contains('open')) closeDreamQuotes();
+});
+function filterDreamQuotes(val) {
+  const q = val.toLowerCase().trim();
+  const filtered = q ? DQ_ALL.filter(quote => quote.toLowerCase().includes(q)) : DQ_ALL;
+  renderDreamQuoteList(filtered);
+}
+function renderDreamQuoteList(quotes) {
+  const list = document.getElementById('dqList');
+  document.getElementById('dqCount').textContent = quotes.length + ' quote' + (quotes.length !== 1 ? 's' : '');
+  if (!quotes.length) {
+    list.innerHTML = '<li class="dq-empty">No quotes match your search.</li>';
+    return;
+  }
+  list.innerHTML = quotes.map((q, i) =>
+    `<li><span class="dq-num">${String(i + 1).padStart(3, '0')}</span>${escapeHtml(q)}</li>`
+  ).join('');
+}
+
+/* ══════════════════════════════════════
    INIT
 ══════════════════════════════════════ */
+loadDreamQuotes();
 loadGlossary();
 loadBooks();
 loadCourses();
