@@ -55,12 +55,32 @@ export default async function handler(req) {
   }
 
   const url = new URL(req.url);
-  const type = url.searchParams.get('type') || 'latest'; // latest | appearances | search
+  const type = url.searchParams.get('type') || 'latest'; // latest | appearances | search | stats
   const query = url.searchParams.get('q') || '';
   const maxResults = Math.min(parseInt(url.searchParams.get('max') || '12'), 50);
   const pageToken = url.searchParams.get('pageToken') || '';
 
   try {
+    // Return channel statistics (total video count)
+    if (type === 'stats') {
+      const statsRes = await fetch(
+        `${YT_BASE}/channels?key=${YT_API_KEY}&id=${CHANNEL_ID}&part=statistics`
+      );
+      const statsData = await statsRes.json();
+      if (statsData.error) throw new Error(statsData.error.message);
+      const stats = statsData.items?.[0]?.statistics || {};
+      return new Response(JSON.stringify({
+        videoCount: parseInt(stats.videoCount || '0'),
+        subscriberCount: parseInt(stats.subscriberCount || '0')
+      }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200'
+        }
+      });
+    }
+
     let videos = [];
     let nextPageToken = null;
 
@@ -84,7 +104,6 @@ export default async function handler(req) {
 
       nextPageToken = data.nextPageToken || null;
       videos = (data.items || []).map(formatSearchItem);
-      videos = await aiSortVideos(videos);
 
     } else {
       // Get channel uploads playlist ID first (cached via edge)
