@@ -18,6 +18,9 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#030609">
+<meta name="author" content="Seán Ó'Laoire, PhD">
+<meta name="copyright" content="© Seán Ó'Laoire, PhD. All rights reserved.">
+<meta name="robots" content="index, follow">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -655,6 +658,12 @@ a.source-chip:hover { border-color: var(--border-mid); color: var(--gold-dim); }
   border-top: 7px solid transparent; border-bottom: 7px solid transparent;
   margin-left: 3px;
 }
+.transcript-badge {
+  position: absolute; bottom: .4rem; left: .4rem;
+  background: rgba(6,9,15,.75); border: 1px solid rgba(200,150,62,.45);
+  color: var(--gold-dim); font-size: .65rem; letter-spacing: .04em;
+  padding: .15rem .45rem; pointer-events: none;
+}
 .video-info { padding: .8rem .9rem 1rem; }
 .video-info h3 {
   font-family: var(--serif); font-size: .9rem; font-weight: 400;
@@ -1123,8 +1132,16 @@ footer {
 .footer-newsletter .nl-msg.err { color: #c0504d; }
 .footer-copy {
   font-size: .72rem; color: var(--muted); width: 100%; text-align: center;
-  margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); line-height: 1.7;
+  margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); line-height: 1.9;
 }
+.footer-copy a { color: var(--muted); text-decoration: none; transition: color .2s; }
+.footer-copy a:hover { color: var(--gold-dim); }
+.footer-cc {
+  display: flex; align-items: center; justify-content: center; gap: .6rem;
+  margin-top: .75rem; opacity: .6; transition: opacity .2s;
+}
+.footer-cc:hover { opacity: 1; }
+.footer-cc img { height: 22px; width: auto; }
 
 /* ── BOTTOM NAV (mobile only) ── */
 #bottomNav {
@@ -2227,6 +2244,7 @@ footer {
       <li><a href="#events">Events</a></li>
       <li><a href="#courses">Courses</a></li>
       <li><a href="#testimonials">Testimonials</a></li>
+      <li><a href="/terms">Terms</a></li>
     </ul>
   </div>
   <div class="footer-newsletter">
@@ -2238,8 +2256,13 @@ footer {
     <div class="nl-msg" id="nlMsg"></div>
   </div>
   <div class="footer-copy">
-    The complete archive of Fr. Seán Ó'Laoire, PhD - freely given to all who seek it.<br>
-    spiritsinspacesuits.com &nbsp;·&nbsp; <a href="/admin.html" style="color:var(--gold-dim);text-decoration:none;font-size:.75rem;letter-spacing:.1em;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--gold-dim)'">Admin</a>
+    © <span id="footerYear"></span> Seán Ó'Laoire, PhD. All Rights Reserved.<br>
+    Content distributed freely with permission at spiritsinspacesuits.com. Unauthorized commercial use, resale, or repackaging is prohibited.<br>
+    <a href="/terms">Terms of Use</a> &nbsp;·&nbsp; <a href="/admin.html" style="font-size:.75rem;letter-spacing:.1em;">Admin</a>
+    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener" class="footer-cc" title="Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License">
+      <img src="https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png" alt="CC BY-NC-ND 4.0">
+      <span style="font-size:.68rem; letter-spacing:.06em; text-transform: uppercase;">CC BY-NC-ND 4.0</span>
+    </a>
   </div>
 </footer>
 
@@ -2773,6 +2796,7 @@ function videoCardHtml(v) {
         <img src="${v.thumbnail}" alt="${escapeHtml(v.title)}" loading="lazy"
              onerror="this.src='https://img.youtube.com/vi/${v.id}/hqdefault.jpg'">
         <div class="video-thumb-overlay"><div class="play-btn"></div></div>
+        ${v.transcriptMatch ? '<div class="transcript-badge">in transcript</div>' : ''}
       </div>
       <div class="video-info">
         <h3>${escapeHtml(v.title)}</h3>
@@ -2826,14 +2850,18 @@ function debounceSearch(val) {
     videoSearchQuery = q.toLowerCase();
     if (!videosExpanded) expandVideoArchive();
     if (q) {
-      // Show local matches instantly while API search loads
+      // Show local title matches instantly while full search loads
       const localMatches = allVideos.filter(v =>
         v.title && v.title.toLowerCase().includes(q.toLowerCase())
       );
+      const totalLabel = channelVideoCount ? ` all ${channelVideoCount.toLocaleString()}` : ' all';
       if (localMatches.length > 0) {
         document.getElementById('videoCount').textContent =
-          `${localMatches.length} local match${localMatches.length !== 1 ? 'es' : ''} - searching full channel…`;
+          `${localMatches.length} quick match${localMatches.length !== 1 ? 'es' : ''} — searching${totalLabel} videos + transcripts…`;
         renderVideoGrid(localMatches);
+      } else {
+        document.getElementById('videoCount').textContent =
+          `Searching${totalLabel} videos + transcripts…`;
       }
       fetchSearchVideos(q);
     } else {
@@ -2848,25 +2876,45 @@ async function fetchSearchVideos(q) {
   const localMatches = allVideos.filter(v =>
     v.title && v.title.toLowerCase().includes(q.toLowerCase())
   );
-  if (localMatches.length === 0) {
-    countEl.textContent = 'Searching…';
-    document.getElementById('videoGrid').innerHTML = '';
-  }
   document.getElementById('videoMoreBtn').style.display = 'none';
   try {
-    const res = await fetch(`/api/videos?type=search&q=${encodeURIComponent(q)}&max=50`);
-    const data = await res.json();
-    const apiResults = data.videos || [];
-    // Merge local and API results, deduplicate by ID
+    // Fire YouTube title search and transcript search in parallel
+    const [titleRes, transcriptRes] = await Promise.allSettled([
+      fetch(`/api/videos?type=search&q=${encodeURIComponent(q)}&max=50`).then(r => r.json()),
+      fetch(`/api/videos?type=transcript-search&q=${encodeURIComponent(q)}`).then(r => r.json())
+    ]);
+    const titleResults = titleRes.status === 'fulfilled' ? (titleRes.value.videos || []) : [];
+    const transcriptResults = transcriptRes.status === 'fulfilled' ? (transcriptRes.value.videos || []) : [];
+
+    // Merge: local + title matches first, then transcript-only matches
     const seen = new Set();
     const merged = [];
-    for (const v of [...localMatches, ...apiResults]) {
+    for (const v of [...localMatches, ...titleResults]) {
       if (v.id && !seen.has(v.id)) {
         seen.add(v.id);
-        merged.push(v);
+        merged.push({ ...v, transcriptMatch: false });
       }
     }
-    countEl.textContent = `${merged.length} result${merged.length !== 1 ? 's' : ''} for "${q}"`;
+    for (const v of transcriptResults) {
+      if (v.id && !seen.has(v.id)) {
+        seen.add(v.id);
+        merged.push({ ...v, transcriptMatch: true });
+      }
+    }
+
+    const titleCount = merged.filter(v => !v.transcriptMatch).length;
+    const transcriptCount = merged.filter(v => v.transcriptMatch).length;
+    let countText;
+    if (merged.length === 0) {
+      countText = `No results for "${q}"`;
+    } else if (titleCount > 0 && transcriptCount > 0) {
+      countText = `${titleCount} title match${titleCount !== 1 ? 'es' : ''} + ${transcriptCount} transcript match${transcriptCount !== 1 ? 'es' : ''} for "${q}"`;
+    } else if (transcriptCount > 0) {
+      countText = `${transcriptCount} transcript match${transcriptCount !== 1 ? 'es' : ''} for "${q}"`;
+    } else {
+      countText = `${titleCount} result${titleCount !== 1 ? 's' : ''} for "${q}"`;
+    }
+    countEl.textContent = countText;
     renderVideoGrid(merged);
   } catch {
     // On API failure, show local matches if any
@@ -3377,6 +3425,9 @@ loadGlossary();
 loadBooks();
 loadCourses();
 renderTodayStory();
+const _fy = document.getElementById('footerYear');
+if (_fy) _fy.textContent = new Date().getFullYear();
+
 loadStories(true);
 loadModels();
 loadVideos();

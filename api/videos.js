@@ -4,6 +4,7 @@
 // AI sorting: Gemini 2.5 Flash Lite re-ranks by title/content richness
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getSupabase } from '../lib/supabase.js';
 
 const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID || 'UCSEABr_YYaS6MLSAXE6Tuzw';
 const YT_API_KEY = process.env.YOUTUBE_API_KEY;
@@ -55,7 +56,7 @@ export default async function handler(req) {
   }
 
   const url = new URL(req.url);
-  const type = url.searchParams.get('type') || 'latest'; // latest | appearances | search | stats
+  const type = url.searchParams.get('type') || 'latest'; // latest | appearances | search | transcript-search | stats
   const query = url.searchParams.get('q') || '';
   const maxResults = Math.min(parseInt(url.searchParams.get('max') || '12'), 50);
   const pageToken = url.searchParams.get('pageToken') || '';
@@ -84,8 +85,53 @@ export default async function handler(req) {
     let videos = [];
     let nextPageToken = null;
 
-    if (type === 'search' && query) {
-      // Keyword search within the channel
+    if (type === 'transcript-search' && query) {
+      // Full-text search across ingested transcript chunks in Supabase
+      const supabase = getSupabase();
+      const { data: chunks, error } = await supabase
+        .from('sean_chunks')
+        .select('source_id, source_title, source_date')
+        .eq('source_type', 'transcript')
+        .ilike('content', `%${query}%`)
+        .not('source_id', 'is', null)
+        .limit(100);
+
+      if (error) throw new Error(error.message);
+
+      // Deduplicate by source_id
+      const seen = new Set();
+      const unique = [];
+      for (const chunk of (chunks || [])) {
+        if (chunk.source_id && !seen.has(chunk.source_id)) {
+          seen.add(chunk.source_id);
+          unique.push(chunk);
+        }
+      }
+
+      if (unique.length > 0) {
+        // Batch-fetch YouTube metadata for matched video IDs (max 50 per request)
+        const ids = unique.slice(0, 50).map(c => c.source_id).join(',');
+        const ytRes = await fetch(`${YT_BASE}/videos?key=${YT_API_KEY}&id=${ids}&part=snippet`);
+        const ytData = await ytRes.json();
+        if (ytData.error) throw new Error(ytData.error.message);
+        videos = (ytData.items || []).map(item => ({
+          id: item.id,
+          title: item.snippet.title,
+          description: item.snippet.description?.slice(0, 200),
+          thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.medium?.url || `https://img.youtube.com/vi/${item.id}/hqdefault.jpg`,
+          publishedAt: item.snippet.publishedAt,
+          channelTitle: item.snippet.channelTitle,
+          transcriptMatch: true
+        }));
+      }
+
+      return new Response(JSON.stringify({ videos, nextPageToken: null }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+    } else if (type === 'search' && query) {
+      // Keyword search within the channel (title/description via YouTube API)
       const params = new URLSearchParams({
         key: YT_API_KEY,
         channelId: CHANNEL_ID,
