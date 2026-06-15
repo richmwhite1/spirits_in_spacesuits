@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Spirits in Spacesuits — Fr. Seán Ó'Laoire, PhD",
   "engines": {
-    "node": ">=18"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "echo 'Run: vercel dev (not npm run dev)' && exit 1",
@@ -13,10 +13,10 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
-    "@supabase/supabase-js": "^2.49.0",
-    "openai": "^4.85.0"
+    "@supabase/supabase-js": "^2.49.0"
   },
   "devDependencies": {
+    "openai": "^4.85.0",
     "vercel": "^41.0.0"
   }
 }

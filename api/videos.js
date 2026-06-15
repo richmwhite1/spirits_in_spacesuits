@@ -186,8 +186,8 @@ export default async function handler(req) {
           .slice(0, 12);
         videos = await aiSortVideos(filtered.slice(0, 6));
       } else {
-        // AI-sort latest videos by spiritual/content depth
-        videos = await aiSortVideos(allVideos);
+        // Chronological order (newest first) — keeps CPU usage low on the homepage feed
+        videos = allVideos;
       }
     }
 

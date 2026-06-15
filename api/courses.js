@@ -31,7 +31,7 @@ export default async function handler(req) {
       .order('created_at', { ascending: true });
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
     return new Response(JSON.stringify({ courses: data ?? [] }), {
-      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' }
+      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' }
     });
   }
 

@@ -31,7 +31,7 @@ export default async function handler(req) {
     const { data, error } = await query;
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
     return new Response(JSON.stringify({ events: data ?? [] }), {
-      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' }
+      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' }
     });
   }
 

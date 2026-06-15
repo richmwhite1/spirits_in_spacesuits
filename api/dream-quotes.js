@@ -72,7 +72,7 @@ export default async function handler(req) {
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
 
     return new Response(JSON.stringify({ quotes: data ?? [], total: count ?? 0 }), {
-      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' }
+      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=7200' }
     });
   }
 

@@ -6,6 +6,7 @@ node_modules/
 # Never commit raw transcript or book files
 # These live locally and get ingested into Supabase
 data/
+essays, stories and poems txt/
 
 # OS clutter
 .DS_Store

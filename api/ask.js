@@ -4,10 +4,21 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { embedQuery } from '../lib/embed.js';
-import { findRelevantChunks } from '../lib/supabase.js';
+import { findRelevantChunks, getSupabase } from '../lib/supabase.js';
 import { checkRateLimit, getIP, rateLimitResponse } from '../lib/rateLimit.js';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+// Memoize first-turn answers for 7 days — same question = same canonical answer
+const ASK_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+async function hashQuestion(text) {
+  const buf = new TextEncoder().encode(text.toLowerCase().trim());
+  const digest = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(digest))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
 
 // Seán's system prompt — strict grounding, his voice, honest about limits
 const SEAN_SYSTEM = `You are an AI built on Fr. Seán Ó'Laoire's complete body of work — his books, recorded teachings, and transcribed homilies. You speak in his voice and answer only from the material provided to you in each conversation.
@@ -64,7 +75,35 @@ export default async function handler(req) {
   // Sanitise input — cap length, strip anything dangerous
   const cleanQuestion = question.trim().slice(0, 500);
 
+  // Only cache standalone questions — follow-ups depend on conversation history
+  const cacheable = history.length === 0;
+  const questionHash = cacheable ? await hashQuestion(cleanQuestion) : null;
+
   try {
+    // 0. Cache lookup — return memoized answer if fresh
+    if (cacheable) {
+      const supabase = getSupabase();
+      const { data: cached } = await supabase
+        .from('ask_cache')
+        .select('response, created_at, hit_count')
+        .eq('question_hash', questionHash)
+        .maybeSingle();
+
+      if (cached && Date.now() - new Date(cached.created_at).getTime() < ASK_CACHE_TTL_MS) {
+        // Fire-and-forget hit-count bump (don't await — keeps response fast)
+        supabase
+          .from('ask_cache')
+          .update({ hit_count: (cached.hit_count || 0) + 1, updated_at: new Date().toISOString() })
+          .eq('question_hash', questionHash)
+          .then(() => {}, () => {});
+
+        return new Response(JSON.stringify({ ...cached.response, remaining, cached: true }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
     // 1. Embed the question
     const queryEmbedding = await embedQuery(cleanQuestion);
 
@@ -142,7 +181,23 @@ export default async function handler(req) {
       }
     }
 
-    return new Response(JSON.stringify({ answer, sources, relatedVideos, remaining }), {
+    const payload = { answer, sources, relatedVideos };
+
+    // Write to cache (fire-and-forget — don't block the response on cache writes)
+    if (cacheable && questionHash) {
+      const supabase = getSupabase();
+      supabase
+        .from('ask_cache')
+        .upsert({
+          question_hash: questionHash,
+          question: cleanQuestion,
+          response: payload,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'question_hash' })
+        .then(() => {}, () => {});
+    }
+
+    return new Response(JSON.stringify({ ...payload, remaining }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });

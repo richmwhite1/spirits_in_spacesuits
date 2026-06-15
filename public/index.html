@@ -3354,43 +3354,72 @@ async function subscribeNewsletter(e) {
    DREAM QUOTES
 ══════════════════════════════════════ */
 let DQ_ALL = [];
-async function loadDreamQuotes() {
+let DQ_ALL_LOADED = false;
+let DQ_ALL_LOADING = null;
+
+// Homepage only needs today's quote \u2014 cached 1h at the edge
+async function loadTodayDreamQuote() {
   try {
-    // Try API first (Supabase-backed, admin-editable)
-    const res = await fetch('/api/dream-quotes');
+    const res = await fetch('/api/dream-quotes?today=1');
     const data = await res.json();
-    const quotes = data.quotes || [];
-    if (quotes.length) {
-      DQ_ALL = quotes.map(q => q.quote);
-      renderTodayDreamQuote();
+    const quote = data.quote?.quote;
+    if (quote) {
+      renderTodayDreamQuote(quote);
       return;
     }
   } catch { /* fall through to static file */ }
   try {
-    // Fallback to static JSON file
     const res = await fetch('/quotes/dream-quotes.json');
     const data = await res.json();
-    DQ_ALL = data.quotes || [];
-    renderTodayDreamQuote();
+    const quotes = data.quotes || [];
+    if (!quotes.length) return;
+    const now = new Date();
+    const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    renderTodayDreamQuote(quotes[dayOfYear % quotes.length]);
   } catch { /* silently fail */ }
 }
-function renderTodayDreamQuote() {
-  if (!DQ_ALL.length) return;
+
+// Full list is only needed when the modal opens \u2014 fetch lazily, cache result
+async function ensureAllDreamQuotes() {
+  if (DQ_ALL_LOADED) return;
+  if (DQ_ALL_LOADING) return DQ_ALL_LOADING;
+  DQ_ALL_LOADING = (async () => {
+    try {
+      const res = await fetch('/api/dream-quotes');
+      const data = await res.json();
+      const quotes = data.quotes || [];
+      if (quotes.length) {
+        DQ_ALL = quotes.map(q => q.quote);
+        DQ_ALL_LOADED = true;
+        return;
+      }
+    } catch { /* fall through */ }
+    try {
+      const res = await fetch('/quotes/dream-quotes.json');
+      const data = await res.json();
+      DQ_ALL = data.quotes || [];
+      DQ_ALL_LOADED = true;
+    } catch { /* silently fail */ }
+  })();
+  return DQ_ALL_LOADING;
+}
+
+function renderTodayDreamQuote(quote) {
+  if (!quote) return;
   const now = new Date();
-  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
-  const idx = dayOfYear % DQ_ALL.length;
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('dqDateLabel').textContent =
     `Today\u2019s Quote \u00B7 ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
   const el = document.getElementById('dqQuote');
-  el.textContent = '\u201C' + DQ_ALL[idx] + '\u201D';
+  el.textContent = '\u201C' + quote + '\u201D';
   requestAnimationFrame(() => el.classList.add('visible'));
 }
-function openDreamQuotes() {
+async function openDreamQuotes() {
   const modal = document.getElementById('dqModal');
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
   document.getElementById('dqSearch').value = '';
+  await ensureAllDreamQuotes();
   renderDreamQuoteList(DQ_ALL);
 }
 function closeDreamQuotes() {
@@ -3420,7 +3449,7 @@ function renderDreamQuoteList(quotes) {
 /* ══════════════════════════════════════
    INIT
 ══════════════════════════════════════ */
-loadDreamQuotes();
+loadTodayDreamQuote();
 loadGlossary();
 loadBooks();
 loadCourses();
