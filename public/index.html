@@ -2563,15 +2563,17 @@ function sanitizeHtml(html) {
 /* ══════════════════════════════════════
    TODAY'S FEATURE (daily rotation, loads from API)
 ══════════════════════════════════════ */
-async function renderTodayStory() {
+async function renderTodayStory(storyArg) {
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const now = new Date();
   document.getElementById('todayDateLabel').textContent =
     `Today's Feature · ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
   try {
-    const res = await fetch('/api/stories?today=1');
-    const data = await res.json();
-    const story = data.story;
+    let story = storyArg;
+    if (story === undefined) {
+      const res = await fetch('/api/stories?today=1');
+      story = (await res.json()).story;
+    }
     if (!story) return;
     const typeLabel = story.content_type === 'essay' ? 'Essay' : story.content_type === 'poem' ? 'Poem' : 'Story';
     document.getElementById('todayStory').innerHTML = `
@@ -2683,8 +2685,9 @@ function closeModalDirect() { document.getElementById('storyModal').classList.re
 /* ══════════════════════════════════════
    MODELS - API-driven
 ══════════════════════════════════════ */
-async function loadModels() {
+async function loadModels(modelsArg) {
   try {
+    if (modelsArg !== undefined) { MODELS = modelsArg || []; renderModels(); return; }
     const res = await fetch('/api/models');
     const data = await res.json();
     MODELS = data.models || [];
@@ -3084,11 +3087,10 @@ function toggleGloss(i) {
   if (card) card.classList.toggle('open');
 }
 
-async function loadGlossary() {
+async function loadGlossary(termsArg) {
   try {
-    const res = await fetch('/api/glossary');
-    const data = await res.json();
-    const terms = (data.terms || []).map(function(t) { return { t: t.term, d: t.definition }; });
+    const raw = termsArg !== undefined ? termsArg : (await (await fetch('/api/glossary')).json()).terms;
+    const terms = (raw || []).map(function(t) { return { t: t.term, d: t.definition }; });
     if (terms.length) { renderGlossaryTerms(terms); return; }
   } catch(e) {}
   // Fallback: hardcoded terms (used before DB is seeded)
@@ -3145,13 +3147,11 @@ async function loadGlossary() {
 /* ══════════════════════════════════════
    BOOKS
 ══════════════════════════════════════ */
-async function loadBooks() {
+async function loadBooks(booksArg) {
   const grid = document.getElementById('booksGrid');
   if (!grid) return;
   try {
-    const res = await fetch('/api/books');
-    const data = await res.json();
-    const books = data.books || [];
+    const books = (booksArg !== undefined ? booksArg : (await (await fetch('/api/books')).json()).books) || [];
     if (books.length) {
       grid.innerHTML = books.map(function(b) {
         const featured = b.sort_order <= 2 ? ' featured' : '';
@@ -3182,13 +3182,11 @@ async function loadBooks() {
 /* ══════════════════════════════════════
    COURSES
 ══════════════════════════════════════ */
-async function loadCourses() {
+async function loadCourses(coursesArg) {
   const container = document.getElementById('coursesContainer');
   if (!container) return;
   try {
-    const res = await fetch('/api/courses');
-    const data = await res.json();
-    const courses = data.courses || [];
+    const courses = (coursesArg !== undefined ? coursesArg : (await (await fetch('/api/courses')).json()).courses) || [];
     if (courses.length) {
       container.innerHTML = '<div class="courses-grid">' + courses.map(function(c) {
         const statusLabel = c.status === 'available' ? 'Available Now' : c.status === 'in_progress' ? 'In Development' : 'Coming Soon';
@@ -3215,13 +3213,11 @@ async function loadCourses() {
 /* ══════════════════════════════════════
    EVENTS
 ══════════════════════════════════════ */
-async function loadEvents() {
+async function loadEvents(eventsArg) {
   const container = document.getElementById('eventsContainer');
   if (!container) return;
   try {
-    const res = await fetch('/api/events');
-    const data = await res.json();
-    const events = data.events || [];
+    const events = (eventsArg !== undefined ? eventsArg : (await (await fetch('/api/events')).json()).events) || [];
     if (!events.length) {
       container.innerHTML = '<div class="events-empty"><p>Future events coming soon.</p></div>';
       return;
@@ -3251,13 +3247,11 @@ async function loadEvents() {
 /* ══════════════════════════════════════
    TESTIMONIALS
 ══════════════════════════════════════ */
-async function loadTestimonials() {
+async function loadTestimonials(itemsArg) {
   const container = document.getElementById('testimonialsContainer');
   if (!container) return;
   try {
-    const res = await fetch('/api/testimonials');
-    const data = await res.json();
-    const items = data.testimonials || [];
+    const items = (itemsArg !== undefined ? itemsArg : (await (await fetch('/api/testimonials')).json()).testimonials) || [];
     if (!items.length) { container.innerHTML = ''; return; }
     container.className = 'testimonials-grid';
     container.innerHTML = items.map(t => `
@@ -3358,11 +3352,14 @@ let DQ_ALL_LOADED = false;
 let DQ_ALL_LOADING = null;
 
 // Homepage only needs today's quote \u2014 cached 1h at the edge
-async function loadTodayDreamQuote() {
+async function loadTodayDreamQuote(quoteArg) {
   try {
-    const res = await fetch('/api/dream-quotes?today=1');
-    const data = await res.json();
-    const quote = data.quote?.quote;
+    let quoteObj = quoteArg;
+    if (quoteObj === undefined) {
+      const res = await fetch('/api/dream-quotes?today=1');
+      quoteObj = (await res.json()).quote;
+    }
+    const quote = quoteObj?.quote;
     if (quote) {
       renderTodayDreamQuote(quote);
       return;
@@ -3449,20 +3446,39 @@ function renderDreamQuoteList(quotes) {
 /* ══════════════════════════════════════
    INIT
 ══════════════════════════════════════ */
-loadTodayDreamQuote();
-loadGlossary();
-loadBooks();
-loadCourses();
-renderTodayStory();
+// Single combined request for the 8 fast Supabase sections (one function call /
+// one edge request instead of eight). Each section is gathered independently
+// server-side, so one failing section never blanks the page. Falls back to the
+// individual loaders if /api/home is unavailable. Videos/stats/stories-archive
+// stay separate (external API / own pagination).
+async function loadHome() {
+  let h;
+  try {
+    const res = await fetch('/api/home');
+    if (!res.ok) throw new Error('home ' + res.status);
+    h = await res.json();
+  } catch {
+    renderTodayStory(); loadTodayDreamQuote(); loadModels();
+    loadGlossary(); loadBooks(); loadCourses(); loadEvents(); loadTestimonials();
+    return;
+  }
+  renderTodayStory(h.todayStory);
+  loadTodayDreamQuote(h.dreamQuote);
+  loadModels(h.models);
+  loadGlossary(h.glossary?.terms);
+  loadBooks(h.books);
+  loadCourses(h.courses);
+  loadEvents(h.events);
+  loadTestimonials(h.testimonials);
+}
+
+loadHome();
 const _fy = document.getElementById('footerYear');
 if (_fy) _fy.textContent = new Date().getFullYear();
 
 loadStories(true);
-loadModels();
 loadVideos();
 fetchChannelVideoCount();
-loadEvents();
-loadTestimonials();
 setTimeout(() => {
   document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
 }, 200);

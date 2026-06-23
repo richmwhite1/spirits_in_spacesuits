@@ -77,7 +77,7 @@ export default async function handler(req) {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200'
+          'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800'
         }
       });
     }
@@ -196,7 +196,7 @@ export default async function handler(req) {
       headers: {
         'Content-Type': 'application/json',
         // Cache for 1 hour at the edge — reduces API quota usage dramatically
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200'
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800'
       }
     });
 

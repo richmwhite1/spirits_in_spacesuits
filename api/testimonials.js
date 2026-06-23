@@ -49,7 +49,7 @@ export default async function handler(req) {
       .order('created_at', { ascending: false });
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
     return new Response(JSON.stringify({ testimonials: data ?? [] }), {
-      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' }
+      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' }
     });
   }
 

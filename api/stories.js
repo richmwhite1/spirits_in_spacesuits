@@ -55,7 +55,7 @@ export default async function handler(req) {
         .range(idx, idx);
 
       return new Response(JSON.stringify({ story: data?.[0] ?? null }), {
-        headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' }
+        headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' }
       });
     }
 
@@ -81,7 +81,7 @@ export default async function handler(req) {
     if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
 
     return new Response(JSON.stringify({ stories: data ?? [], total: count ?? 0 }), {
-      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=7200' }
+      headers: { ...JSON_HEADERS, 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' }
     });
   }
 
