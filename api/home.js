@@ -57,13 +57,16 @@ export default async function handler(req) {
     testimonials: async () => (await supabase.from('testimonials')
       .select('id, name, location, message, created_at')
       .eq('approved', true).order('created_at', { ascending: false })).data ?? [],
+    podcasts: async () => (await supabase.from('podcasts').select('*')
+      .order('aired_date', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false })).data ?? [],
   };
 
   const keys = Object.keys(tasks);
   const settled = await Promise.allSettled(keys.map(k => tasks[k]()));
 
   // Defaults match each section's "empty" shape so the client can render unconditionally.
-  const empties = { todayStory: null, dreamQuote: null, models: [], books: [], courses: [], glossary: [], events: [], testimonials: [] };
+  const empties = { todayStory: null, dreamQuote: null, models: [], books: [], courses: [], glossary: [], events: [], testimonials: [], podcasts: [] };
   const out = {};
   keys.forEach((k, i) => {
     out[k] = settled[i].status === 'fulfilled' ? settled[i].value : empties[k];

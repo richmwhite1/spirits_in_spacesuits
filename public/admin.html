@@ -258,6 +258,8 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <button class="snav-item" onclick="showPage('content', this)">Stories, Essays & Poems</button>
       <button class="snav-item" onclick="showPage('books', this)">Books</button>
       <button class="snav-item" onclick="showPage('models', this)">Models of Reality</button>
+      <div class="snav-section">Media</div>
+      <button class="snav-item" onclick="showPage('podcasts', this)">Podcast Appearances</button>
       <div class="snav-section">Seán's Lexicon</div>
       <button class="snav-item" onclick="showPage('glossary', this)">Glossary</button>
       <div class="snav-section">Events & Engagement</div>
@@ -529,6 +531,30 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
           <tbody id="coursesBody"></tbody>
         </table>
         <div class="empty-state" id="noCourses" style="display:none;">No courses yet. Click "+ Add Course" to get started.</div>
+      </div>
+    </div>
+
+    <!-- ── PODCAST APPEARANCES PAGE ── -->
+    <div class="page" id="page-podcasts">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1 class="page-title">Podcast Appearances</h1>
+          <p class="page-lead">Shows where Seán was a guest (not his own channel). Add a new appearance when one is released — paste the YouTube link and a few details. These appear in the "Podcast Appearances" section of the website immediately.</p>
+        </div>
+        <button class="btn btn-green" onclick="openPodcastModal()">+ Add Podcast</button>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-search">
+          <input type="text" id="podcastSearch" placeholder="Search by show, host or title…" oninput="renderPodcastsTable(_podcastsFilter(this.value))">
+        </div>
+      </div>
+      <div class="loading" id="podcastsLoading">Loading…</div>
+      <div id="podcastsTableWrap" style="display:none;">
+        <table class="data-table">
+          <thead><tr><th style="width:110px">Aired</th><th>Show / Host</th><th>Title</th><th style="width:130px"></th></tr></thead>
+          <tbody id="podcastsBody"></tbody>
+        </table>
+        <div class="empty-state" id="noPodcasts" style="display:none;">No appearances yet. Click "+ Add Podcast" to get started.</div>
       </div>
     </div>
 
@@ -908,6 +934,50 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
   </div>
 </div>
 
+<!-- PODCAST MODAL -->
+<div class="modal-overlay" id="podcastModal" onclick="closePodcastModalBg(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="podcastModalTitle">Add Podcast</div>
+      <button class="modal-close" onclick="closePodcastModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="podcastId">
+      <div class="form-group">
+        <label>Show / Host <span style="color:#e06060">*</span></label>
+        <input type="text" id="podcastHost" placeholder="e.g. Aubrey Marcus, Buddha at the Gas Pump">
+        <div class="form-hint">The name of the podcast or the person who interviewed Seán.</div>
+      </div>
+      <div class="form-group">
+        <label>Title / Topic <span style="color:#e06060">*</span></label>
+        <input type="text" id="podcastTitle" placeholder="e.g. Jesus, Reincarnation and Mysticism">
+        <div class="form-hint">The episode title or what the conversation was about.</div>
+      </div>
+      <div class="form-group">
+        <label>YouTube Link <span style="color:#e06060">*</span></label>
+        <input type="url" id="podcastUrl" placeholder="https://youtu.be/…">
+        <div class="form-hint">Paste the full YouTube address. The video plays directly on the site.</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date Aired <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — optional</span></label>
+          <input type="date" id="podcastDate">
+          <div class="form-hint">Used to order newest first.</div>
+        </div>
+        <div class="form-group">
+          <label>Duration <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — optional</span></label>
+          <input type="text" id="podcastDuration" placeholder="e.g. 1:12:30 or 59:00">
+          <div class="form-hint">Hours:minutes:seconds, or minutes:seconds.</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closePodcastModal()">Cancel</button>
+      <button class="btn btn-sm btn-green" id="podcastSaveBtn" onclick="savePodcast()">Save Podcast</button>
+    </div>
+  </div>
+</div>
+
 <!-- CONFIRM DIALOG -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-box">
@@ -989,6 +1059,7 @@ function showPage(name, el) {
   if (name === 'glossary')     loadGlossary();
   if (name === 'events')       loadEvents();
   if (name === 'courses')      loadCourses();
+  if (name === 'podcasts')     loadPodcasts();
   if (name === 'testimonials') loadTestimonials();
   if (name === 'subscribers')  loadSubscribers();
 }
@@ -2148,6 +2219,158 @@ async function executeCourseDelete() {
     const res = await fetch(`/api/courses?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
     const data = await res.json();
     res.ok ? (toast(`"${title}" deleted`, 'success'), loadCourses()) : toast(data.error || 'Delete failed', 'error');
+  } catch { toast('Connection error', 'error'); }
+}
+
+/* ══════════════════════════════════════
+   PODCAST APPEARANCES
+══════════════════════════════════════ */
+let _podcastsMap = {};
+let _podcastsAll = [];
+
+// "1:12:30" / "59:00" / "90" → seconds. Returns null for blank/invalid.
+function parseDurationToSeconds(str) {
+  if (!str) return null;
+  const s = String(str).trim();
+  if (!s) return null;
+  if (/^\d+$/.test(s)) return parseInt(s) * 60; // bare number = minutes
+  const parts = s.split(':').map(p => parseInt(p, 10));
+  if (parts.some(isNaN)) return null;
+  let secs = 0;
+  for (const p of parts) secs = secs * 60 + p;
+  return secs;
+}
+
+function formatSecondsToDuration(secs) {
+  if (secs == null) return '';
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = secs % 60;
+  const pad = n => String(n).padStart(2, '0');
+  return h ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+
+function _podcastsFilter(val) {
+  const q = (val || '').trim().toLowerCase();
+  if (!q) return _podcastsAll;
+  return _podcastsAll.filter(p =>
+    (p.host && p.host.toLowerCase().includes(q)) ||
+    (p.title && p.title.toLowerCase().includes(q))
+  );
+}
+
+async function loadPodcasts() {
+  document.getElementById('podcastsLoading').style.display = 'block';
+  document.getElementById('podcastsTableWrap').style.display = 'none';
+  try {
+    const res = await fetch('/api/podcasts');
+    const data = await res.json();
+    _podcastsAll = data.podcasts || [];
+    renderPodcastsTable(_podcastsAll);
+  } catch { document.getElementById('podcastsLoading').textContent = 'Failed to load. Check your connection.'; }
+}
+
+function renderPodcastsTable(items) {
+  document.getElementById('podcastsLoading').style.display = 'none';
+  document.getElementById('podcastsTableWrap').style.display = 'block';
+  _podcastsMap = {};
+  _podcastsAll.forEach(p => { _podcastsMap[p.id] = p; });
+  if (!items.length) {
+    document.getElementById('podcastsBody').innerHTML = '';
+    document.getElementById('noPodcasts').style.display = 'block';
+    return;
+  }
+  document.getElementById('noPodcasts').style.display = 'none';
+  document.getElementById('podcastsBody').innerHTML = items.map(p => {
+    const date = p.aired_date ? new Date(p.aired_date + 'T00:00:00').toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '—';
+    return `<tr>
+      <td style="color:var(--muted);font-size:.75rem;">${esc(date)}</td>
+      <td style="color:var(--cream-d);">${esc(p.host || '')}</td>
+      <td>${esc(p.title || '')}</td>
+      <td>
+        <button class="btn btn-sm" onclick="editPodcast('${esc(p.id)}')" style="margin-right:.4rem;">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmPodcastDelete('${esc(p.id)}','${esc(p.title).replace(/'/g,"&#39;")}')">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openPodcastModal(prefill) {
+  document.getElementById('podcastId').value = '';
+  document.getElementById('podcastHost').value = '';
+  document.getElementById('podcastTitle').value = '';
+  document.getElementById('podcastUrl').value = '';
+  document.getElementById('podcastDate').value = '';
+  document.getElementById('podcastDuration').value = '';
+  document.getElementById('podcastModalTitle').textContent = 'Add Podcast';
+  document.getElementById('podcastSaveBtn').textContent = 'Save Podcast';
+  if (prefill) {
+    document.getElementById('podcastId').value = prefill.id || '';
+    document.getElementById('podcastHost').value = prefill.host || '';
+    document.getElementById('podcastTitle').value = prefill.title || '';
+    document.getElementById('podcastUrl').value = prefill.youtube_url || '';
+    document.getElementById('podcastDate').value = prefill.aired_date || '';
+    document.getElementById('podcastDuration').value = formatSecondsToDuration(prefill.duration_seconds);
+    document.getElementById('podcastModalTitle').textContent = 'Edit Podcast';
+  }
+  document.getElementById('podcastModal').classList.add('open');
+}
+
+function editPodcast(id) {
+  const p = _podcastsMap[id];
+  if (p) openPodcastModal(p);
+}
+
+function closePodcastModal() { document.getElementById('podcastModal').classList.remove('open'); }
+function closePodcastModalBg(e) { if (e.target === document.getElementById('podcastModal')) closePodcastModal(); }
+
+async function savePodcast() {
+  const id = document.getElementById('podcastId').value;
+  const payload = {
+    host:             document.getElementById('podcastHost').value.trim(),
+    title:            document.getElementById('podcastTitle').value.trim(),
+    youtube_url:      document.getElementById('podcastUrl').value.trim(),
+    aired_date:       document.getElementById('podcastDate').value.trim(),
+    duration_seconds: parseDurationToSeconds(document.getElementById('podcastDuration').value),
+  };
+  if (!payload.host)        return toast('Show / Host is required', 'error');
+  if (!payload.title)       return toast('Title is required', 'error');
+  if (!payload.youtube_url) return toast('YouTube link is required', 'error');
+  const btn = document.getElementById('podcastSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/podcasts?id=${id}` : '/api/podcasts';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast(id ? 'Podcast updated!' : `"${data.podcast?.title}" added`, 'success');
+      closePodcastModal();
+      loadPodcasts();
+    } else { toast(data.error || 'Save failed', 'error'); }
+  } catch { toast('Connection error — please try again', 'error'); }
+  btn.disabled = false; btn.textContent = 'Save Podcast';
+}
+
+function confirmPodcastDelete(id, title) {
+  pendingDelete = { type: 'podcast', id, title };
+  document.getElementById('confirmTitle').textContent = 'Delete Podcast';
+  document.getElementById('confirmMsg').textContent = `Permanently delete "${title}"? This cannot be undone.`;
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.getElementById('confirmOkBtn').onclick = executePodcastDelete;
+}
+async function executePodcastDelete() {
+  if (!pendingDelete) return;
+  const { id, title } = pendingDelete;
+  closeConfirm();
+  try {
+    const res = await fetch(`/api/podcasts?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const data = await res.json();
+    res.ok ? (toast(`"${title}" deleted`, 'success'), loadPodcasts()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
 }
 

@@ -1300,6 +1300,7 @@ footer {
     <li><a href="#dream-quotes">Quotes</a></li>
     <li><a href="#latest">Latest</a></li>
     <li><a href="#videos">Videos</a></li>
+    <li><a href="#podcasts">Podcasts</a></li>
     <li><a href="#stories">Stories</a></li>
     <li><a href="#teachings">Teachings</a></li>
     <li><a href="#books">Books</a></li>
@@ -2012,6 +2013,36 @@ footer {
   </div>
 </section>
 
+<!-- PODCAST APPEARANCES (guest on other shows) -->
+<section id="podcasts">
+  <div class="inner">
+    <p class="eyebrow fade-in">Beyond the Channel</p>
+    <h2 class="fade-in">Podcast Appearances</h2>
+    <p class="section-lead fade-in">Conversations where Seán was a guest on other shows — interviews, dialogues and deep dives from across the web.</p>
+    <div id="podcastLoading">Loading appearances…</div>
+    <div id="podcastEmpty" style="display:none;"><p style="text-align:center;color:var(--muted);padding:2rem;font-style:italic;">No appearances listed yet.</p></div>
+    <!-- Compact: horizontal scroll of first 6 -->
+    <div class="video-scroll-row" id="podcastScrollRow" style="display:none;"></div>
+    <div class="video-browse-bar fade-in" id="podcastBrowseBar" style="display:none;">
+      <span class="video-browse-count" id="podcastBrowseCount"></span>
+      <button class="video-expand-btn" onclick="expandPodcasts()">Browse all →</button>
+    </div>
+    <!-- Expanded: full search + grid -->
+    <div class="video-archive-wrap" id="podcastArchiveWrap">
+      <div class="video-controls fade-in" style="justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;">
+        <div class="video-search-wrap" style="flex:1;min-width:200px;">
+          <span class="video-search-icon">⌕</span>
+          <input class="video-search" id="podcastSearch" type="text"
+            placeholder="Search by show, host or topic…"
+            oninput="filterPodcasts(this.value)">
+        </div>
+      </div>
+      <p class="video-count" id="podcastCount"></p>
+      <div class="video-grid" id="podcastGrid"></div>
+    </div>
+  </div>
+</section>
+
 <!-- STORIES -->
 <section id="stories">
   <div class="inner">
@@ -2235,6 +2266,7 @@ footer {
     <ul class="footer-nav">
       <li><a href="#ask">Ask Seán</a></li>
       <li><a href="#videos">Videos</a></li>
+      <li><a href="#podcasts">Podcasts</a></li>
       <li><a href="#dream-quotes">Quotes</a></li>
       <li><a href="#stories">Stories</a></li>
       <li><a href="#teachings">Teachings</a></li>
@@ -3451,6 +3483,107 @@ function renderDreamQuoteList(quotes) {
 // server-side, so one failing section never blanks the page. Falls back to the
 // individual loaders if /api/home is unavailable. Videos/stats/stories-archive
 // stay separate (external API / own pagination).
+/* ══════════════════════════════════════
+   PODCAST APPEARANCES (guest on other shows)
+══════════════════════════════════════ */
+let allPodcasts = [];
+let podcastsExpanded = false;
+
+function formatDuration(secs) {
+  if (!secs) return '';
+  const h = Math.floor(secs / 3600);
+  const m = Math.round((secs % 3600) / 60);
+  return h ? `${h}h ${m}m` : `${m} min`;
+}
+
+function podcastCardHtml(p, idx) {
+  const thumb = p.video_id
+    ? `https://img.youtube.com/vi/${p.video_id}/hqdefault.jpg`
+    : '';
+  const date = p.aired_date ? new Date(p.aired_date + 'T00:00:00').toLocaleDateString('en-US',{year:'numeric',month:'short'}) : '';
+  const meta = [p.host, date, formatDuration(p.duration_seconds)].filter(Boolean).join(' · ');
+  return `
+    <div class="video-card" onclick="openPodcast(${idx})">
+      <div class="video-thumb">
+        ${thumb ? `<img src="${thumb}" alt="${escapeHtml(p.title)}" loading="lazy" onerror="this.style.display='none'">` : '<div style="position:absolute;inset:0;background:var(--mid);"></div>'}
+        <div class="video-thumb-overlay"><div class="play-btn"></div></div>
+      </div>
+      <div class="video-info">
+        <h3>${escapeHtml(p.title)}</h3>
+        <p class="video-meta">${escapeHtml(meta)}</p>
+      </div>
+    </div>
+  `;
+}
+
+function openPodcast(idx) {
+  const p = allPodcasts[idx];
+  if (!p) return;
+  const title = p.host ? `${p.title} — ${p.host}` : p.title;
+  if (p.video_id) {
+    openVideoModal(p.video_id, title);
+  } else if (p.youtube_url) {
+    window.open(p.youtube_url, '_blank', 'noopener');
+  }
+}
+
+function loadPodcasts(list) {
+  const loading = document.getElementById('podcastLoading');
+  if (Array.isArray(list)) {
+    allPodcasts = list;
+    if (loading) loading.style.display = 'none';
+    renderPodcastCompact();
+  } else {
+    fetch('/api/podcasts').then(r => r.json()).then(d => {
+      allPodcasts = d.podcasts || [];
+      if (loading) loading.style.display = 'none';
+      renderPodcastCompact();
+    }).catch(() => { if (loading) loading.style.display = 'none'; });
+  }
+}
+
+function renderPodcastCompact() {
+  if (!allPodcasts.length) {
+    document.getElementById('podcastEmpty').style.display = 'block';
+    return;
+  }
+  const row = document.getElementById('podcastScrollRow');
+  row.innerHTML = allPodcasts.slice(0, 6).map((p, i) => podcastCardHtml(p, i)).join('');
+  row.style.display = 'flex';
+  document.getElementById('podcastBrowseBar').style.display = 'flex';
+  document.getElementById('podcastBrowseCount').textContent =
+    `${allPodcasts.length} appearance${allPodcasts.length !== 1 ? 's' : ''}`;
+}
+
+function expandPodcasts() {
+  podcastsExpanded = true;
+  document.getElementById('podcastScrollRow').style.display = 'none';
+  document.getElementById('podcastBrowseBar').style.display = 'none';
+  document.getElementById('podcastArchiveWrap').style.display = 'block';
+  renderPodcastGrid(allPodcasts);
+}
+
+function renderPodcastGrid(list) {
+  document.getElementById('podcastGrid').innerHTML =
+    list.map(p => podcastCardHtml(p, allPodcasts.indexOf(p))).join('');
+  document.getElementById('podcastCount').textContent =
+    `Showing ${list.length} of ${allPodcasts.length} appearances`;
+}
+
+function filterPodcasts(val) {
+  const q = val.trim().toLowerCase();
+  if (!q) { renderPodcastGrid(allPodcasts); return; }
+  const matches = allPodcasts.filter(p =>
+    (p.title && p.title.toLowerCase().includes(q)) ||
+    (p.host && p.host.toLowerCase().includes(q))
+  );
+  document.getElementById('podcastGrid').innerHTML =
+    matches.map(p => podcastCardHtml(p, allPodcasts.indexOf(p))).join('');
+  document.getElementById('podcastCount').textContent = matches.length
+    ? `${matches.length} match${matches.length !== 1 ? 'es' : ''} for "${val.trim()}"`
+    : `No matches for "${val.trim()}"`;
+}
+
 async function loadHome() {
   let h;
   try {
@@ -3460,6 +3593,7 @@ async function loadHome() {
   } catch {
     renderTodayStory(); loadTodayDreamQuote(); loadModels();
     loadGlossary(); loadBooks(); loadCourses(); loadEvents(); loadTestimonials();
+    loadPodcasts();
     return;
   }
   renderTodayStory(h.todayStory);
@@ -3470,6 +3604,7 @@ async function loadHome() {
   loadCourses(h.courses);
   loadEvents(h.events);
   loadTestimonials(h.testimonials);
+  loadPodcasts(h.podcasts);
 }
 
 loadHome();
