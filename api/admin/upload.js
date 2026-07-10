@@ -75,7 +75,7 @@ export default async function handler(req) {
     return new Response(JSON.stringify({ error: 'No usable text found after cleaning.' }), { status: 400 });
   }
 
-  // Embed in batches using Gemini text-embedding-004
+  // Embed in batches using gemini-embedding-2 (768 dims)
   const allEmbeddings = await embedBatch(chunks);
 
   // Store in Supabase (batches of 100)

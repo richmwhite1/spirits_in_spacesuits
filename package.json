@@ -6,7 +6,7 @@
     "node": "24.x"
   },
   "scripts": {
-    "dev": "echo 'Run: vercel dev (not npm run dev)' && exit 1",
+    "dev": "echo 'Use the Vercel CLI to run locally, not npm run dev' && exit 1",
     "ingest": "node scripts/ingest.js",
     "ingest:transcripts": "node scripts/ingest.js --source=transcripts",
     "ingest:books": "node scripts/ingest.js --source=books"

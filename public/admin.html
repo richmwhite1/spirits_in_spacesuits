@@ -305,19 +305,34 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
     <!-- ── UPLOAD PAGE ── -->
     <div class="page" id="page-upload">
       <h1 class="page-title">Add to Corpus</h1>
-      <p class="page-lead">Add a transcript, book chapter, or essay to the AI knowledge base. It will be chunked, embedded, and made searchable. <strong>Only plain text (.txt) and subtitle (.srt) files are supported</strong> — save Word documents as .txt first.</p>
+      <p class="page-lead">Add transcripts, book chapters, or essays to the AI knowledge base. Content is chunked, embedded, and made searchable. Accepts <strong>.txt, .srt, .docx, and .pdf</strong> — select several files at once to batch-ingest a month of transcripts.</p>
       <div class="upload-form">
         <div class="form-group">
-          <label>File</label>
+          <label>File(s)</label>
           <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()"
                ondragover="handleDragOver(event)" ondrop="handleDrop(event)" ondragleave="handleDragLeave()">
             <div class="dropzone-icon">↑</div>
-            <div class="dropzone-label">Drop file here or click to browse</div>
-            <div class="dropzone-hint">.txt or .srt only — Word docs must be saved as .txt first</div>
-            <input type="file" id="fileInput" accept=".txt,.srt" onchange="handleFileSelect(event)">
+            <div class="dropzone-label">Drop files here or click to browse</div>
+            <div class="dropzone-hint">.txt, .srt, .docx or .pdf — select multiple files to batch-ingest</div>
+            <input type="file" id="fileInput" accept=".txt,.srt,.docx,.pdf" multiple onchange="handleFileSelect(event)">
           </div>
           <div id="fileNameDisplay"></div>
         </div>
+
+        <!-- Batch mode: shown when 2+ files are selected -->
+        <div id="batchPanel" style="display:none;">
+          <p class="form-hint" style="margin-bottom:.9rem;">Files are ingested as <strong>transcripts</strong>. Title and date come from the filename (e.g. "2011-01-02 Title.docx"); the YouTube video ID is read from a URL on the first line of each file. Fill in any red fields before ingesting.</p>
+          <div style="max-width:100%;overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>Title</th><th>Date</th><th>YouTube ID</th><th style="width:170px">Status</th></tr></thead>
+              <tbody id="batchRows"></tbody>
+            </table>
+          </div>
+          <div class="upload-status" id="batchStatus"></div>
+          <button class="btn" id="batchBtn" onclick="ingestBatch()" style="margin-top:1rem;">Ingest All into Corpus →</button>
+        </div>
+
+        <div id="singleUploadFields">
         <div class="form-group">
           <label>Or Paste Text Directly</label>
           <textarea id="textInput" placeholder="Paste transcript or document text here…"></textarea>
@@ -352,6 +367,7 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
         </div>
         <div class="upload-status" id="uploadStatus"></div>
         <button class="btn" id="uploadBtn" onclick="uploadContent()">Ingest into Corpus →</button>
+        </div><!-- /singleUploadFields -->
       </div>
     </div>
 
@@ -1130,32 +1146,199 @@ async function executeCorpusDelete() {
    UPLOAD
 ══════════════════════════════════════ */
 let fileText = null;
+let batchFiles = [];   // [{file, title, date, videoId, text, status, chunks?, error?}]
 
-function handleFileSelect(e) { const f = e.target.files[0]; if (f) readFile(f); }
+const CORPUS_FILE_RE = /\.(txt|srt|docx|pdf)$/i;
+
+function handleFileSelect(e) { const fs = Array.from(e.target.files || []); if (fs.length) handleCorpusFiles(fs); }
 function handleDragOver(e) { e.preventDefault(); document.getElementById('dropzone').classList.add('drag-over'); }
 function handleDragLeave() { document.getElementById('dropzone').classList.remove('drag-over'); }
-function handleDrop(e) { e.preventDefault(); document.getElementById('dropzone').classList.remove('drag-over'); if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); }
+function handleDrop(e) { e.preventDefault(); document.getElementById('dropzone').classList.remove('drag-over'); const fs = Array.from(e.dataTransfer.files || []); if (fs.length) handleCorpusFiles(fs); }
 
-function readFile(file) {
+function handleCorpusFiles(files) {
   const display = document.getElementById('fileNameDisplay');
-  const allowed = /\.(txt|srt)$/i;
-  if (!allowed.test(file.name)) {
-    display.textContent = '';
+  const bad = files.filter(f => !CORPUS_FILE_RE.test(f.name));
+  if (bad.length) {
     display.style.color = '#e06060';
-    display.textContent = `✗ "${file.name}" is not supported. Save as .txt first (in Word: File → Save As → Plain Text).`;
-    fileText = null;
+    display.textContent = `✗ Unsupported: ${bad.map(f => f.name).join(', ')} — use .txt, .srt, .docx or .pdf`;
     return;
   }
+  if (files.length === 1) readSingleFile(files[0]);
+  else enterBatchMode(files);
+}
+
+// Extract plain text from any supported corpus file type (runs in the browser)
+async function extractFileText(file) {
+  if (/\.(txt|srt)$/i.test(file.name)) return await file.text();
+  if (/\.docx$/i.test(file.name)) {
+    await loadMammoth();
+    const result = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
+    return result.value;
+  }
+  if (/\.pdf$/i.test(file.name)) {
+    await loadPdfJs();
+    const { text } = await pdfToText(await file.arrayBuffer());
+    return text;
+  }
+  throw new Error('Unsupported file type');
+}
+
+// Filename → { title, date } — mirrors scripts/ingest_2010_transcripts.py parse_filename()
+function parseTranscriptFilename(name) {
+  let stem = name.replace(CORPUS_FILE_RE, '').replace(/^\(Final\s+Draft\)\s*/i, '').trim();
+  const numMatch = stem.match(/\((\d+)\)\s*$/);
+  const clipNum = numMatch ? numMatch[1] : null;
+  let body = numMatch ? stem.replace(/\((\d+)\)\s*$/, '').trim() : stem;
+  let date = null;
+  const m = body.match(/(\d{4}-\d{2}-\d{2}|\d{4})/);
+  if (m) {
+    date = m[1].length === 10 ? m[1] : `${m[1]}-01-01`;
+    body = body.slice(m.index + m[1].length).replace(/^[-\s_]+/, '').trim();
+  }
+  let title = body.replace(/_+/g, ' ').replace(/\s{2,}/g, ' ').replace(/^[-\s]+/, '').trim();
+  if (!title) {
+    const base = date || stem;
+    title = clipNum ? `${base} (${clipNum})` : base;
+  } else if (clipNum) {
+    title = `${title} (${clipNum})`;
+  }
+  return { title, date };
+}
+
+// If the first non-empty line is a YouTube URL, extract the video ID and strip that line
+function extractLeadingYouTube(raw) {
+  const lines = raw.split('\n');
+  let i = 0;
+  while (i < lines.length && !lines[i].trim()) i++;
+  const m = i < lines.length ? lines[i].match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/) : null;
+  if (!m) return { videoId: null, text: raw };
+  lines.splice(0, i + 1);
+  while (lines.length && !lines[0].trim()) lines.shift();
+  return { videoId: m[1], text: lines.join('\n') };
+}
+
+async function readSingleFile(file) {
+  document.getElementById('batchPanel').style.display = 'none';
+  document.getElementById('singleUploadFields').style.display = 'block';
+  const display = document.getElementById('fileNameDisplay');
   display.style.color = 'var(--gold-d)';
   display.textContent = `Reading: ${file.name}…`;
-  const titleInput = document.getElementById('titleInput');
-  if (!titleInput.value.trim()) {
-    titleInput.value = file.name.replace(/\.(txt|srt)$/i,'').replace(/[-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  try {
+    const raw = await extractFileText(file);
+    const { videoId, text } = extractLeadingYouTube(raw);
+    fileText = text;
+    const parsed = parseTranscriptFilename(file.name);
+    const titleInput = document.getElementById('titleInput');
+    if (!titleInput.value.trim()) titleInput.value = parsed.title;
+    if (parsed.date && !document.getElementById('dateInput').value) document.getElementById('dateInput').value = parsed.date;
+    if (videoId && !document.getElementById('videoIdInput').value.trim()) {
+      document.getElementById('videoIdInput').value = videoId;
+      previewThumb(videoId);
+    }
+    display.textContent = `✓ ${file.name} (${Math.round(fileText.length/1024)} KB${videoId ? `, YouTube: ${videoId}` : ''})`;
+  } catch (err) {
+    display.style.color = '#e06060';
+    display.textContent = `Error reading ${file.name}: ${err.message}`;
+    fileText = null;
   }
-  const reader = new FileReader();
-  reader.onload = e => { fileText = e.target.result; display.textContent = `✓ ${file.name} (${Math.round(fileText.length/1024)} KB)`; };
-  reader.onerror = () => { display.textContent = 'Error reading file.'; };
-  reader.readAsText(file);
+}
+
+/* ── Batch mode ── */
+async function enterBatchMode(files) {
+  document.getElementById('singleUploadFields').style.display = 'none';
+  document.getElementById('batchPanel').style.display = 'block';
+  document.getElementById('batchStatus').style.display = 'none';
+  const display = document.getElementById('fileNameDisplay');
+  display.style.color = 'var(--gold-d)';
+  files.sort((a, b) => a.name.localeCompare(b.name));
+  batchFiles = files.map(file => ({ file, title: '', date: null, videoId: null, text: null, status: 'reading' }));
+  for (let i = 0; i < batchFiles.length; i++) {
+    const entry = batchFiles[i];
+    display.textContent = `Reading ${i + 1} of ${batchFiles.length}: ${entry.file.name}…`;
+    try {
+      const raw = await extractFileText(entry.file);
+      const { videoId, text } = extractLeadingYouTube(raw);
+      const parsed = parseTranscriptFilename(entry.file.name);
+      Object.assign(entry, { title: parsed.title, date: parsed.date, videoId, text, status: 'ready' });
+    } catch (err) {
+      Object.assign(entry, { title: parseTranscriptFilename(entry.file.name).title, status: 'read-error', error: err.message });
+    }
+  }
+  renderBatchRows();
+  const missing = batchFiles.filter(e => e.status === 'ready' && !e.videoId).length;
+  display.textContent = `${batchFiles.length} files read.` + (missing ? ` ${missing} missing a YouTube video ID — fill in the red fields.` : ' Review and ingest below.');
+}
+
+function batchStatusHtml(e) {
+  switch (e.status) {
+    case 'ready':      return e.videoId ? '<span style="color:var(--muted)">ready</span>' : '<span style="color:#e06060">needs video ID</span>';
+    case 'read-error': return `<span style="color:#e08080">✗ ${esc(e.error || 'read failed')}</span>`;
+    case 'uploading':  return '<span style="color:#7ab0d0">ingesting…</span>';
+    case 'done':       return `<span style="color:#80c0a0">✓ ${e.chunks} chunks</span>`;
+    case 'skipped':    return '<span style="color:var(--gold-d)">already in corpus</span>';
+    case 'error':      return `<span style="color:#e08080">✗ ${esc(e.error || 'failed')}</span>`;
+    default:           return '<span style="color:var(--muted)">reading…</span>';
+  }
+}
+
+function renderBatchRows() {
+  document.getElementById('batchRows').innerHTML = batchFiles.map((e, i) => `<tr>
+    <td title="${esc(e.file.name)}">${esc(e.title)}</td>
+    <td style="white-space:nowrap;">${e.date || '<span style="color:#e06060">—</span>'}</td>
+    <td><input type="text" id="bvid-${i}" value="${esc(e.videoId || '')}" placeholder="video ID or URL"
+         style="width:140px;font-size:.78rem;${e.videoId ? '' : 'border-color:#e06060;'}"
+         oninput="setBatchVideoId(${i}, this)" ${e.status === 'ready' || e.status === 'read-error' ? '' : 'disabled'}></td>
+    <td id="bstat-${i}">${batchStatusHtml(e)}</td>
+  </tr>`).join('');
+}
+
+function setBatchVideoId(i, input) {
+  const id = parseVideoId(input.value);
+  batchFiles[i].videoId = id && id.length >= 8 ? id : null;
+  input.style.borderColor = batchFiles[i].videoId ? '' : '#e06060';
+}
+
+function updateBatchRow(i) {
+  const cell = document.getElementById(`bstat-${i}`);
+  if (cell) cell.innerHTML = batchStatusHtml(batchFiles[i]);
+  const input = document.getElementById(`bvid-${i}`);
+  if (input) input.disabled = !(batchFiles[i].status === 'ready' || batchFiles[i].status === 'read-error');
+}
+
+async function ingestBatch() {
+  const pending = batchFiles.filter(e => e.status === 'ready');
+  if (!pending.length) return showBatchStatus('error', 'Nothing left to ingest.');
+  const missing = pending.filter(e => !e.videoId);
+  if (missing.length) return showBatchStatus('error', `${missing.length} file(s) missing a YouTube video ID — fill in the red fields first.`);
+  const btn = document.getElementById('batchBtn');
+  btn.disabled = true; btn.textContent = 'Ingesting…';
+  let done = 0, skipped = 0, failed = 0;
+  for (let i = 0; i < batchFiles.length; i++) {
+    const e = batchFiles[i];
+    if (e.status !== 'ready') continue;
+    e.status = 'uploading'; updateBatchRow(i);
+    showBatchStatus('running', `Ingesting ${done + skipped + failed + 1} of ${pending.length}: "${e.title}"…`);
+    try {
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+        body: JSON.stringify({ text: e.text, title: e.title, sourceType: 'transcript', sourceId: e.videoId, sourceDate: e.date })
+      });
+      const data = await res.json();
+      if (res.ok) { e.status = 'done'; e.chunks = data.chunks; done++; }
+      else if (res.status === 409) { e.status = 'skipped'; skipped++; }
+      else { e.status = 'error'; e.error = data.error || 'upload failed'; failed++; }
+    } catch { e.status = 'error'; e.error = 'connection error'; failed++; }
+    updateBatchRow(i);
+  }
+  showBatchStatus(failed ? 'error' : 'success', `Done — ingested: ${done}, already in corpus: ${skipped}, errors: ${failed}.`);
+  toast(`Batch complete: ${done} ingested${failed ? `, ${failed} failed` : ''}`, failed ? 'error' : 'success');
+  btn.disabled = false; btn.textContent = 'Ingest All into Corpus →';
+}
+
+function showBatchStatus(type, msg) {
+  const el = document.getElementById('batchStatus');
+  el.className = `upload-status ${type}`; el.textContent = msg; el.style.display = 'block';
 }
 
 function parseVideoId(input) {
@@ -2390,6 +2573,37 @@ async function loadMammoth() {
   _mammothLoaded = true;
 }
 
+async function loadPdfJs() {
+  if (window.pdfjsLib) return;
+  window.pdfjsLib = await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs');
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
+}
+
+async function pdfToText(arrayBuffer) {
+  const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let pages = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    // Group items into lines by vertical position, then paragraphs
+    const items = content.items;
+    let lines = [], curY = null, curLine = [];
+    items.forEach(item => {
+      const y = Math.round(item.transform[5]);
+      if (curY === null || Math.abs(y - curY) > 3) {
+        if (curLine.length) lines.push(curLine.join(''));
+        curLine = [item.str];
+        curY = y;
+      } else {
+        curLine.push(item.str);
+      }
+    });
+    if (curLine.length) lines.push(curLine.join(''));
+    pages.push(lines.join('\n'));
+  }
+  return { text: pages.join('\n\n'), numPages: pdf.numPages };
+}
+
 async function importContentFile(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -2421,42 +2635,11 @@ async function importContentFile(e) {
       status.textContent = `Imported ${file.name} ✓`;
 
     } else if (file.name.endsWith('.pdf')) {
-      if (!window.pdfjsLib) {
-        await new Promise((resolve, reject) => {
-          const s = document.createElement('script');
-          s.src = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs';
-          s.type = 'module';
-          s.onload = resolve; s.onerror = reject;
-          document.head.appendChild(s);
-        });
-        window.pdfjsLib = await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs');
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
-      }
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let pages = [];
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        // Group items into lines by vertical position, then paragraphs
-        const items = content.items;
-        let lines = [], curY = null, curLine = [];
-        items.forEach(item => {
-          const y = Math.round(item.transform[5]);
-          if (curY === null || Math.abs(y - curY) > 3) {
-            if (curLine.length) lines.push(curLine.join(''));
-            curLine = [item.str];
-            curY = y;
-          } else {
-            curLine.push(item.str);
-          }
-        });
-        if (curLine.length) lines.push(curLine.join(''));
-        pages.push(lines.join('\n'));
-      }
-      document.getElementById('contentBody').value = textToSimpleHtml(pages.join('\n\n'), titleHint);
+      await loadPdfJs();
+      const { text, numPages } = await pdfToText(await file.arrayBuffer());
+      document.getElementById('contentBody').value = textToSimpleHtml(text, titleHint);
       status.style.color = '#90d0a8';
-      status.textContent = `Imported ${pdf.numPages}-page PDF ✓`;
+      status.textContent = `Imported ${numPages}-page PDF ✓`;
 
     } else {
       status.style.color = '#e09090';
