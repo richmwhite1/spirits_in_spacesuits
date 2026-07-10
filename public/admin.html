@@ -58,6 +58,9 @@ body { font-family: var(--sans); background: var(--dark); color: var(--body); fo
 .btn-sm { padding: .45rem .9rem; font-size: .7rem; }
 .btn-green { border-color: #2a6a40; color: #70c090; }
 .btn-green:hover { background: #1a4a2c; color: var(--cream); }
+.arrow-btn { background: none; border: 1px solid var(--border); color: var(--gold-d); width: 22px; height: 22px; cursor: pointer; font-size: .7rem; line-height: 1; transition: all .2s; vertical-align: middle; }
+.arrow-btn:hover:not(:disabled) { border-color: var(--gold-d); color: var(--gold-p); }
+.arrow-btn:disabled { opacity: .25; cursor: default; }
 
 /* LAYOUT */
 #app { display: none; overflow: hidden; }
@@ -233,7 +236,7 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
     <div class="login-logo">Spirits in Spacesuits</div>
     <div class="login-sub">Admin Panel</div>
     <label for="passwordInput">Password</label>
-    <input type="password" id="passwordInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')login()">
+    <input type="password" id="passwordInput" placeholder="Enter admin password" autofocus autocomplete="current-password" oninput="hideLoginError()" onkeydown="if(event.key==='Enter')login()">
     <div class="login-error" id="loginError">Incorrect password.</div>
     <button class="btn btn-full" onclick="login()">Sign In</button>
   </div>
@@ -324,12 +327,13 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
           <p class="form-hint" style="margin-bottom:.9rem;">Files are ingested as <strong>transcripts</strong>. Title and date come from the filename (e.g. "2011-01-02 Title.docx"); the YouTube video ID is read from a URL on the first line of each file. Fill in any red fields before ingesting.</p>
           <div style="max-width:100%;overflow-x:auto;">
             <table class="data-table">
-              <thead><tr><th>Title</th><th>Date</th><th>YouTube ID</th><th style="width:170px">Status</th></tr></thead>
+              <thead><tr><th>Title</th><th>Date</th><th>YouTube ID</th><th style="width:170px">Status</th><th style="width:34px"></th></tr></thead>
               <tbody id="batchRows"></tbody>
             </table>
           </div>
           <div class="upload-status" id="batchStatus"></div>
           <button class="btn" id="batchBtn" onclick="ingestBatch()" style="margin-top:1rem;">Ingest All into Corpus →</button>
+          <button class="btn btn-sm" onclick="clearBatch()" style="margin-top:1rem;margin-left:.6rem;">Clear Selection</button>
         </div>
 
         <div id="singleUploadFields">
@@ -437,7 +441,7 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <div class="loading" id="modelsLoading">Loading…</div>
       <div id="modelsTableWrap" style="display:none;">
         <table class="data-table">
-          <thead><tr><th style="width:50px">#</th><th>Title</th><th>Subtitle</th><th style="width:130px"></th></tr></thead>
+          <thead><tr><th style="width:50px">#</th><th>Title</th><th>Subtitle</th><th style="width:190px"></th></tr></thead>
           <tbody id="modelsBody"></tbody>
         </table>
         <div class="empty-state" id="noModels" style="display:none;">No models yet. Click "+ Add Model" to get started.</div>
@@ -500,7 +504,7 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <div class="loading" id="booksLoading">Loading…</div>
       <div id="booksTableWrap" style="display:none;">
         <table class="data-table">
-          <thead><tr><th style="width:50px">Order</th><th>Title</th><th>Badge</th><th style="width:150px"></th></tr></thead>
+          <thead><tr><th style="width:50px">Order</th><th>Title</th><th>Badge</th><th style="width:200px"></th></tr></thead>
           <tbody id="booksBody"></tbody>
         </table>
         <div class="empty-state" id="noBooks" style="display:none;">No books yet. Click "+ Add Book" to get started.</div>
@@ -543,7 +547,7 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <div class="loading" id="coursesLoading">Loading…</div>
       <div id="coursesTableWrap" style="display:none;">
         <table class="data-table">
-          <thead><tr><th style="width:110px">Status</th><th>Title</th><th style="width:130px"></th></tr></thead>
+          <thead><tr><th style="width:110px">Status</th><th>Title</th><th style="width:190px"></th></tr></thead>
           <tbody id="coursesBody"></tbody>
         </table>
         <div class="empty-state" id="noCourses" style="display:none;">No courses yet. Click "+ Add Course" to get started.</div>
@@ -623,7 +627,8 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" id="dqSaveBtn" onclick="saveDQ()">Save</button>
+      <button class="btn btn-sm" onclick="closeDQModal()">Cancel</button>
+      <button class="btn btn-sm btn-green" id="dqSaveBtn" onclick="saveDQ()">Save</button>
     </div>
   </div>
 </div>
@@ -648,7 +653,9 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
         </div>
         <div class="form-group">
           <label>Date (optional)</label>
-          <input type="text" id="contentDate" placeholder="e.g. February 18, 2019">
+          <input type="date" id="contentDate">
+          <input type="hidden" id="contentDateOriginal">
+          <div class="form-hint">Shown on the piece as e.g. "February 18, 2019".</div>
         </div>
       </div>
       <div class="form-group">
@@ -1014,6 +1021,13 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
 ══════════════════════════════════════ */
 let adminSecret = null;
 
+function hideLoginError() { document.getElementById('loginError').style.display = 'none'; }
+function showLoginError(msg) {
+  const el = document.getElementById('loginError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
 async function login() {
   const pw = document.getElementById('passwordInput').value.trim();
   if (!pw) return;
@@ -1025,14 +1039,35 @@ async function login() {
       adminSecret = pw;
       sessionStorage.setItem('adminSecret', pw);
       sessionStorage.setItem('adminLoginTime', Date.now().toString());
+      hideLoginError();
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('app').classList.add('show');
       loadCorpus();
     } else {
-      document.getElementById('loginError').style.display = 'block';
+      showLoginError('Incorrect password.');
     }
-  } catch { document.getElementById('loginError').textContent = 'Connection error.'; document.getElementById('loginError').style.display = 'block'; }
+  } catch { showLoginError('Connection error.'); }
   btn.disabled = false; btn.textContent = 'Sign In';
+}
+
+// The 8-hour session can lapse (or the secret be rotated) while the tab is
+// open — bounce back to the login screen instead of showing "Save failed".
+function sessionExpired() {
+  adminSecret = null;
+  sessionStorage.removeItem('adminSecret');
+  sessionStorage.removeItem('adminLoginTime');
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('loginScreen').style.display = 'flex';
+  showLoginError('Session expired — please sign in again.');
+  document.getElementById('passwordInput').focus();
+}
+
+// fetch wrapper for admin-authenticated requests: injects the secret and
+// redirects to login on 401.
+async function adminFetch(url, opts = {}) {
+  const res = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), 'x-admin-secret': adminSecret } });
+  if (res.status === 401) { sessionExpired(); throw new Error('session expired'); }
+  return res;
 }
 
 function logout() { sessionStorage.removeItem('adminSecret'); sessionStorage.removeItem('adminLoginTime'); location.reload(); }
@@ -1087,7 +1122,7 @@ async function loadCorpus() {
   document.getElementById('corpusLoading').style.display = 'block';
   document.getElementById('corpusContent').style.display = 'none';
   try {
-    const res = await fetch('/api/admin/stats', { headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch('/api/admin/stats');
     if (!res.ok) throw new Error();
     renderCorpus(await res.json());
   } catch {
@@ -1132,9 +1167,9 @@ async function executeCorpusDelete() {
   const { title, sourceType } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch('/api/admin/delete', {
+    const res = await adminFetch('/api/admin/delete', {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, sourceType })
     });
     const data = await res.json();
@@ -1244,6 +1279,32 @@ async function readSingleFile(file) {
 }
 
 /* ── Batch mode ── */
+let _batchBusy = false;
+
+function removeBatchFile(i) {
+  if (_batchBusy) return;
+  batchFiles.splice(i, 1);
+  if (!batchFiles.length) return clearBatch();
+  renderBatchRows();
+  updateBatchSummary();
+}
+
+function clearBatch() {
+  if (_batchBusy) return;
+  batchFiles = [];
+  document.getElementById('batchPanel').style.display = 'none';
+  document.getElementById('singleUploadFields').style.display = 'block';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('fileNameDisplay').textContent = '';
+}
+
+function updateBatchSummary() {
+  const display = document.getElementById('fileNameDisplay');
+  const missing = batchFiles.filter(e => e.status === 'ready' && !e.videoId).length;
+  display.textContent = `${batchFiles.length} file${batchFiles.length !== 1 ? 's' : ''} selected.` +
+    (missing ? ` ${missing} missing a YouTube video ID — fill in the red fields.` : ' Review and ingest below.');
+}
+
 async function enterBatchMode(files) {
   document.getElementById('singleUploadFields').style.display = 'none';
   document.getElementById('batchPanel').style.display = 'block';
@@ -1265,8 +1326,7 @@ async function enterBatchMode(files) {
     }
   }
   renderBatchRows();
-  const missing = batchFiles.filter(e => e.status === 'ready' && !e.videoId).length;
-  display.textContent = `${batchFiles.length} files read.` + (missing ? ` ${missing} missing a YouTube video ID — fill in the red fields.` : ' Review and ingest below.');
+  updateBatchSummary();
 }
 
 function batchStatusHtml(e) {
@@ -1289,6 +1349,7 @@ function renderBatchRows() {
          style="width:140px;font-size:.78rem;${e.videoId ? '' : 'border-color:#e06060;'}"
          oninput="setBatchVideoId(${i}, this)" ${e.status === 'ready' || e.status === 'read-error' ? '' : 'disabled'}></td>
     <td id="bstat-${i}">${batchStatusHtml(e)}</td>
+    <td>${_batchBusy ? '' : `<button class="key-remove" onclick="removeBatchFile(${i})" title="Remove from batch">×</button>`}</td>
   </tr>`).join('');
 }
 
@@ -1312,6 +1373,8 @@ async function ingestBatch() {
   if (missing.length) return showBatchStatus('error', `${missing.length} file(s) missing a YouTube video ID — fill in the red fields first.`);
   const btn = document.getElementById('batchBtn');
   btn.disabled = true; btn.textContent = 'Ingesting…';
+  _batchBusy = true;
+  renderBatchRows(); // hides the per-row remove buttons while ingesting
   let done = 0, skipped = 0, failed = 0;
   for (let i = 0; i < batchFiles.length; i++) {
     const e = batchFiles[i];
@@ -1319,9 +1382,9 @@ async function ingestBatch() {
     e.status = 'uploading'; updateBatchRow(i);
     showBatchStatus('running', `Ingesting ${done + skipped + failed + 1} of ${pending.length}: "${e.title}"…`);
     try {
-      const res = await fetch('/api/admin/upload', {
+      const res = await adminFetch('/api/admin/upload', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: e.text, title: e.title, sourceType: 'transcript', sourceId: e.videoId, sourceDate: e.date })
       });
       const data = await res.json();
@@ -1331,6 +1394,8 @@ async function ingestBatch() {
     } catch { e.status = 'error'; e.error = 'connection error'; failed++; }
     updateBatchRow(i);
   }
+  _batchBusy = false;
+  renderBatchRows();
   showBatchStatus(failed ? 'error' : 'success', `Done — ingested: ${done}, already in corpus: ${skipped}, errors: ${failed}.`);
   toast(`Batch complete: ${done} ingested${failed ? `, ${failed} failed` : ''}`, failed ? 'error' : 'success');
   btn.disabled = false; btn.textContent = 'Ingest All into Corpus →';
@@ -1377,9 +1442,9 @@ async function uploadContent() {
   btn.disabled = true; btn.textContent = 'Ingesting…';
   showUploadStatus('running', `Processing "${title}"… embedding and storing chunks. This may take 10–30 seconds for large files.`);
   try {
-    const res = await fetch('/api/admin/upload', {
+    const res = await adminFetch('/api/admin/upload', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, title, sourceType, sourceId, sourceDate })
     });
     const data = await res.json();
@@ -1407,11 +1472,12 @@ function showUploadStatus(type, msg) {
 ══════════════════════════════════════ */
 let dqSearchVal = '';
 let dqSearchTimer = null;
+let _dqMap = {};
 
 async function loadDQ() {
   document.getElementById('dqLoading').style.display = 'block';
   document.getElementById('dqTableWrap').style.display = 'none';
-  const params = new URLSearchParams();
+  const params = new URLSearchParams({ _: Date.now() });
   if (dqSearchVal) params.set('q', dqSearchVal);
   try {
     const res = await fetch('/api/dream-quotes?' + params);
@@ -1423,6 +1489,8 @@ async function loadDQ() {
 function renderDQTable(items) {
   document.getElementById('dqLoading').style.display = 'none';
   document.getElementById('dqTableWrap').style.display = 'block';
+  _dqMap = {};
+  items.forEach(q => { _dqMap[q.id] = q; });
   if (!items.length) {
     document.getElementById('dqBody').innerHTML = '';
     document.getElementById('noDQ').style.display = 'block';
@@ -1434,7 +1502,7 @@ function renderDQTable(items) {
       <td style="color:var(--muted);font-size:.75rem;">${i + 1}</td>
       <td style="font-size:.85rem;line-height:1.5;max-width:600px;white-space:normal;">${esc(q.quote.length > 200 ? q.quote.slice(0, 200) + '…' : q.quote)}</td>
       <td>
-        <button class="btn btn-sm" onclick="editDQ(${JSON.stringify(JSON.stringify(q))})" style="margin-right:.4rem;">Edit</button>
+        <button class="btn btn-sm" onclick="editDQ('${esc(q.id)}')" style="margin-right:.4rem;">Edit</button>
         <button class="btn btn-sm btn-danger" onclick="confirmDQDelete('${esc(q.id)}','${esc(jsq(q.quote.slice(0, 40)))}')">Delete</button>
       </td>
     </tr>`).join('');
@@ -1460,8 +1528,9 @@ function openDQModal(prefill) {
   }
   document.getElementById('dqModal').classList.add('open');
 }
-function editDQ(jsonStr) {
-  try { openDQModal(JSON.parse(jsonStr)); } catch {}
+function editDQ(id) {
+  const q = _dqMap[id];
+  if (q) openDQModal(q);
 }
 function closeDQModal() {
   document.getElementById('dqModal').classList.remove('open');
@@ -1480,9 +1549,9 @@ async function saveDQ() {
   try {
     const method = id ? 'PUT' : 'POST';
     const url = id ? `/api/dream-quotes?id=${id}` : '/api/dream-quotes';
-    const res = await fetch(url, {
+    const res = await adminFetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -1507,7 +1576,7 @@ async function executeDQDelete() {
   const { id, preview } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch(`/api/dream-quotes?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/dream-quotes?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast('Quote deleted', 'success'), loadDQ()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
@@ -1519,23 +1588,39 @@ async function executeDQDelete() {
 let contentFilter = 'all';
 let contentSearchVal = '';
 let contentSearchTimer = null;
+let _contentMap = {};
+let _contentReq = 0;
 
 async function loadContent() {
   document.getElementById('contentLoading').style.display = 'block';
   document.getElementById('contentTableWrap').style.display = 'none';
-  const params = new URLSearchParams({ limit: '200' });
-  if (contentFilter !== 'all') params.set('type', contentFilter);
-  if (contentSearchVal) params.set('q', contentSearchVal);
+  const req = ++_contentReq; // drop this response if a newer search superseded it
   try {
-    const res = await fetch('/api/stories?' + params);
-    const data = await res.json();
-    renderContentTable(data.stories || []);
-  } catch { document.getElementById('contentLoading').textContent = 'Failed to load.'; }
+    // The API caps limit at 100 per request — page through until we have everything.
+    const all = [];
+    let offset = 0, total = Infinity;
+    while (all.length < total) {
+      const params = new URLSearchParams({ limit: '100', offset: String(offset), _: Date.now() });
+      if (contentFilter !== 'all') params.set('type', contentFilter);
+      if (contentSearchVal) params.set('q', contentSearchVal);
+      const res = await fetch('/api/stories?' + params);
+      const data = await res.json();
+      const page = data.stories || [];
+      all.push(...page);
+      total = data.total ?? all.length;
+      if (!page.length) break;
+      offset += page.length;
+    }
+    if (req !== _contentReq) return;
+    renderContentTable(all);
+  } catch { if (req === _contentReq) document.getElementById('contentLoading').textContent = 'Failed to load.'; }
 }
 
 function renderContentTable(items) {
   document.getElementById('contentLoading').style.display = 'none';
   document.getElementById('contentTableWrap').style.display = 'block';
+  _contentMap = {};
+  items.forEach(s => { _contentMap[s.id] = s; });
   if (!items.length) {
     document.getElementById('contentBody').innerHTML = '';
     document.getElementById('noContent').style.display = 'block';
@@ -1548,7 +1633,7 @@ function renderContentTable(items) {
       <td>${esc(s.title)}</td>
       <td style="color:var(--muted);font-size:.75rem;">${esc(s.story_date || '—')}</td>
       <td>
-        <button class="btn btn-sm" onclick="editContent(${JSON.stringify(JSON.stringify(s))})" style="margin-right:.4rem;">Edit</button>
+        <button class="btn btn-sm" onclick="editContent('${esc(s.id)}')" style="margin-right:.4rem;">Edit</button>
         <button class="btn btn-sm btn-danger" onclick="confirmContentDelete('${esc(s.id)}','${esc(jsq(s.title))}')">Delete</button>
       </td>
     </tr>`).join('');
@@ -1567,11 +1652,28 @@ function debounceContentSearch(val) {
   contentSearchTimer = setTimeout(loadContent, 300);
 }
 
+// ── Date helpers — story_date is stored as display text ("February 18, 2019"),
+// so the picker converts to/from that format.
+function parseLooseDate(str) {
+  const s = (str || '').trim();
+  if (!s) return null;
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+function toDateInputValue(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+function formatDisplayDate(isoYmd) {
+  return new Date(isoYmd + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
 // ── Content Modal
 function openContentModal(prefill) {
   document.getElementById('contentId').value = '';
   document.getElementById('contentType').value = 'story';
   document.getElementById('contentDate').value = '';
+  document.getElementById('contentDateOriginal').value = '';
   document.getElementById('contentTitle').value = '';
   document.getElementById('contentExcerpt').value = '';
   document.getElementById('contentBody').value = '';
@@ -1580,7 +1682,10 @@ function openContentModal(prefill) {
   if (prefill) {
     document.getElementById('contentId').value = prefill.id || '';
     document.getElementById('contentType').value = prefill.content_type || 'story';
-    document.getElementById('contentDate').value = prefill.story_date || '';
+    const rawDate = prefill.story_date || '';
+    document.getElementById('contentDateOriginal').value = rawDate;
+    const parsed = parseLooseDate(rawDate);
+    document.getElementById('contentDate').value = parsed ? toDateInputValue(parsed) : '';
     document.getElementById('contentTitle').value = prefill.title || '';
     document.getElementById('contentExcerpt').value = prefill.excerpt || '';
     document.getElementById('contentBody').value = prefill.body || '';
@@ -1589,8 +1694,9 @@ function openContentModal(prefill) {
   document.getElementById('contentModal').classList.add('open');
 }
 
-function editContent(jsonStr) {
-  try { openContentModal(JSON.parse(jsonStr)); } catch {}
+function editContent(id) {
+  const s = _contentMap[id];
+  if (s) openContentModal(s);
 }
 
 function closeContentModal() {
@@ -1622,12 +1728,20 @@ async function saveContent() {
   const id = document.getElementById('contentId').value;
   const rawBody = document.getElementById('contentBody').value;
   const title   = document.getElementById('contentTitle').value.trim();
+  const pickedDate   = document.getElementById('contentDate').value;
+  const originalDate = document.getElementById('contentDateOriginal').value;
+  // A picked date is stored in the site's display format. If the stored date
+  // couldn't be parsed into the picker, keep it rather than silently wiping it.
+  const story_date = pickedDate
+    ? formatDisplayDate(pickedDate)
+    : (originalDate && !parseLooseDate(originalDate) ? originalDate : '');
   const payload = {
     content_type: document.getElementById('contentType').value,
     title,
-    story_date:   document.getElementById('contentDate').value.trim(),
+    story_date,
     excerpt:      document.getElementById('contentExcerpt').value.trim(),
     body:         sanitizeBody(rawBody, title),
+    sort_order:   (id && _contentMap[id]?.sort_order) || 0, // preserve on edit — the API resets omitted fields
   };
   if (!payload.title) return toast('Title is required', 'error');
   const btn = document.getElementById('contentSaveBtn');
@@ -1635,9 +1749,9 @@ async function saveContent() {
   try {
     const method = id ? 'PUT' : 'POST';
     const url = id ? `/api/stories?id=${id}` : '/api/stories';
-    const res = await fetch(url, {
+    const res = await adminFetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -1662,7 +1776,7 @@ async function executeContentDelete() {
   const { id, title } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch(`/api/stories?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/stories?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast(`"${title}" deleted`, 'success'), loadContent()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
@@ -1675,12 +1789,13 @@ async function loadModels() {
   document.getElementById('modelsLoading').style.display = 'block';
   document.getElementById('modelsTableWrap').style.display = 'none';
   try {
-    const res = await fetch('/api/models');
+    const res = await fetch('/api/models?_=' + Date.now());
     const data = await res.json();
     renderModelsTable(data.models || []);
   } catch { document.getElementById('modelsLoading').textContent = 'Failed to load.'; }
 }
 
+let _modelsList = [];
 function renderModelsTable(items) {
   document.getElementById('modelsLoading').style.display = 'none';
   document.getElementById('modelsTableWrap').style.display = 'block';
@@ -1692,17 +1807,26 @@ function renderModelsTable(items) {
   document.getElementById('noModels').style.display = 'none';
   // Store in map for edit lookups (avoids HTML attribute escaping issues)
   _modelsMap = {};
+  _modelsList = items;
   items.forEach(m => { _modelsMap[m.id] = m; });
-  document.getElementById('modelsBody').innerHTML = items.map(m => `
+  document.getElementById('modelsBody').innerHTML = items.map((m, i) => `
     <tr>
       <td style="color:var(--gold-d);font-family:var(--serif);">${esc(m.num || '—')}</td>
       <td style="color:var(--cream-d);">${esc(m.title)}</td>
       <td style="color:var(--muted);font-size:.78rem;">${esc(m.subtitle || '—')}</td>
-      <td>
-        <button class="btn btn-sm" onclick="editModel('${esc(m.id)}')" style="margin-right:.4rem;">Edit</button>
+      <td style="white-space:nowrap;">
+        <button class="arrow-btn" onclick="moveModel('${esc(m.id)}',-1)" ${i === 0 ? 'disabled' : ''} title="Move up">↑</button>
+        <button class="arrow-btn" onclick="moveModel('${esc(m.id)}',1)" ${i === items.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
+        <button class="btn btn-sm" onclick="editModel('${esc(m.id)}')" style="margin:0 .4rem;">Edit</button>
         <button class="btn btn-sm btn-danger" onclick="confirmModelDelete('${esc(m.id)}','${esc(jsq(m.title))}')">Delete</button>
       </td>
     </tr>`).join('');
+}
+
+function moveModel(id, dir) {
+  reorderRow(_modelsList, id, dir, mid => `/api/models?id=${mid}`,
+    m => ({ num: m.num, title: m.title, subtitle: m.subtitle, description: m.description, image_url: m.image_url, video_id: m.video_id, video_title: m.video_title, keys: m.keys || [], sort_order: m.sort_order }),
+    renderModelsTable, loadModels);
 }
 
 // ── Model Modal
@@ -1791,9 +1915,8 @@ async function uploadModelImage(file) {
   formData.append('file', file);
 
   try {
-    const res = await fetch('/api/upload-image', {
+    const res = await adminFetch('/api/upload-image', {
       method: 'POST',
-      headers: { 'x-admin-secret': adminSecret },
       body: formData,
     });
     const data = await res.json();
@@ -1856,9 +1979,9 @@ async function saveModel() {
   try {
     const method = id ? 'PUT' : 'POST';
     const url = id ? `/api/models?id=${id}` : '/api/models';
-    const res = await fetch(url, {
+    const res = await adminFetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -1883,7 +2006,7 @@ async function executeModelDelete() {
   const { id, title } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch(`/api/models?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/models?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast(`"${title}" deleted`, 'success'), loadModels()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
@@ -1897,8 +2020,38 @@ function closeConfirm() {
   pendingDelete = null;
 }
 
+// ── Row reordering (Models / Books / Courses) ──
+// Swaps a row with its neighbour, renumbers sort_order to match position, and
+// PUTs only the rows whose sort_order changed. Re-renders optimistically.
+let _reorderBusy = false;
+async function reorderRow(list, id, dir, putUrl, buildPayload, rerender, reload) {
+  if (_reorderBusy) return;
+  const i = list.findIndex(x => x.id === id);
+  const j = i + dir;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  [list[i], list[j]] = [list[j], list[i]];
+  const changed = [];
+  list.forEach((it, pos) => { if (it.sort_order !== pos + 1) { it.sort_order = pos + 1; changed.push(it); } });
+  rerender(list);
+  _reorderBusy = true;
+  try {
+    for (const it of changed) {
+      const res = await adminFetch(putUrl(it.id), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(buildPayload(it))
+      });
+      if (!res.ok) throw new Error();
+    }
+    toast('Order updated', 'success');
+  } catch { toast('Reorder failed — reloading list', 'error'); reload(); }
+  _reorderBusy = false;
+}
+
 let toastTimer = null;
 function toast(msg, type = '') {
+  // Don't toast over the login screen (e.g. catch blocks firing after a 401 redirect)
+  if (document.getElementById('loginScreen').style.display !== 'none') return;
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.className = `toast ${type} show`;
@@ -1920,13 +2073,16 @@ function jsq(str) {
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
+    closeDQModal();
     closeContentModal();
     closeModelModal();
     closeEventModal();
     closeBookModal();
     closeGlossaryModal();
     closeCourseModal();
+    closePodcastModal();
     closeConfirm();
+    closeMobileSidebar();
   }
 });
 
@@ -1956,12 +2112,13 @@ document.querySelectorAll('.snav-item').forEach(btn => {
    BOOKS
 ══════════════════════════════════════ */
 let _booksMap = {};
+let _booksList = [];
 
 async function loadBooks() {
   document.getElementById('booksLoading').style.display = 'block';
   document.getElementById('booksTableWrap').style.display = 'none';
   try {
-    const res = await fetch('/api/books');
+    const res = await fetch('/api/books?_=' + Date.now());
     const data = await res.json();
     renderBooksTable(data.books || []);
   } catch { document.getElementById('booksLoading').textContent = 'Failed to load. Check your connection.'; }
@@ -1971,6 +2128,7 @@ function renderBooksTable(items) {
   document.getElementById('booksLoading').style.display = 'none';
   document.getElementById('booksTableWrap').style.display = 'block';
   _booksMap = {};
+  _booksList = items;
   items.forEach(b => { _booksMap[b.id] = b; });
   if (!items.length) {
     document.getElementById('booksBody').innerHTML = '';
@@ -1978,16 +2136,24 @@ function renderBooksTable(items) {
     return;
   }
   document.getElementById('noBooks').style.display = 'none';
-  document.getElementById('booksBody').innerHTML = items.map(b => `
+  document.getElementById('booksBody').innerHTML = items.map((b, i) => `
     <tr>
       <td style="color:var(--gold-d);font-family:var(--serif);">${esc(b.sort_order ?? '—')}</td>
       <td style="color:var(--cream-d);">${esc(b.title)}</td>
       <td style="color:var(--muted);font-size:.78rem;">${esc(b.badge_text || '—')}</td>
-      <td>
-        <button class="btn btn-sm" onclick="editBook('${esc(b.id)}')" style="margin-right:.4rem;">Edit</button>
+      <td style="white-space:nowrap;">
+        <button class="arrow-btn" onclick="moveBook('${esc(b.id)}',-1)" ${i === 0 ? 'disabled' : ''} title="Move up">↑</button>
+        <button class="arrow-btn" onclick="moveBook('${esc(b.id)}',1)" ${i === items.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
+        <button class="btn btn-sm" onclick="editBook('${esc(b.id)}')" style="margin:0 .4rem;">Edit</button>
         <button class="btn btn-sm btn-danger" onclick="confirmBookDelete('${esc(b.id)}','${esc(jsq(b.title))}')">Delete</button>
       </td>
     </tr>`).join('');
+}
+
+function moveBook(id, dir) {
+  reorderRow(_booksList, id, dir, bid => `/api/books?id=${bid}`,
+    b => ({ title: b.title, subtitle: b.subtitle, badge_text: b.badge_text, description: b.description, cover_url: b.cover_url, links: b.links || [], sort_order: b.sort_order }),
+    renderBooksTable, loadBooks);
 }
 
 // ── Book Link Rows (purchase links inside modal)
@@ -2073,9 +2239,9 @@ async function saveBook() {
   try {
     const method = id ? 'PUT' : 'POST';
     const url = id ? `/api/books?id=${id}` : '/api/books';
-    const res = await fetch(url, {
+    const res = await adminFetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -2100,7 +2266,7 @@ async function executeBookDelete() {
   const { id, title } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch(`/api/books?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/books?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast(`"${title}" removed`, 'success'), loadBooks()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
@@ -2152,9 +2318,8 @@ async function uploadBookImage(file) {
   const formData = new FormData();
   formData.append('file', file);
   try {
-    const res = await fetch('/api/upload-image', {
+    const res = await adminFetch('/api/upload-image', {
       method: 'POST',
-      headers: { 'x-admin-secret': adminSecret },
       body: formData,
     });
     const data = await res.json();
@@ -2183,7 +2348,7 @@ async function loadGlossary() {
   document.getElementById('glossaryLoading').style.display = 'block';
   document.getElementById('glossaryTableWrap').style.display = 'none';
   try {
-    const res = await fetch('/api/glossary');
+    const res = await fetch('/api/glossary?_=' + Date.now());
     const data = await res.json();
     _allGlossaryTerms = data.terms || [];
     renderGlossaryTable(_allGlossaryTerms);
@@ -2259,9 +2424,9 @@ async function saveGlossary() {
   try {
     const method = id ? 'PUT' : 'POST';
     const url = id ? `/api/glossary?id=${id}` : '/api/glossary';
-    const res = await fetch(url, {
+    const res = await adminFetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -2286,7 +2451,7 @@ async function executeGlossaryDelete() {
   const { id, term } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch(`/api/glossary?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/glossary?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast(`"${term}" removed from glossary`, 'success'), loadGlossary()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
@@ -2296,12 +2461,13 @@ async function executeGlossaryDelete() {
    COURSES
 ══════════════════════════════════════ */
 let _coursesMap = {};
+let _coursesList = [];
 
 async function loadCourses() {
   document.getElementById('coursesLoading').style.display = 'block';
   document.getElementById('coursesTableWrap').style.display = 'none';
   try {
-    const res = await fetch('/api/courses');
+    const res = await fetch('/api/courses?_=' + Date.now());
     const data = await res.json();
     renderCoursesTable(data.courses || []);
   } catch { document.getElementById('coursesLoading').textContent = 'Failed to load. Check your connection.'; }
@@ -2311,6 +2477,7 @@ function renderCoursesTable(items) {
   document.getElementById('coursesLoading').style.display = 'none';
   document.getElementById('coursesTableWrap').style.display = 'block';
   _coursesMap = {};
+  _coursesList = items;
   items.forEach(c => { _coursesMap[c.id] = c; });
   if (!items.length) {
     document.getElementById('coursesBody').innerHTML = '';
@@ -2318,18 +2485,26 @@ function renderCoursesTable(items) {
     return;
   }
   document.getElementById('noCourses').style.display = 'none';
-  document.getElementById('coursesBody').innerHTML = items.map(c => {
+  document.getElementById('coursesBody').innerHTML = items.map((c, i) => {
     const statusLabel = c.status === 'available' ? 'Available' : c.status === 'in_progress' ? 'In Development' : 'Coming Soon';
     const statusColor = c.status === 'available' ? '#80c0a0' : c.status === 'in_progress' ? '#7ab0d0' : 'var(--gold-d)';
     return `<tr>
       <td><span style="font-size:.72rem;color:${statusColor};">${esc(statusLabel)}</span></td>
       <td style="color:var(--cream-d);">${esc(c.title)}</td>
-      <td>
-        <button class="btn btn-sm" onclick="editCourse('${esc(c.id)}')" style="margin-right:.4rem;">Edit</button>
+      <td style="white-space:nowrap;">
+        <button class="arrow-btn" onclick="moveCourse('${esc(c.id)}',-1)" ${i === 0 ? 'disabled' : ''} title="Move up">↑</button>
+        <button class="arrow-btn" onclick="moveCourse('${esc(c.id)}',1)" ${i === items.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
+        <button class="btn btn-sm" onclick="editCourse('${esc(c.id)}')" style="margin:0 .4rem;">Edit</button>
         <button class="btn btn-sm btn-danger" onclick="confirmCourseDelete('${esc(c.id)}','${esc(jsq(c.title))}')">Delete</button>
       </td>
     </tr>`;
   }).join('');
+}
+
+function moveCourse(id, dir) {
+  reorderRow(_coursesList, id, dir, cid => `/api/courses?id=${cid}`,
+    c => ({ title: c.title, subtitle: c.subtitle, description: c.description, image_url: c.image_url, link: c.link, status: c.status, sort_order: c.sort_order }),
+    renderCoursesTable, loadCourses);
 }
 
 // ── Course Modal
@@ -2373,6 +2548,7 @@ async function saveCourse() {
     link:        document.getElementById('courseLink').value.trim(),
     status:      document.getElementById('courseStatus').value,
     sort_order:  parseInt(document.getElementById('courseOrder').value) || 0,
+    image_url:   (id && _coursesMap[id]?.image_url) || null, // no image field in this modal — don't wipe it on edit
   };
   if (!payload.title) return toast('Title is required', 'error');
   const btn = document.getElementById('courseSaveBtn');
@@ -2380,9 +2556,9 @@ async function saveCourse() {
   try {
     const method = id ? 'PUT' : 'POST';
     const url = id ? `/api/courses?id=${id}` : '/api/courses';
-    const res = await fetch(url, {
+    const res = await adminFetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -2407,7 +2583,7 @@ async function executeCourseDelete() {
   const { id, title } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch(`/api/courses?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/courses?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast(`"${title}" deleted`, 'success'), loadCourses()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
@@ -2454,7 +2630,7 @@ async function loadPodcasts() {
   document.getElementById('podcastsLoading').style.display = 'block';
   document.getElementById('podcastsTableWrap').style.display = 'none';
   try {
-    const res = await fetch('/api/podcasts');
+    const res = await fetch('/api/podcasts?_=' + Date.now());
     const data = await res.json();
     _podcastsAll = data.podcasts || [];
     renderPodcastsTable(_podcastsAll);
@@ -2532,9 +2708,9 @@ async function savePodcast() {
   try {
     const method = id ? 'PUT' : 'POST';
     const url = id ? `/api/podcasts?id=${id}` : '/api/podcasts';
-    const res = await fetch(url, {
+    const res = await adminFetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -2559,7 +2735,7 @@ async function executePodcastDelete() {
   const { id, title } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch(`/api/podcasts?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/podcasts?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast(`"${title}" deleted`, 'success'), loadPodcasts()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
@@ -2728,7 +2904,7 @@ async function loadEvents() {
   document.getElementById('eventsLoading').style.display = 'block';
   document.getElementById('eventsTableWrap').style.display = 'none';
   try {
-    const res = await fetch('/api/events?all=1', { headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch('/api/events?all=1&_=' + Date.now());
     const data = await res.json();
     renderEventsTable(data.events || []);
   } catch { document.getElementById('eventsLoading').textContent = 'Failed to load.'; }
@@ -2811,9 +2987,9 @@ async function saveEvent() {
   try {
     const method = id ? 'PUT' : 'POST';
     const url = id ? `/api/events?id=${id}` : '/api/events';
-    const res = await fetch(url, {
+    const res = await adminFetch(url, {
       method,
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
@@ -2838,7 +3014,7 @@ async function executeEventDelete() {
   const { id, title } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch(`/api/events?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/events?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast(`"${title}" deleted`, 'success'), loadEvents()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
@@ -2852,9 +3028,10 @@ let testimonialsFilter = 'all';
 async function loadTestimonials() {
   document.getElementById('testimonialsLoading').style.display = 'block';
   document.getElementById('testimonialsTableWrap').style.display = 'none';
-  const params = testimonialsFilter !== 'all' ? `?status=${testimonialsFilter}` : '';
+  const params = new URLSearchParams({ _: Date.now() });
+  if (testimonialsFilter !== 'all') params.set('status', testimonialsFilter);
   try {
-    const res = await fetch(`/api/testimonials${params}`, { headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/testimonials?${params}`);
     const data = await res.json();
     renderTestimonialsTable(data.testimonials || []);
   } catch { document.getElementById('testimonialsLoading').textContent = 'Failed to load.'; }
@@ -2884,7 +3061,7 @@ function renderTestimonialsTable(items) {
       <td>${statusBadge}</td>
       <td>
         ${approveBtn}
-        <button class="btn btn-sm" style="border-color:rgba(180,80,80,.3);color:var(--muted);margin-top:.2rem;" onclick="confirmTestimonialDelete('${esc(t.id)}','${esc(jsq(t.name))}','${t.approved}')">Delete…</button>
+        <button class="btn btn-sm btn-danger" style="margin-top:.2rem;" onclick="confirmTestimonialDelete('${esc(t.id)}','${esc(jsq(t.name))}','${t.approved}')">Delete</button>
       </td>
     </tr>`;
   }).join('');
@@ -2899,9 +3076,9 @@ function setTestimonialsFilter(f, el) {
 
 async function setTestimonialApproval(id, approved, name) {
   try {
-    const res = await fetch(`/api/testimonials?id=${id}`, {
+    const res = await adminFetch(`/api/testimonials?id=${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'x-admin-secret': adminSecret },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ approved })
     });
     const data = await res.json();
@@ -2924,7 +3101,7 @@ async function executeTestimonialDelete() {
   const { id, name } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch(`/api/testimonials?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/testimonials?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast(`Testimonial from "${name}" deleted`, 'success'), loadTestimonials()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
@@ -2942,13 +3119,18 @@ async function loadSubscribers(search = '') {
   document.getElementById('exportSubsBtn').style.display = 'none';
   const params = search ? `?search=${encodeURIComponent(search)}` : '';
   try {
-    const res = await fetch(`/api/admin/subscribers${params}`, { headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/admin/subscribers${params}`);
     const data = await res.json();
     allSubscribers = data.subscribers || [];
     const total = data.total ?? allSubscribers.length;
     document.getElementById('subsTotalLabel').textContent = `${total} subscriber${total !== 1 ? 's' : ''}`;
     renderSubscribersTable(allSubscribers);
-    if (allSubscribers.length) document.getElementById('exportSubsBtn').style.display = '';
+    if (allSubscribers.length) {
+      const btn = document.getElementById('exportSubsBtn');
+      // Make it obvious when a search filter means only a subset is exported
+      btn.textContent = search ? `↓ Export ${allSubscribers.length} shown` : '↓ Export CSV';
+      btn.style.display = '';
+    }
   } catch { document.getElementById('subsLoading').textContent = 'Failed to load.'; }
 }
 
@@ -2989,7 +3171,7 @@ async function executeSubDelete() {
   const { id, name } = pendingDelete;
   closeConfirm();
   try {
-    const res = await fetch(`/api/admin/subscribers?id=${id}`, { method: 'DELETE', headers: { 'x-admin-secret': adminSecret } });
+    const res = await adminFetch(`/api/admin/subscribers?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast(`${name} removed`, 'success'), loadSubscribers(document.getElementById('subsSearch').value)) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
