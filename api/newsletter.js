@@ -27,6 +27,19 @@ export default async function handler(req) {
   }
 
   const supabase = db();
+
+  // Light abuse guard: 10 signups per IP per day. Fail open — a rate-limit
+  // outage should never block genuine signups.
+  try {
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
+    const { data: count } = await supabase.rpc('increment_rate_limit', {
+      p_ip: `news::${ip}`,
+      p_date: new Date().toISOString().split('T')[0]
+    });
+    if ((count || 1) > 10) {
+      return new Response(JSON.stringify({ error: 'Too many signups from this connection today. Please try again tomorrow.' }), { status: 429, headers: JSON_HEADERS });
+    }
+  } catch { /* fail open */ }
   const { error } = await supabase
     .from('newsletter_subscribers')
     .insert({ email })

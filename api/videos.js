@@ -57,7 +57,7 @@ export default async function handler(req) {
 
   const url = new URL(req.url);
   const type = url.searchParams.get('type') || 'latest'; // latest | appearances | search | transcript-search | stats
-  const query = url.searchParams.get('q') || '';
+  const query = (url.searchParams.get('q') || '').slice(0, 100);
   const maxResults = Math.min(parseInt(url.searchParams.get('max') || '12'), 50);
   const pageToken = url.searchParams.get('pageToken') || '';
 
@@ -127,7 +127,12 @@ export default async function handler(req) {
 
       return new Response(JSON.stringify({ videos, nextPageToken: null }), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+          'Content-Type': 'application/json',
+          // Corpus changes rarely — cache per-query at the edge to avoid
+          // repeating the ilike scan + YouTube metadata fetch
+          'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800'
+        }
       });
 
     } else if (type === 'search' && query) {

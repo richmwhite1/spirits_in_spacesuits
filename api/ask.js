@@ -133,11 +133,17 @@ export default async function handler(req) {
       `---\n${c.content}`
     )).join('\n\n');
 
-    // 4. Build conversation history (cap at last 6 turns to control costs)
-    const recentHistory = history.slice(-6).map(turn => ({
-      role: turn.role,
-      content: turn.content.slice(0, 800) // Cap each turn
-    }));
+    // 4. Build conversation history (cap at last 6 turns to control costs).
+    // Drop malformed turns and any leading assistant turns — Gemini requires
+    // history to start with a user message.
+    const recentHistory = (Array.isArray(history) ? history : [])
+      .filter(turn => turn && typeof turn.content === 'string' && ['user', 'assistant'].includes(turn.role))
+      .slice(-6)
+      .map(turn => ({
+        role: turn.role,
+        content: turn.content.slice(0, 800) // Cap each turn
+      }));
+    while (recentHistory.length && recentHistory[0].role !== 'user') recentHistory.shift();
 
     // 5. Call Gemini — 1200 tokens allows full, nuanced answers for layered spiritual questions
     const model = genAI.getGenerativeModel({

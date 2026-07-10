@@ -8,6 +8,12 @@ node_modules/
 data/
 essays, stories and poems txt/
 
+# Supabase CLI scratch files (regenerated on every CLI run)
+supabase/.temp/
+
+# Local Python env
+.venv/
+
 # OS clutter
 .DS_Store
 Thumbs.db

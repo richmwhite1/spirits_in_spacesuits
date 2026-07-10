@@ -1115,7 +1115,7 @@ function renderCorpus(data) {
       <td>${esc(s.source_title)}</td>
       <td>${s.chunk_count.toLocaleString()}</td>
       <td>${s.source_id ? `<a class="source-id-link" href="https://www.youtube.com/watch?v=${esc(s.source_id)}" target="_blank">${esc(s.source_id)} ↗</a>` : '<span style="color:var(--muted)">—</span>'}</td>
-      <td><button class="btn btn-sm btn-danger" onclick="confirmCorpusDelete('${esc(s.source_title)}','${esc(s.source_type)}')">Delete</button></td>
+      <td><button class="btn btn-sm btn-danger" onclick="confirmCorpusDelete('${esc(jsq(s.source_title))}','${esc(jsq(s.source_type))}')">Delete</button></td>
     </tr>`).join('');
 }
 
@@ -1435,7 +1435,7 @@ function renderDQTable(items) {
       <td style="font-size:.85rem;line-height:1.5;max-width:600px;white-space:normal;">${esc(q.quote.length > 200 ? q.quote.slice(0, 200) + '…' : q.quote)}</td>
       <td>
         <button class="btn btn-sm" onclick="editDQ(${JSON.stringify(JSON.stringify(q))})" style="margin-right:.4rem;">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="confirmDQDelete('${esc(q.id)}','${esc(q.quote.slice(0, 40))}')">Delete</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmDQDelete('${esc(q.id)}','${esc(jsq(q.quote.slice(0, 40)))}')">Delete</button>
       </td>
     </tr>`).join('');
 }
@@ -1549,7 +1549,7 @@ function renderContentTable(items) {
       <td style="color:var(--muted);font-size:.75rem;">${esc(s.story_date || '—')}</td>
       <td>
         <button class="btn btn-sm" onclick="editContent(${JSON.stringify(JSON.stringify(s))})" style="margin-right:.4rem;">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="confirmContentDelete('${esc(s.id)}','${esc(s.title)}')">Delete</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmContentDelete('${esc(s.id)}','${esc(jsq(s.title))}')">Delete</button>
       </td>
     </tr>`).join('');
 }
@@ -1700,7 +1700,7 @@ function renderModelsTable(items) {
       <td style="color:var(--muted);font-size:.78rem;">${esc(m.subtitle || '—')}</td>
       <td>
         <button class="btn btn-sm" onclick="editModel('${esc(m.id)}')" style="margin-right:.4rem;">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="confirmModelDelete('${esc(m.id)}','${esc(m.title).replace(/'/g,'&#39;')}')">Delete</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmModelDelete('${esc(m.id)}','${esc(jsq(m.title))}')">Delete</button>
       </td>
     </tr>`).join('');
 }
@@ -1910,6 +1910,14 @@ function esc(str) {
   return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// Escape a value for use inside a single-quoted JS string in an inline handler.
+// Wrap with esc() afterwards for the HTML attribute context: esc(jsq(x)).
+// Note: HTML entities like &#39; are decoded before inline JS runs, so they
+// can't be used to escape quotes here — only a backslash survives parsing.
+function jsq(str) {
+  return String(str ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, ' ');
+}
+
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     closeContentModal();
@@ -1977,7 +1985,7 @@ function renderBooksTable(items) {
       <td style="color:var(--muted);font-size:.78rem;">${esc(b.badge_text || '—')}</td>
       <td>
         <button class="btn btn-sm" onclick="editBook('${esc(b.id)}')" style="margin-right:.4rem;">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="confirmBookDelete('${esc(b.id)}','${esc(b.title).replace(/'/g,"&#39;")}')">Delete</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmBookDelete('${esc(b.id)}','${esc(jsq(b.title))}')">Delete</button>
       </td>
     </tr>`).join('');
 }
@@ -2202,7 +2210,7 @@ function renderGlossaryTable(items) {
       <td style="color:var(--muted);font-size:.82rem;font-style:italic;">${esc(preview)}</td>
       <td>
         <button class="btn btn-sm" onclick="editGlossary('${esc(t.id)}')" style="margin-right:.4rem;">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="confirmGlossaryDelete('${esc(t.id)}','${esc(t.term).replace(/'/g,"&#39;")}')">Delete</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmGlossaryDelete('${esc(t.id)}','${esc(jsq(t.term))}')">Delete</button>
       </td>
     </tr>`;
   }).join('');
@@ -2318,7 +2326,7 @@ function renderCoursesTable(items) {
       <td style="color:var(--cream-d);">${esc(c.title)}</td>
       <td>
         <button class="btn btn-sm" onclick="editCourse('${esc(c.id)}')" style="margin-right:.4rem;">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="confirmCourseDelete('${esc(c.id)}','${esc(c.title).replace(/'/g,"&#39;")}')">Delete</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmCourseDelete('${esc(c.id)}','${esc(jsq(c.title))}')">Delete</button>
       </td>
     </tr>`;
   }).join('');
@@ -2472,7 +2480,7 @@ function renderPodcastsTable(items) {
       <td>${esc(p.title || '')}</td>
       <td>
         <button class="btn btn-sm" onclick="editPodcast('${esc(p.id)}')" style="margin-right:.4rem;">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="confirmPodcastDelete('${esc(p.id)}','${esc(p.title).replace(/'/g,"&#39;")}')">Delete</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmPodcastDelete('${esc(p.id)}','${esc(jsq(p.title))}')">Delete</button>
       </td>
     </tr>`;
   }).join('');
@@ -2749,7 +2757,7 @@ function renderEventsTable(items) {
       <td style="color:var(--muted);font-size:.78rem;">${esc(e.location || '—')}</td>
       <td>
         <button class="btn btn-sm" onclick="editEvent('${esc(e.id)}')" style="margin-right:.4rem;">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="confirmEventDelete('${esc(e.id)}','${esc(e.title).replace(/'/g,"&#39;")}')">Delete</button>
+        <button class="btn btn-sm btn-danger" onclick="confirmEventDelete('${esc(e.id)}','${esc(jsq(e.title))}')">Delete</button>
       </td>
     </tr>`;
   }).join('');
@@ -2867,8 +2875,8 @@ function renderTestimonialsTable(items) {
       ? '<span class="type-badge" style="border-color:rgba(100,180,130,.35);color:#80c0a0;">Approved</span>'
       : '<span class="type-badge" style="border-color:rgba(200,150,62,.3);color:var(--gold-d);">Pending</span>';
     const approveBtn = t.approved
-      ? `<button class="btn btn-sm btn-danger" style="margin-right:.3rem;" onclick="setTestimonialApproval('${esc(t.id)}',false,'${esc(t.name).replace(/'/g,"&#39;")}')">Revoke</button>`
-      : `<button class="btn btn-sm btn-green" style="margin-right:.3rem;" onclick="setTestimonialApproval('${esc(t.id)}',true,'${esc(t.name).replace(/'/g,"&#39;")}')">Approve</button>`;
+      ? `<button class="btn btn-sm btn-danger" style="margin-right:.3rem;" onclick="setTestimonialApproval('${esc(t.id)}',false,'${esc(jsq(t.name))}')">Revoke</button>`
+      : `<button class="btn btn-sm btn-green" style="margin-right:.3rem;" onclick="setTestimonialApproval('${esc(t.id)}',true,'${esc(jsq(t.name))}')">Approve</button>`;
     return `<tr>
       <td style="color:var(--cream-d);">${esc(t.name)}</td>
       <td style="color:var(--muted);font-size:.75rem;">${esc(t.location || '—')}</td>
@@ -2876,7 +2884,7 @@ function renderTestimonialsTable(items) {
       <td>${statusBadge}</td>
       <td>
         ${approveBtn}
-        <button class="btn btn-sm" style="border-color:rgba(180,80,80,.3);color:var(--muted);margin-top:.2rem;" onclick="confirmTestimonialDelete('${esc(t.id)}','${esc(t.name).replace(/'/g,"&#39;")}','${t.approved}')">Delete…</button>
+        <button class="btn btn-sm" style="border-color:rgba(180,80,80,.3);color:var(--muted);margin-top:.2rem;" onclick="confirmTestimonialDelete('${esc(t.id)}','${esc(jsq(t.name))}','${t.approved}')">Delete…</button>
       </td>
     </tr>`;
   }).join('');
@@ -2958,7 +2966,7 @@ function renderSubscribersTable(items) {
     return `<tr>
       <td>${esc(s.email)}</td>
       <td style="color:var(--muted);font-size:.82rem;">${date}</td>
-      <td><button class="btn btn-sm btn-danger" onclick="confirmSubDelete('${esc(s.id)}','${esc(s.email)}')">Delete</button></td>
+      <td><button class="btn btn-sm btn-danger" onclick="confirmSubDelete('${esc(s.id)}','${esc(jsq(s.email))}')">Delete</button></td>
     </tr>`;
   }).join('');
 }
