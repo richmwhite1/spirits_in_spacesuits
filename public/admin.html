@@ -262,7 +262,6 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <button class="snav-item" onclick="showPage('books', this)">Books</button>
       <button class="snav-item" onclick="showPage('models', this)">Models of Reality</button>
       <div class="snav-section">Media</div>
-      <button class="snav-item" onclick="showPage('featured', this)">Latest from Seán</button>
       <button class="snav-item" onclick="showPage('podcasts', this)">Podcast Appearances</button>
       <div class="snav-section">Seán's Lexicon</div>
       <button class="snav-item" onclick="showPage('glossary', this)">Glossary</button>
@@ -555,31 +554,12 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       </div>
     </div>
 
-    <!-- ── LATEST FROM SEÁN PAGE (off-channel videos) ── -->
-    <div class="page" id="page-featured">
-      <div class="page-header">
-        <div class="page-header-text">
-          <h1 class="page-title">Latest from Seán</h1>
-          <p class="page-lead">Videos on Seán's own YouTube channel appear in the homepage "Latest from Seán" section automatically. Add a video here when it lives on <strong>someone else's</strong> channel — an interview, a guest talk, a conference recording — so it shows there too. Paste the link and the title and channel fill themselves in. Pin one to make it the very first video on the homepage.</p>
-        </div>
-        <button class="btn btn-green" onclick="openFeaturedModal()">+ Add Video</button>
-      </div>
-      <div class="loading" id="featuredLoading">Loading…</div>
-      <div id="featuredTableWrap" style="display:none;">
-        <table class="data-table">
-          <thead><tr><th style="width:74px"></th><th style="width:110px">Date</th><th>Title</th><th style="width:150px">Channel</th><th style="width:70px">Pinned</th><th style="width:130px"></th></tr></thead>
-          <tbody id="featuredBody"></tbody>
-        </table>
-        <div class="empty-state" id="noFeatured" style="display:none;">Nothing added yet. The homepage is showing Seán's channel uploads only — click "+ Add Video" to put an off-channel video in there too.</div>
-      </div>
-    </div>
-
     <!-- ── PODCAST APPEARANCES PAGE ── -->
     <div class="page" id="page-podcasts">
       <div class="page-header">
         <div class="page-header-text">
           <h1 class="page-title">Podcast Appearances</h1>
-          <p class="page-lead">Shows where Seán was a guest (not his own channel). Add a new appearance when one is released — paste the YouTube link and a few details. These appear in the "Podcast Appearances" section of the website immediately.</p>
+          <p class="page-lead">Any video of Seán's that lives on <strong>someone else's</strong> YouTube channel — podcasts, interviews, guest talks. His own channel feeds the "Latest from Seán" section automatically, so nothing from it needs adding anywhere. Paste the YouTube link and a few details; the appearance shows up on the website within minutes.</p>
         </div>
         <button class="btn btn-green" onclick="openPodcastModal()">+ Add Podcast</button>
       </div>
@@ -977,56 +957,6 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
   </div>
 </div>
 
-<!-- LATEST FROM SEÁN (off-channel video) MODAL -->
-<div class="modal-overlay" id="featuredModal" onclick="closeFeaturedModalBg(event)">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="featuredModalTitle">Add Video</div>
-      <button class="modal-close" onclick="closeFeaturedModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="featuredId">
-      <div class="form-group">
-        <label>YouTube Link <span style="color:#e06060">*</span></label>
-        <input type="url" id="featuredUrl" placeholder="https://youtu.be/…" oninput="onFeaturedUrlInput()">
-        <div class="form-hint" id="featuredUrlHint">Paste the full YouTube address — the title, channel and thumbnail fill in automatically.</div>
-      </div>
-      <div id="featuredPreview" style="display:none;margin:-.4rem 0 1rem;">
-        <img id="featuredThumb" style="width:200px;border-radius:4px;display:block;" alt="">
-      </div>
-      <div class="form-group">
-        <label>Title <span style="color:#e06060">*</span></label>
-        <input type="text" id="featuredTitle" placeholder="e.g. Why Humanity's Current Chaos May Be Part of a Spiritual Rebirth">
-        <div class="form-hint">Shown on the homepage. Edit it freely — YouTube titles are often long.</div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Channel / Host <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — optional</span></label>
-          <input type="text" id="featuredSource" placeholder="e.g. Guy Lawrence">
-          <div class="form-hint">Whose channel it was posted on. Shown as "Latest — with …".</div>
-        </div>
-        <div class="form-group">
-          <label>Date <span style="font-size:.65rem;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:300"> — optional</span></label>
-          <input type="date" id="featuredDate">
-          <div class="form-hint">Used to order it against his channel uploads.</div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Position on the homepage</label>
-        <select id="featuredPinned">
-          <option value="1">Pin to the top — show this first</option>
-          <option value="0">Place by date among his channel videos</option>
-        </select>
-        <div class="form-hint">Pinned videos always lead the "Latest from Seán" section. If several are pinned, the newest goes first.</div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-sm" onclick="closeFeaturedModal()">Cancel</button>
-      <button class="btn btn-sm btn-green" id="featuredSaveBtn" onclick="saveFeatured()">Save Video</button>
-    </div>
-  </div>
-</div>
-
 <!-- PODCAST MODAL -->
 <div class="modal-overlay" id="podcastModal" onclick="closePodcastModalBg(event)">
   <div class="modal">
@@ -1180,7 +1110,6 @@ function showPage(name, el) {
   if (name === 'glossary')     loadGlossary();
   if (name === 'events')       loadEvents();
   if (name === 'courses')      loadCourses();
-  if (name === 'featured')     loadFeatured();
   if (name === 'podcasts')     loadPodcasts();
   if (name === 'testimonials') loadTestimonials();
   if (name === 'subscribers')  loadSubscribers();
@@ -2657,185 +2586,6 @@ async function executeCourseDelete() {
     const res = await adminFetch(`/api/courses?id=${id}`, { method: 'DELETE' });
     const data = await res.json();
     res.ok ? (toast(`"${title}" deleted`, 'success'), loadCourses()) : toast(data.error || 'Delete failed', 'error');
-  } catch { toast('Connection error', 'error'); }
-}
-
-/* ══════════════════════════════════════
-   LATEST FROM SEÁN — off-channel videos
-   Videos on Seán's own channel arrive via /api/videos automatically. These are
-   the ones posted on other people's channels, which that feed can never see.
-══════════════════════════════════════ */
-let _featuredMap = {};
-let _featuredAll = [];
-
-// Any common YouTube URL shape, or a bare 11-char id.
-function parseYouTubeId(input) {
-  const str = (input || '').trim();
-  if (!str) return null;
-  const m = str.match(/(?:youtu\.be\/|youtube\.com\/live\/|youtube\.com\/shorts\/|[?&]v=|\/embed\/)([A-Za-z0-9_-]{11})/);
-  if (m) return m[1];
-  return /^[A-Za-z0-9_-]{11}$/.test(str) ? str : null;
-}
-
-// YouTube's oEmbed endpoint needs no API key and is CORS-open, so the admin can
-// fill in the title and channel from a pasted link without spending quota.
-let _featuredLookupId = null;
-async function onFeaturedUrlInput() {
-  const id = parseYouTubeId(document.getElementById('featuredUrl').value);
-  const preview = document.getElementById('featuredPreview');
-  const hint = document.getElementById('featuredUrlHint');
-  if (!id) {
-    preview.style.display = 'none';
-    _featuredLookupId = null;
-    return;
-  }
-  if (id === _featuredLookupId) return;
-  _featuredLookupId = id;
-  document.getElementById('featuredThumb').src = `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
-  preview.style.display = 'block';
-  hint.textContent = 'Looking up the video…';
-  try {
-    const res = await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent('https://youtu.be/' + id)}`);
-    if (!res.ok) throw new Error('lookup failed');
-    const meta = await res.json();
-    if (_featuredLookupId !== id) return; // a newer link was pasted meanwhile
-    const titleEl = document.getElementById('featuredTitle');
-    const sourceEl = document.getElementById('featuredSource');
-    if (!titleEl.value.trim())  titleEl.value = meta.title || '';
-    if (!sourceEl.value.trim()) sourceEl.value = meta.author_name || '';
-    hint.textContent = `Found: ${meta.title || id}`;
-  } catch {
-    if (_featuredLookupId !== id) return;
-    hint.textContent = 'Could not read the title automatically — type it in below.';
-  }
-}
-
-async function loadFeatured() {
-  document.getElementById('featuredLoading').style.display = 'block';
-  document.getElementById('featuredTableWrap').style.display = 'none';
-  try {
-    const res = await fetch('/api/featured-videos?_=' + Date.now());
-    const data = await res.json();
-    if (data.error) {
-      document.getElementById('featuredLoading').textContent =
-        'Could not load: ' + data.error + ' — the featured_videos table may not exist yet.';
-      return;
-    }
-    _featuredAll = data.featuredVideos || [];
-    renderFeaturedTable(_featuredAll);
-  } catch { document.getElementById('featuredLoading').textContent = 'Failed to load. Check your connection.'; }
-}
-
-function renderFeaturedTable(items) {
-  document.getElementById('featuredLoading').style.display = 'none';
-  document.getElementById('featuredTableWrap').style.display = 'block';
-  _featuredMap = {};
-  _featuredAll.forEach(v => { _featuredMap[v.id] = v; });
-  if (!items.length) {
-    document.getElementById('featuredBody').innerHTML = '';
-    document.getElementById('noFeatured').style.display = 'block';
-    return;
-  }
-  document.getElementById('noFeatured').style.display = 'none';
-  document.getElementById('featuredBody').innerHTML = items.map(v => {
-    const date = v.published_at ? new Date(v.published_at + 'T00:00:00').toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : '—';
-    return `<tr>
-      <td>${v.video_id ? `<img src="https://img.youtube.com/vi/${esc(v.video_id)}/default.jpg" alt="" style="width:64px;border-radius:3px;display:block;">` : ''}</td>
-      <td style="color:var(--muted);font-size:.75rem;">${esc(date)}</td>
-      <td><a href="${esc(v.youtube_url || '#')}" target="_blank" rel="noopener" style="color:var(--gold-d);text-decoration:none;">${esc(v.title || '')} ↗</a></td>
-      <td style="color:var(--cream-d);">${esc(v.source || '—')}</td>
-      <td>${v.pinned ? '<span style="color:#6ec07a;">pinned</span>' : '<span style="color:var(--muted)">—</span>'}</td>
-      <td>
-        <button class="btn btn-sm" onclick="editFeatured('${esc(v.id)}')" style="margin-right:.4rem;">Edit</button>
-        <button class="btn btn-sm btn-danger" onclick="confirmFeaturedDelete('${esc(v.id)}','${esc(jsq(v.title))}')">Delete</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-function openFeaturedModal(prefill) {
-  _featuredLookupId = null;
-  document.getElementById('featuredId').value = '';
-  document.getElementById('featuredUrl').value = '';
-  document.getElementById('featuredTitle').value = '';
-  document.getElementById('featuredSource').value = '';
-  document.getElementById('featuredDate').value = '';
-  document.getElementById('featuredPinned').value = '1';
-  document.getElementById('featuredPreview').style.display = 'none';
-  document.getElementById('featuredUrlHint').textContent =
-    'Paste the full YouTube address — the title, channel and thumbnail fill in automatically.';
-  document.getElementById('featuredModalTitle').textContent = 'Add Video';
-  document.getElementById('featuredSaveBtn').textContent = 'Save Video';
-  if (prefill) {
-    _featuredLookupId = prefill.video_id || null;
-    document.getElementById('featuredId').value = prefill.id || '';
-    document.getElementById('featuredUrl').value = prefill.youtube_url || '';
-    document.getElementById('featuredTitle').value = prefill.title || '';
-    document.getElementById('featuredSource').value = prefill.source || '';
-    document.getElementById('featuredDate').value = prefill.published_at || '';
-    document.getElementById('featuredPinned').value = prefill.pinned ? '1' : '0';
-    if (prefill.video_id) {
-      document.getElementById('featuredThumb').src = `https://img.youtube.com/vi/${prefill.video_id}/mqdefault.jpg`;
-      document.getElementById('featuredPreview').style.display = 'block';
-    }
-    document.getElementById('featuredModalTitle').textContent = 'Edit Video';
-  }
-  document.getElementById('featuredModal').classList.add('open');
-}
-
-function editFeatured(id) {
-  const v = _featuredMap[id];
-  if (v) openFeaturedModal(v);
-}
-
-function closeFeaturedModal() { document.getElementById('featuredModal').classList.remove('open'); }
-function closeFeaturedModalBg(e) { if (e.target === document.getElementById('featuredModal')) closeFeaturedModal(); }
-
-async function saveFeatured() {
-  const id = document.getElementById('featuredId').value;
-  const payload = {
-    youtube_url:  document.getElementById('featuredUrl').value.trim(),
-    title:        document.getElementById('featuredTitle').value.trim(),
-    source:       document.getElementById('featuredSource').value.trim(),
-    published_at: document.getElementById('featuredDate').value.trim(),
-    pinned:       document.getElementById('featuredPinned').value === '1'
-  };
-  if (!payload.youtube_url) return toast('YouTube link is required', 'error');
-  if (!parseYouTubeId(payload.youtube_url)) return toast('That does not look like a YouTube link', 'error');
-  if (!payload.title) return toast('Title is required', 'error');
-  const btn = document.getElementById('featuredSaveBtn');
-  btn.disabled = true; btn.textContent = 'Saving…';
-  try {
-    const res = await adminFetch(id ? `/api/featured-videos?id=${id}` : '/api/featured-videos', {
-      method: id ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (res.ok) {
-      toast(id ? 'Video updated — live on the homepage within ~10 minutes' : `"${data.video?.title}" added — live on the homepage within ~10 minutes`, 'success');
-      closeFeaturedModal();
-      loadFeatured();
-    } else { toast(data.error || 'Save failed', 'error'); }
-  } catch { toast('Connection error — please try again', 'error'); }
-  btn.disabled = false; btn.textContent = 'Save Video';
-}
-
-function confirmFeaturedDelete(id, title) {
-  pendingDelete = { type: 'featured', id, title };
-  document.getElementById('confirmTitle').textContent = 'Remove Video';
-  document.getElementById('confirmMsg').textContent = `Remove "${title}" from "Latest from Seán"? The video itself stays on YouTube.`;
-  document.getElementById('confirmOverlay').classList.add('open');
-  document.getElementById('confirmOkBtn').onclick = executeFeaturedDelete;
-}
-async function executeFeaturedDelete() {
-  if (!pendingDelete) return;
-  const { id, title } = pendingDelete;
-  closeConfirm();
-  try {
-    const res = await adminFetch(`/api/featured-videos?id=${id}`, { method: 'DELETE' });
-    const data = await res.json();
-    res.ok ? (toast(`"${title}" removed`, 'success'), loadFeatured()) : toast(data.error || 'Delete failed', 'error');
   } catch { toast('Connection error', 'error'); }
 }
 

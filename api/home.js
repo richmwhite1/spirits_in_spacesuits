@@ -1,5 +1,5 @@
 // /api/home — combined homepage payload
-// Bundles the fast Supabase-only sections the homepage needs on first paint into a
+// Bundles the 7 fast Supabase-only sections the homepage needs on first paint into a
 // single response, so the page makes one request instead of ~8. Mirrors the public GET
 // query in each individual endpoint (stories?today=1, models, glossary, books, courses,
 // events, testimonials, dream-quotes?today=1). Each section is gathered independently via
@@ -63,19 +63,13 @@ export default async function handler(req) {
     podcasts: async () => (await supabase.from('podcasts').select('*')
       .order('aired_date', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })).data ?? [],
-    // Off-channel YouTube videos merged into "Latest from Seán" (see
-    // api/featured-videos.js) — /api/videos only sees his own channel.
-    featuredVideos: async () => (await supabase.from('featured_videos').select('*')
-      .order('pinned', { ascending: false })
-      .order('published_at', { ascending: false, nullsFirst: false })
-      .order('created_at', { ascending: false })).data ?? [],
   };
 
   const keys = Object.keys(tasks);
   const settled = await Promise.allSettled(keys.map(k => tasks[k]()));
 
   // Defaults match each section's "empty" shape so the client can render unconditionally.
-  const empties = { todayStory: null, dreamQuote: null, models: [], books: [], courses: [], glossary: [], events: [], testimonials: [], podcasts: [], featuredVideos: [] };
+  const empties = { todayStory: null, dreamQuote: null, models: [], books: [], courses: [], glossary: [], events: [], testimonials: [], podcasts: [] };
   const out = {};
   keys.forEach((k, i) => {
     out[k] = settled[i].status === 'fulfilled' ? settled[i].value : empties[k];

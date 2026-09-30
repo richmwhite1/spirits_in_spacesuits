@@ -1954,9 +1954,9 @@ footer {
 <!-- LATEST FROM SEÁN -->
 <section id="latest">
   <div class="inner">
-    <p class="eyebrow fade-in">Newest First</p>
+    <p class="eyebrow fade-in">Direct from the Channel</p>
     <h2 class="fade-in">Latest from Seán</h2>
-    <p class="section-lead fade-in">His channel, auto-updated the moment he posts — plus hand-picked conversations from other channels. Watch directly here or browse the full archive below.</p>
+    <p class="section-lead fade-in">Auto-updated the moment he posts. Watch directly here or browse the full archive below.</p>
     <div id="latestContainer">
       <div id="latestLoading">Loading latest teaching…</div>
     </div>
@@ -2819,10 +2819,6 @@ function closeImgLightbox() {
    VIDEOS - YouTube API
 ══════════════════════════════════════ */
 let allVideos = [];
-// Off-channel videos added in the admin panel (Media → Latest from Seán).
-// /api/videos can only see his own channel's uploads, so these are merged into
-// the Latest feed here. Populated by loadHome().
-let featuredVideos = [];
 let videoNextPageToken = null;
 let videoSearchQuery = '';
 let videoSearchTimer = null;
@@ -3015,50 +3011,17 @@ async function fetchChannelVideoCount() {
   } catch {}
 }
 
-// Featured (off-channel) rows use the Supabase column names — map them onto the
-// same shape /api/videos returns so both can render through one code path.
-function normaliseFeatured(f) {
-  return {
-    id: f.video_id,
-    title: f.title,
-    thumbnail: `https://img.youtube.com/vi/${f.video_id}/hqdefault.jpg`,
-    publishedAt: f.published_at ? f.published_at + 'T00:00:00' : (f.created_at || null),
-    source: f.source || '',
-    pinned: !!f.pinned,
-    external: true
-  };
-}
-
-// Pinned off-channel videos lead, then everything (channel uploads + unpinned
-// off-channel videos) newest first. Deduped by video id, so a video that is
-// both featured here and on the channel only appears once.
-function latestFeed() {
-  const featured = featuredVideos.filter(f => f.video_id).map(normaliseFeatured);
-  const pinned = featured.filter(v => v.pinned);
-  const byDate = [...featured.filter(v => !v.pinned), ...allVideos]
-    .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
-  const seen = new Set();
-  return [...pinned, ...byDate].filter(v => {
-    if (!v.id || seen.has(v.id)) return false;
-    seen.add(v.id);
-    return true;
-  });
-}
-
 function renderLatestVideos() {
   const container = document.getElementById('latestContainer');
-  if (!container) return;
-  const feed = latestFeed();
-  if (!feed.length) {
+  if (!allVideos.length) {
     container.innerHTML = `<p style="text-align:center;color:var(--muted);padding:2rem;font-style:italic;">
       Visit <a href="https://www.youtube.com/@spiritsinspacesuits" target="_blank" rel="noopener" style="color:var(--gold-dim);">the channel</a> for the latest teachings.
     </p>`;
     return;
   }
 
-  const [first, ...rest] = feed;
+  const [first, ...rest] = allVideos;
   const secondaries = rest.slice(0, 2);
-  const label = first.external && first.source ? `Latest — with ${escapeHtml(first.source)}` : 'Latest Teaching';
 
   container.innerHTML = `
     <div class="latest-grid fade-in">
@@ -3067,7 +3030,7 @@ function renderLatestVideos() {
              onerror="this.src='https://img.youtube.com/vi/${first.id}/hqdefault.jpg'">
         <div class="latest-featured-overlay"></div>
         <div class="latest-featured-content">
-          <div class="latest-featured-label">${label}</div>
+          <div class="latest-featured-label">Latest Teaching</div>
           <div class="latest-featured-title">${escapeHtml(first.title)}</div>
           <div class="latest-featured-date">${first.publishedAt ? new Date(first.publishedAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : ''}</div>
         </div>
@@ -3081,7 +3044,7 @@ function renderLatestVideos() {
           </div>
           <div>
             <div class="latest-secondary-title">${escapeHtml(v.title)}</div>
-            <div class="latest-secondary-date">${[v.external && v.source ? v.source : '', v.publishedAt ? new Date(v.publishedAt).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : ''].filter(Boolean).map(escapeHtml).join(' · ')}</div>
+            <div class="latest-secondary-date">${v.publishedAt ? new Date(v.publishedAt).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) : ''}</div>
           </div>
         </div>
       `).join('')}
@@ -3630,7 +3593,7 @@ async function loadHome() {
   } catch {
     renderTodayStory(); loadTodayDreamQuote(); loadModels();
     loadGlossary(); loadBooks(); loadCourses(); loadEvents(); loadTestimonials();
-    loadPodcasts(); loadFeaturedVideos();
+    loadPodcasts();
     return;
   }
   renderTodayStory(h.todayStory);
@@ -3642,22 +3605,6 @@ async function loadHome() {
   loadEvents(h.events);
   loadTestimonials(h.testimonials);
   loadPodcasts(h.podcasts);
-  loadFeaturedVideos(h.featuredVideos);
-}
-
-// Off-channel videos for "Latest from Seán". Comes bundled in /api/home; the
-// standalone endpoint is the fallback when that request fails. Re-renders the
-// Latest section because loadVideos() may have already finished without them.
-function loadFeaturedVideos(list) {
-  if (Array.isArray(list)) {
-    featuredVideos = list;
-    renderLatestVideos();
-    return;
-  }
-  fetch('/api/featured-videos').then(r => r.json()).then(d => {
-    featuredVideos = d.featuredVideos || [];
-    renderLatestVideos();
-  }).catch(() => {});
 }
 
 loadHome();
