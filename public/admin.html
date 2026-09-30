@@ -560,7 +560,7 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <div class="page-header">
         <div class="page-header-text">
           <h1 class="page-title">Latest from Seán</h1>
-          <p class="page-lead">Videos on Seán's own YouTube channel appear in the homepage "Latest from Seán" section automatically. Add a video here when it lives on <strong>someone else's</strong> channel — an interview, a guest talk, a conference recording — so it shows there too. Paste the link and the title fills itself in. Pin one to make it the very first video on the homepage.</p>
+          <p class="page-lead">Videos on Seán's own YouTube channel appear in the homepage "Latest from Seán" section automatically. Add a video here when it lives on <strong>someone else's</strong> channel — an interview, a guest talk, a conference recording — so it shows there too. Paste the link and the title and channel fill themselves in. Pin one to make it the very first video on the homepage.</p>
         </div>
         <button class="btn btn-green" onclick="openFeaturedModal()">+ Add Video</button>
       </div>
@@ -989,7 +989,7 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <div class="form-group">
         <label>YouTube Link <span style="color:#e06060">*</span></label>
         <input type="url" id="featuredUrl" placeholder="https://youtu.be/…" oninput="onFeaturedUrlInput()">
-        <div class="form-hint" id="featuredUrlHint">Paste the full YouTube address. The title, channel and upload date fill in automatically.</div>
+        <div class="form-hint" id="featuredUrlHint">Paste the full YouTube address — the title, channel and thumbnail fill in automatically.</div>
       </div>
       <div id="featuredPreview" style="display:none;margin:-.4rem 0 1rem;">
         <img id="featuredThumb" style="width:200px;border-radius:4px;display:block;" alt="">
@@ -2763,7 +2763,7 @@ function openFeaturedModal(prefill) {
   document.getElementById('featuredPinned').value = '1';
   document.getElementById('featuredPreview').style.display = 'none';
   document.getElementById('featuredUrlHint').textContent =
-    'Paste the full YouTube address. The title, channel and upload date fill in automatically.';
+    'Paste the full YouTube address — the title, channel and thumbnail fill in automatically.';
   document.getElementById('featuredModalTitle').textContent = 'Add Video';
   document.getElementById('featuredSaveBtn').textContent = 'Save Video';
   if (prefill) {
