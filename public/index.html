@@ -3085,6 +3085,7 @@ document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
    VIDEO MODAL
 ══════════════════════════════════════ */
 function openVideoModal(id, title) {
+  window.sisTrackOnce && sisTrackOnce('video', id + '::' + (title || ''));
   document.getElementById('videoIframe').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
   document.getElementById('videoModalTitle').textContent = title;
   document.getElementById('videoModal').classList.add('open');
@@ -3321,6 +3322,7 @@ async function submitTestimonial(e) {
     });
     const data = await res.json();
     if (res.ok) {
+      sisTrack('testimonial');
       status.className = 'tform-status success';
       status.textContent = 'Thank you - your testimonial has been received and will appear here once reviewed.';
       status.style.display = 'block';
@@ -3361,6 +3363,7 @@ async function subscribeNewsletter(e) {
     });
     const data = await res.json();
     if (res.ok) {
+      sisTrack('subscribe');
       msg.className = 'nl-msg ok';
       msg.textContent = data.message || 'Thank you - you\'re on the list.';
       document.getElementById('nlEmail').value = '';
@@ -3617,6 +3620,105 @@ fetchChannelVideoCount();
 setTimeout(() => {
   document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
 }, 200);
+
+/* ══════════════════════════════════════
+   ANALYTICS
+   First-party, cookie-free. Events are queued and posted to /api/track in
+   batches — a typical visit is two requests: the pageview on arrival, and
+   everything else on the way out. Honours Do Not Track.
+══════════════════════════════════════ */
+window.sisTrack = function () {};
+(function () {
+  if (navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.globalPrivacyControl) return;
+
+  const rand = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+  let sid;
+  try {
+    sid = sessionStorage.getItem('sis_sid') || rand();
+    sessionStorage.setItem('sis_sid', sid);
+  } catch { sid = rand(); }
+
+  const queue = [];
+  const seen = new Set();
+  let timer = null;
+
+  function flush(useBeacon) {
+    if (!queue.length) return;
+    const payload = JSON.stringify({
+      s: sid,
+      p: location.pathname,
+      r: document.referrer || '',
+      e: queue.splice(0, queue.length)
+    });
+    try {
+      if (useBeacon && navigator.sendBeacon) {
+        navigator.sendBeacon('/api/track', new Blob([payload], { type: 'application/json' }));
+      } else {
+        fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          keepalive: true
+        }).catch(() => {});
+      }
+    } catch { /* analytics never breaks the page */ }
+  }
+
+  function track(t, l) {
+    queue.push(l ? { t, l: String(l).slice(0, 200) } : { t });
+    clearTimeout(timer);
+    timer = setTimeout(() => flush(false), 5000);
+  }
+  // Only record a given section or video once per visit, so a reader who scrolls
+  // up and down doesn't look like ten readers.
+  function trackOnce(t, l) {
+    const key = t + ':' + l;
+    if (seen.has(key)) return;
+    seen.add(key);
+    track(t, l);
+  }
+  window.sisTrack = track;
+  window.sisTrackOnce = trackOnce;
+
+  track('pageview');
+  flush(false);
+
+  // Which parts of the page people actually reach. The rootMargin band fires when
+  // a section crosses the middle of the viewport, which works for sections far
+  // taller than the screen (a threshold never would).
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver(entries => {
+      for (const en of entries) {
+        if (en.isIntersecting && en.target.id) trackOnce('section', en.target.id);
+      }
+    }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
+    document.querySelectorAll('section[id]').forEach(el => obs.observe(el));
+  }
+
+  // Outbound clicks, downloads, and YouTube links that bypass the modal
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    const href = a.getAttribute('href') || '';
+    if (!href || href.startsWith('#') || href.startsWith('mailto:')) return;
+    let u;
+    try { u = new URL(a.href, location.href); } catch { return; }
+    if (u.pathname.startsWith('/downloads/')) {
+      return track('download', decodeURIComponent(u.pathname.replace('/downloads/', '')));
+    }
+    if (u.host === location.host) return;
+    if (/(^|\.)(youtube\.com|youtu\.be)$/.test(u.hostname)) {
+      const id = u.searchParams.get('v') || u.pathname.replace(/^\//, '');
+      return trackOnce('video', id + '::' + (a.textContent || '').trim().slice(0, 120));
+    }
+    track('outbound', (u.hostname + u.pathname).slice(0, 200));
+  }, { capture: true });
+
+  addEventListener('pagehide', () => flush(true));
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flush(true);
+  });
+})();
 
 /* ── BOTTOM NAV ACTIVE STATE ── */
 (function() {

@@ -226,6 +226,98 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
   .data-table th, .data-table td { padding: .5rem .6rem; font-size: .78rem; }
   .btn-sm { padding: .4rem .7rem; font-size: .68rem; }
 }
+
+/* ══ ANALYTICS DASHBOARD ══
+   Series colours are validated for this surface (#101828) rather than picked by
+   eye: worst adjacent CVD ΔE 8.3, worst normal-vision ΔE 17.6, all three ≥3:1
+   against the card background. Gold stays slot 1 so the headline metric wears
+   the brand colour. Text never wears a series colour — the swatch beside it
+   carries identity. */
+.viz {
+  --surface:  #101828;
+  --series-1: #b8862f;   /* visitors  — gold  */
+  --series-2: #3987e5;   /* pageviews — blue  */
+  --series-3: #1baf7a;   /* questions — aqua  */
+  --grid:     rgba(200,150,62,.10);
+  --axis:     rgba(200,150,62,.20);
+}
+
+.page.wide { max-width: 1240px; }
+
+/* Range filter — one row above the charts */
+.filter-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+.range-group { display: inline-flex; border: 1px solid var(--border); }
+.range-btn { background: none; border: none; border-right: 1px solid var(--border); color: var(--muted); font-family: var(--sans); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; padding: .5rem .9rem; cursor: pointer; transition: color .2s, background .2s; }
+.range-btn:last-child { border-right: none; }
+.range-btn:hover { color: var(--cream-d); background: var(--glow); }
+.range-btn.active { color: var(--gold); background: var(--glow); }
+.filter-note { font-size: .68rem; color: var(--muted); margin-left: auto; }
+
+/* Stat tiles — value, then a signed delta against the previous window */
+.stat-sub { font-size: .66rem; color: var(--muted); margin-top: .35rem; }
+.delta { font-size: .68rem; letter-spacing: .04em; }
+.delta.up   { color: #4fb36b; }
+.delta.down { color: #d07a6a; }
+.delta.flat { color: var(--muted); }
+.stats-row.six  { grid-template-columns: repeat(3, 1fr); }
+.stats-row.tight { margin-bottom: 1.75rem; }
+
+/* Panels */
+.panel { background: var(--mid); padding: 1.5rem; margin-bottom: 2px; }
+.panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); margin-bottom: 2.5rem; }
+.panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+.panel-title { font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-d); }
+.panel-note { font-size: .68rem; color: var(--muted); }
+.link-btn { background: none; border: none; color: var(--muted); font-family: var(--sans); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; padding: 0; transition: color .2s; }
+.link-btn:hover { color: var(--gold-d); }
+
+/* Legend — always present for two or more series */
+.legend { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-bottom: .75rem; }
+.legend-item { display: inline-flex; align-items: center; gap: .45rem; font-size: .7rem; color: var(--cream-d); }
+.legend-key { width: 14px; height: 2px; border-radius: 1px; flex: none; }
+
+/* Line chart */
+.chart-wrap { position: relative; }
+.chart-wrap svg { display: block; width: 100%; height: auto; }
+.chart-tip { position: absolute; pointer-events: none; opacity: 0; transition: opacity .12s; background: var(--surface, #101828); border: 1px solid var(--bm); padding: .55rem .7rem; font-size: .72rem; color: var(--cream-d); white-space: nowrap; z-index: 5; box-shadow: 0 6px 22px rgba(0,0,0,.5); }
+.chart-tip.show { opacity: 1; }
+.chart-tip .tip-date { font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .35rem; }
+.chart-tip .tip-row { display: flex; align-items: center; gap: .45rem; }
+.chart-tip .tip-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.chart-tip .tip-val { margin-left: auto; padding-left: 1rem; font-variant-numeric: tabular-nums; color: var(--cream); }
+
+/* Horizontal bar list — length carries magnitude, so one hue for every row */
+.barlist { display: flex; flex-direction: column; gap: .55rem; }
+.barlist-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .35rem .75rem; align-items: baseline; }
+.barlist-label { font-size: .78rem; color: var(--body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.barlist-label a { color: var(--gold-d); text-decoration: none; }
+.barlist-label a:hover { color: var(--gold); }
+.barlist-val { font-size: .78rem; color: var(--cream-d); font-variant-numeric: tabular-nums; }
+.barlist-track { grid-column: 1 / -1; height: 10px; background: rgba(255,255,255,.035); }
+.barlist-fill { height: 100%; background: var(--series-1); border-radius: 0 4px 4px 0; }
+
+/* Hour-of-day columns */
+.hourchart { display: flex; align-items: flex-end; gap: 2px; height: 110px; }
+.hourbar { flex: 1; background: var(--series-1); border-radius: 4px 4px 0 0; min-height: 2px; position: relative; }
+.hourbar.empty { background: rgba(255,255,255,.05); }
+.hour-axis { display: flex; justify-content: space-between; font-size: .6rem; color: var(--muted); margin-top: .5rem; font-variant-numeric: tabular-nums; }
+
+/* Question feed */
+.qfeed { display: flex; flex-direction: column; gap: 1px; background: var(--border); }
+.qfeed-row { background: var(--mid); padding: .7rem .9rem; display: flex; gap: .9rem; align-items: baseline; }
+.qfeed-q { flex: 1; font-size: .82rem; color: var(--body); }
+.qfeed-meta { font-size: .66rem; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; padding: .1rem .45rem; font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--border); color: var(--muted); }
+.pill.miss   { border-color: rgba(208,122,106,.35); color: #d07a6a; }
+.pill.cached { border-color: rgba(57,135,229,.30); color: #6ba6ec; }
+
+.setup-note { background: var(--mid); border-left: 2px solid var(--gold-d); padding: 1.25rem 1.5rem; font-size: .85rem; color: var(--body); margin-bottom: 2rem; }
+.setup-note code { font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: var(--gold-p); }
+
+@media (max-width: 900px) {
+  .panel-grid { grid-template-columns: 1fr; }
+  .stats-row.six { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
 <body>
@@ -253,8 +345,10 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <div class="sidebar-logo-sub">Admin Panel</div>
     </div>
     <nav class="sidenav">
+      <div class="snav-section">Overview</div>
+      <button class="snav-item active" onclick="showPage('analytics', this)">Analytics</button>
       <div class="snav-section">AI Knowledge Base</div>
-      <button class="snav-item active" onclick="showPage('corpus', this)">Corpus Stats</button>
+      <button class="snav-item" onclick="showPage('corpus', this)">Corpus Stats</button>
       <button class="snav-item" onclick="showPage('upload', this)">Add to Corpus</button>
       <div class="snav-section">Written Content</div>
       <button class="snav-item" onclick="showPage('dreamquotes', this)">Dream Quotes</button>
@@ -284,8 +378,158 @@ nav.sidenav { padding: 1rem 0; flex: 1; }
       <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Open menu">☰</button>
     </div>
 
+    <!-- ── ANALYTICS PAGE ── -->
+    <div class="page active wide viz" id="page-analytics">
+      <h1 class="page-title">Analytics</h1>
+      <p class="page-lead">How people are finding the site, how far into it they get, and what they are asking Seán's AI. Counted first-party with no cookies and no third-party trackers — visitors are identified by a salted hash that rotates every day, so the same person on two days counts twice and can never be traced back to an individual.</p>
+
+      <div class="filter-row">
+        <div class="range-group" id="rangeGroup">
+          <button class="range-btn" onclick="setRange(7, this)">7 days</button>
+          <button class="range-btn active" onclick="setRange(30, this)">30 days</button>
+          <button class="range-btn" onclick="setRange(90, this)">90 days</button>
+          <button class="range-btn" onclick="setRange(365, this)">12 months</button>
+        </div>
+        <button class="link-btn" onclick="loadAnalytics()">↻ Refresh</button>
+        <span class="filter-note" id="anGenerated"></span>
+      </div>
+
+      <div class="loading" id="anLoading">Loading analytics…</div>
+      <div class="setup-note" id="anSetup" style="display:none;"></div>
+
+      <div id="anContent" style="display:none;">
+
+        <!-- Headline numbers -->
+        <div class="stats-row tight">
+          <div class="stat-card">
+            <div class="stat-num" id="anVisitors">—</div>
+            <div class="stat-label">Visitors</div>
+            <div class="stat-sub"><span class="delta" id="anVisitorsDelta"></span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="anPageviews">—</div>
+            <div class="stat-label">Page Views</div>
+            <div class="stat-sub"><span class="delta" id="anPageviewsDelta"></span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="anQuestions">—</div>
+            <div class="stat-label">AI Questions</div>
+            <div class="stat-sub"><span class="delta" id="anQuestionsDelta"></span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="anSubs">—</div>
+            <div class="stat-label">New Subscribers</div>
+            <div class="stat-sub" id="anSubsTotal"></div>
+          </div>
+        </div>
+
+        <!-- Trend -->
+        <div class="panel" style="margin-bottom:2.5rem;">
+          <div class="panel-head">
+            <div class="panel-title">Traffic &amp; AI questions over time</div>
+            <button class="link-btn" onclick="toggleTrendTable()" id="trendTableBtn">Show table</button>
+          </div>
+          <div class="legend" id="trendLegend"></div>
+          <div class="chart-wrap" id="trendWrap">
+            <div class="chart-tip" id="trendTip"></div>
+          </div>
+          <div id="trendTable" style="display:none; margin-top:1.5rem; max-height:320px; overflow:auto;"></div>
+        </div>
+
+        <!-- Ask Seán -->
+        <div class="section-label">Ask Seán</div>
+        <div class="stats-row tight">
+          <div class="stat-card"><div class="stat-num" id="anAnsRate">—</div><div class="stat-label">Answered</div><div class="stat-sub" id="anAnsSub"></div></div>
+          <div class="stat-card"><div class="stat-num" id="anCacheRate">—</div><div class="stat-label">Served From Cache</div><div class="stat-sub">No Gemini call, no cost</div></div>
+          <div class="stat-card"><div class="stat-num" id="anPerAsker">—</div><div class="stat-label">Questions Per Asker</div><div class="stat-sub" id="anAskersSub"></div></div>
+          <div class="stat-card"><div class="stat-num" id="anLatency">—</div><div class="stat-label">Median Answer Time</div><div class="stat-sub">Uncached answers</div></div>
+        </div>
+
+        <div class="panel-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Most asked</div>
+              <span class="panel-note">Grouped by wording</span>
+            </div>
+            <div class="barlist" id="anTopQuestions"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Questions the archive could not answer</div>
+              <span class="panel-note">Content gaps</span>
+            </div>
+            <div class="barlist" id="anGaps"></div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom:2.5rem;">
+          <div class="panel-head">
+            <div class="panel-title">Latest questions</div>
+            <span class="panel-note">Most recent 40</span>
+          </div>
+          <div class="qfeed" id="anRecent"></div>
+        </div>
+
+        <!-- Audience -->
+        <div class="section-label">Audience</div>
+        <div class="panel-grid">
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title">Where visitors come from</div></div>
+            <div class="barlist" id="anReferrers"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title">Countries</div></div>
+            <div class="barlist" id="anCountries"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title">Devices</div></div>
+            <div class="barlist" id="anDevices"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Time of day</div>
+              <span class="panel-note">Page views, UTC</span>
+            </div>
+            <div class="hourchart" id="anHours"></div>
+            <div class="hour-axis"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="section-label">Content engagement</div>
+        <div class="stats-row tight">
+          <div class="stat-card"><div class="stat-num" id="anDepth">—</div><div class="stat-label">Sections Per Visit</div><div class="stat-sub">How far people read</div></div>
+          <div class="stat-card"><div class="stat-num" id="anReachAsk">—</div><div class="stat-label">Visits Reaching Ask Seán</div><div class="stat-sub" id="anReachAskSub"></div></div>
+          <div class="stat-card"><div class="stat-num" id="anSessions">—</div><div class="stat-label">Visits</div><div class="stat-sub">Browser sessions</div></div>
+          <div class="stat-card"><div class="stat-num" id="anTestimonials">—</div><div class="stat-label">Testimonials Submitted</div><div class="stat-sub">This period</div></div>
+        </div>
+
+        <div class="panel-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Section reach</div>
+              <span class="panel-note">Distinct visitors</span>
+            </div>
+            <div class="barlist" id="anSections"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title">Videos opened</div></div>
+            <div class="barlist" id="anVideos"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title">Outbound clicks</div></div>
+            <div class="barlist" id="anOutbound"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><div class="panel-title">Downloads</div></div>
+            <div class="barlist" id="anDownloads"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── CORPUS PAGE ── -->
-    <div class="page active" id="page-corpus">
+    <div class="page" id="page-corpus">
       <h1 class="page-title">AI Corpus</h1>
       <p class="page-lead">The RAG knowledge base powering "Ask Seán." Add transcripts, books, essays, and poems here so the AI can cite them. Stories and essays also belong in <em>Stories, Essays & Poems</em> for website display — the two are independent.</p>
       <div class="loading" id="corpusLoading">Loading corpus stats…</div>
@@ -1042,7 +1286,7 @@ async function login() {
       hideLoginError();
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('app').classList.add('show');
-      loadCorpus();
+      loadAnalytics();
     } else {
       showLoginError('Incorrect password.');
     }
@@ -1089,7 +1333,7 @@ const SESSION_MAX_AGE = 8 * 60 * 60 * 1000; // 8 hours
         adminSecret = saved;
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').classList.add('show');
-        loadCorpus();
+        loadAnalytics();
       } else { sessionStorage.removeItem('adminSecret'); }
     }).catch(() => {});
 })();
@@ -1102,6 +1346,7 @@ function showPage(name, el) {
   document.querySelectorAll('.snav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   el.classList.add('active');
+  if (name === 'analytics')    loadAnalytics();
   if (name === 'corpus')       loadCorpus();
   if (name === 'dreamquotes')  loadDQ();
   if (name === 'content')      loadContent();
@@ -1113,6 +1358,353 @@ function showPage(name, el) {
   if (name === 'podcasts')     loadPodcasts();
   if (name === 'testimonials') loadTestimonials();
   if (name === 'subscribers')  loadSubscribers();
+}
+
+/* ══════════════════════════════════════
+   ANALYTICS DASHBOARD
+   Values come from one RPC (analytics_summary) so the whole page is a single
+   request. Charts are hand-built SVG/HTML — no chart library, no build step.
+══════════════════════════════════════ */
+
+// Series colours validated against the card surface (#101828) — see the .viz
+// block in the stylesheet for the measured separations.
+const VIZ = {
+  series: ['#b8862f', '#3987e5', '#1baf7a'],
+  surface: '#101828',
+  grid:    'rgba(200,150,62,.10)',
+  axis:    'rgba(200,150,62,.22)',
+  tick:    '#8a7d70'
+};
+
+let anRange = 30;
+let anData = null;
+
+function setRange(days, el) {
+  anRange = days;
+  document.querySelectorAll('#rangeGroup .range-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadAnalytics();
+}
+
+async function loadAnalytics() {
+  document.getElementById('anLoading').style.display = 'block';
+  document.getElementById('anLoading').textContent = 'Loading analytics…';
+  document.getElementById('anSetup').style.display = 'none';
+  document.getElementById('anContent').style.display = 'none';
+  try {
+    const res = await adminFetch('/api/admin/analytics?days=' + anRange);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'request failed');
+    if (data.notReady) {
+      document.getElementById('anLoading').style.display = 'none';
+      const setup = document.getElementById('anSetup');
+      setup.style.display = 'block';
+      setup.innerHTML = 'Analytics tables are not set up yet. Apply <code>supabase/migrations/20260930_analytics.sql</code> in Supabase, then reload this page. Collection starts as soon as the tables exist.';
+      return;
+    }
+    anData = data;
+    renderAnalytics(data);
+  } catch (err) {
+    document.getElementById('anLoading').textContent = 'Failed to load analytics. ' + (err.message || '');
+  }
+}
+
+/* ── small helpers ── */
+const nfmt = n => (n == null ? '—' : Number(n).toLocaleString());
+const pct  = (a, b) => (b ? Math.round((a / b) * 100) + '%' : '—');
+
+function setDelta(id, cur, prev, unit) {
+  const el = document.getElementById(id);
+  if (!prev && !cur) { el.textContent = ''; return; }
+  if (!prev) { el.className = 'delta up'; el.textContent = 'new this period'; return; }
+  const change = Math.round(((cur - prev) / prev) * 100);
+  el.className = 'delta ' + (change > 0 ? 'up' : change < 0 ? 'down' : 'flat');
+  el.textContent = `${change > 0 ? '+' : ''}${change}% vs previous ${unit}`;
+}
+
+const regionNames = (() => {
+  try { return new Intl.DisplayNames(['en'], { type: 'region' }); } catch { return null; }
+})();
+function countryName(code) {
+  if (!code || code === 'unknown') return 'Unknown';
+  try { return (regionNames && regionNames.of(code)) || code; } catch { return code; }
+}
+function prettySection(id) {
+  return String(id).replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+function shortDate(iso) {
+  const d = new Date(iso + (iso.length === 10 ? 'T00:00:00Z' : ''));
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+}
+function relTime(iso) {
+  const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins + 'm ago';
+  if (mins < 1440) return Math.round(mins / 60) + 'h ago';
+  return Math.round(mins / 1440) + 'd ago';
+}
+
+function renderAnalytics(d) {
+  document.getElementById('anLoading').style.display = 'none';
+  document.getElementById('anContent').style.display = 'block';
+
+  const t = d.totals, p = d.previous, a = d.ask;
+  const unit = d.days + ' days';
+  document.getElementById('anGenerated').textContent = 'Updated ' + new Date(d.generated_at).toLocaleString();
+
+  document.getElementById('anVisitors').textContent  = nfmt(t.visitors);
+  document.getElementById('anPageviews').textContent = nfmt(t.pageviews);
+  document.getElementById('anQuestions').textContent = nfmt(t.questions);
+  document.getElementById('anSubs').textContent      = nfmt(t.subscribers_new);
+  document.getElementById('anSubsTotal').textContent = nfmt(t.subscribers_total) + ' on the list';
+  setDelta('anVisitorsDelta',  t.visitors,  p.visitors,  unit);
+  setDelta('anPageviewsDelta', t.pageviews, p.pageviews, unit);
+  setDelta('anQuestionsDelta', t.questions, p.questions, unit);
+
+  // Ask Seán
+  const answered = a.total - a.unanswered;
+  document.getElementById('anAnsRate').textContent   = a.total ? pct(answered, a.total) : '—';
+  document.getElementById('anAnsSub').textContent    = a.total ? `${nfmt(a.unanswered)} found nothing` : 'No questions yet';
+  document.getElementById('anCacheRate').textContent = a.total ? pct(a.cached, a.total) : '—';
+  document.getElementById('anPerAsker').textContent  = t.askers ? (a.total / t.askers).toFixed(1) : '—';
+  document.getElementById('anAskersSub').textContent = `${nfmt(t.askers)} distinct askers`;
+  document.getElementById('anLatency').textContent   = a.median_latency_ms ? (a.median_latency_ms / 1000).toFixed(1) + 's' : '—';
+
+  // Content
+  document.getElementById('anDepth').textContent        = d.depth.sections_per_session ?? '—';
+  document.getElementById('anReachAsk').textContent     = t.sessions ? pct(d.depth.sessions_reaching_ask, t.sessions) : '—';
+  document.getElementById('anReachAskSub').textContent  = nfmt(d.depth.sessions_reaching_ask) + ' visits';
+  document.getElementById('anSessions').textContent     = nfmt(t.sessions);
+  document.getElementById('anTestimonials').textContent = nfmt(t.testimonials_new);
+
+  drawTrend(d.daily);
+  renderTrendTable(d.daily);
+
+  barlist('anTopQuestions', d.top_questions, {
+    label: r => esc(r.question),
+    note:  r => (r.misses ? ` · ${r.misses} unanswered` : '')
+  });
+  barlist('anGaps', d.gaps, {
+    label: r => esc(r.question),
+    empty: a.total
+      ? 'Nothing unanswered — every question found material in the archive.'
+      : 'No questions asked in this period.'
+  });
+  barlist('anReferrers', d.referrers, {
+    label: r => (r.label === 'direct' ? 'Direct / bookmarked' : esc(r.label))
+  });
+  barlist('anCountries', d.countries, { label: r => esc(countryName(r.label)) });
+  barlist('anDevices',   d.devices,   { label: r => esc(prettySection(r.label)) });
+  // The RPC ranks sections by total views; the panel shows distinct visitors, so
+  // re-sort on the number actually being drawn or the bars come out of order.
+  barlist('anSections', d.sections.map(s => ({ ...s, n: s.uniques })).sort((a, b) => b.n - a.n), {
+    label: r => esc(prettySection(r.label))
+  });
+  barlist('anVideos', d.videos, {
+    label: r => {
+      const [id, title] = String(r.label).split('::');
+      return `<a href="https://www.youtube.com/watch?v=${esc(id)}" target="_blank" rel="noopener">${esc(title || id)} ↗</a>`;
+    }
+  });
+  barlist('anOutbound',  d.outbound,  { label: r => esc(r.label) });
+  barlist('anDownloads', d.downloads, { label: r => esc(r.label) });
+
+  renderHours(d.hours);
+  renderRecentQuestions(d.recent_questions);
+}
+
+/* ── Horizontal bar list. Length carries magnitude, so every row is one hue. ── */
+function barlist(elId, rows, opts = {}) {
+  const box = document.getElementById(elId);
+  if (!rows || !rows.length) {
+    box.innerHTML = `<div class="empty-state" style="padding:1.25rem;">${esc(opts.empty || 'No data for this period.')}</div>`;
+    return;
+  }
+  const max = Math.max(...rows.map(r => r.n)) || 1;
+  box.innerHTML = rows.map(r => {
+    const raw = String(r.label ?? r.question ?? '');
+    return `<div class="barlist-row">
+        <div class="barlist-label" title="${esc(raw)}">${opts.label ? opts.label(r) : esc(raw)}</div>
+        <div class="barlist-val">${nfmt(r.n)}${opts.note ? `<span style="color:var(--muted)">${opts.note(r)}</span>` : ''}</div>
+        <div class="barlist-track"><div class="barlist-fill" style="width:${Math.max(1.5, (r.n / max) * 100)}%"></div></div>
+      </div>`;
+  }).join('');
+}
+
+function renderHours(hours) {
+  const byHour = new Array(24).fill(0);
+  (hours || []).forEach(h => { byHour[h.hour] = h.n; });
+  const max = Math.max(...byHour) || 1;
+  document.getElementById('anHours').innerHTML = byHour.map((n, h) =>
+    `<div class="hourbar${n ? '' : ' empty'}" style="height:${n ? Math.max(3, (n / max) * 100) : 3}%" title="${String(h).padStart(2, '0')}:00 UTC — ${nfmt(n)} views"></div>`
+  ).join('');
+}
+
+function renderRecentQuestions(rows) {
+  const box = document.getElementById('anRecent');
+  if (!rows || !rows.length) {
+    box.innerHTML = '<div class="empty-state" style="padding:1.5rem;">No questions asked in this period.</div>';
+    return;
+  }
+  box.innerHTML = rows.map(r => `
+    <div class="qfeed-row">
+      <div class="qfeed-q">${esc(r.question)}</div>
+      <div class="qfeed-meta">
+        ${r.answered ? `${r.source_count} source${r.source_count === 1 ? '' : 's'}` : '<span class="pill miss">no match</span>'}
+        ${r.cached ? ' <span class="pill cached">cached</span>' : ''}
+        · ${esc(relTime(r.created_at))}
+      </div>
+    </div>`).join('');
+}
+
+/* ══ TREND CHART ══
+   Three series on one linear count axis (never a second axis — the scales would
+   be arbitrary). Legend always present; end labels only when they don't collide,
+   with the crosshair tooltip and the table view carrying the rest. */
+const TREND_SERIES = [
+  { key: 'visitors',  name: 'Visitors',     color: VIZ.series[0] },
+  { key: 'pageviews', name: 'Page views',   color: VIZ.series[1] },
+  { key: 'questions', name: 'AI questions', color: VIZ.series[2] }
+];
+
+function niceMax(v) {
+  if (v <= 0) return 1;
+  const pow = Math.pow(10, Math.floor(Math.log10(v)));
+  const n = v / pow;
+  return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * pow;
+}
+
+function drawTrend(daily) {
+  const wrap = document.getElementById('trendWrap');
+  document.getElementById('trendLegend').innerHTML = TREND_SERIES.map(s =>
+    `<span class="legend-item"><span class="legend-key" style="background:${s.color}"></span>${s.name}</span>`
+  ).join('');
+
+  if (!daily || !daily.length) {
+    wrap.innerHTML = '<div class="empty-state">No traffic recorded yet.</div>';
+    return;
+  }
+
+  const W = 960, H = 320, padL = 56, padR = 20, padT = 14, padB = 38;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const n = daily.length;
+  const x = i => (n === 1 ? padL + plotW / 2 : padL + (plotW * i) / (n - 1));
+
+  const peak = Math.max(1, ...daily.flatMap(d => TREND_SERIES.map(s => d[s.key])));
+  const top = niceMax(peak);
+  const tickCount = top <= 4 ? Math.max(1, Math.round(top)) : 4;
+  const y = v => padT + plotH - (v / top) * plotH;
+
+  // Hairline grid, solid and recessive — it should never compete with the data
+  let svg = '';
+  for (let i = 0; i <= tickCount; i++) {
+    const val = (top * i) / tickCount;
+    svg += `<line x1="${padL}" y1="${y(val)}" x2="${W - padR}" y2="${y(val)}" stroke="${i ? VIZ.grid : VIZ.axis}" stroke-width="1"/>`;
+    svg += `<text x="${padL - 10}" y="${y(val) + 4}" text-anchor="end" font-size="11" fill="${VIZ.tick}" style="font-variant-numeric:tabular-nums">${Math.round(val).toLocaleString()}</text>`;
+  }
+
+  const labelEvery = Math.max(1, Math.ceil(n / 7));
+  daily.forEach((d, i) => {
+    if (i % labelEvery && i !== n - 1) return;
+    svg += `<text x="${x(i)}" y="${H - 14}" text-anchor="middle" font-size="11" fill="${VIZ.tick}">${shortDate(d.date)}</text>`;
+  });
+
+  TREND_SERIES.forEach(s => {
+    const pts = daily.map((d, i) => `${x(i).toFixed(1)},${y(d[s.key]).toFixed(1)}`).join(' ');
+    svg += `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  });
+
+  // End markers get a 2px surface ring so they stay legible where lines cross
+  const ends = TREND_SERIES.map(s => ({ s, ey: y(daily[n - 1][s.key]) }));
+  ends.forEach(({ s, ey }) => {
+    svg += `<circle cx="${x(n - 1)}" cy="${ey}" r="4" fill="${s.color}" stroke="${VIZ.surface}" stroke-width="2"/>`;
+  });
+
+  // Direct end labels only when they clear each other — nudged labels detach from
+  // their lines and read as noise, and the legend plus tooltip already cover it
+  const sorted = ends.map(e => e.ey).sort((p, q) => p - q);
+  const clear = sorted.every((v, i) => i === 0 || v - sorted[i - 1] >= 15);
+  if (clear && n > 1) {
+    ends.forEach(({ s, ey }) => {
+      svg += `<text x="${x(n - 1) - 10}" y="${ey - 9}" text-anchor="end" font-size="11" fill="#c4b8a4" style="font-variant-numeric:tabular-nums">${nfmt(daily[n - 1][s.key])}</text>`;
+    });
+  }
+
+  // Crosshair layer
+  svg += `<line id="trendCross" x1="0" y1="${padT}" x2="0" y2="${padT + plotH}" stroke="${VIZ.axis}" stroke-width="1" opacity="0"/>`;
+  TREND_SERIES.forEach(s => {
+    svg += `<circle class="trend-focus" cx="0" cy="0" r="4.5" fill="${s.color}" stroke="${VIZ.surface}" stroke-width="2" opacity="0"/>`;
+  });
+  svg += `<rect id="trendHit" x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="transparent"/>`;
+
+  const desc = `Daily visitors, page views and AI questions over the last ${n} days.`;
+  wrap.innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${desc}"><title>Traffic and AI questions over time</title><desc>${desc}</desc>${svg}</svg>` +
+    `<div class="chart-tip" id="trendTip"></div>`;
+
+  const svgEl = wrap.querySelector('svg');
+  const cross = wrap.querySelector('#trendCross');
+  const focus = Array.from(wrap.querySelectorAll('.trend-focus'));
+  const tipEl = wrap.querySelector('#trendTip');
+
+  function hide() {
+    cross.setAttribute('opacity', '0');
+    focus.forEach(c => c.setAttribute('opacity', '0'));
+    tipEl.classList.remove('show');
+  }
+
+  function move(ev) {
+    const rect = svgEl.getBoundingClientRect();
+    const scale = rect.width / W;
+    const sx = (ev.clientX - rect.left) / scale;
+    const i = n === 1 ? 0 : Math.max(0, Math.min(n - 1, Math.round(((sx - padL) / plotW) * (n - 1))));
+    const d = daily[i];
+
+    cross.setAttribute('opacity', '1');
+    cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i));
+    focus.forEach((c, k) => {
+      c.setAttribute('opacity', '1');
+      c.setAttribute('cx', x(i));
+      c.setAttribute('cy', y(d[TREND_SERIES[k].key]));
+    });
+
+    tipEl.innerHTML =
+      `<div class="tip-date">${esc(new Date(d.date + 'T00:00:00Z').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' }))}</div>` +
+      TREND_SERIES.map(s =>
+        `<div class="tip-row"><span class="tip-dot" style="background:${s.color}"></span>${s.name}<span class="tip-val">${nfmt(d[s.key])}</span></div>`
+      ).join('');
+    tipEl.classList.add('show');
+
+    const px = x(i) * scale;
+    const tw = tipEl.offsetWidth;
+    tipEl.style.left = Math.max(0, Math.min(rect.width - tw, px - tw / 2)) + 'px';
+    tipEl.style.top = Math.max(0, padT * scale - 6) + 'px';
+  }
+
+  svgEl.addEventListener('mousemove', move);
+  svgEl.addEventListener('mouseleave', hide);
+  svgEl.addEventListener('touchmove', e => { if (e.touches[0]) move(e.touches[0]); }, { passive: true });
+  svgEl.addEventListener('touchend', hide);
+}
+
+/* Table view — the non-visual route to the same numbers */
+function renderTrendTable(daily) {
+  document.getElementById('trendTable').innerHTML = `
+    <table class="data-table">
+      <thead><tr><th>Date</th><th>Visitors</th><th>Page views</th><th>AI questions</th></tr></thead>
+      <tbody style="font-variant-numeric:tabular-nums">
+        ${(daily || []).slice().reverse().map(d => `<tr>
+          <td>${esc(shortDate(d.date))}</td><td>${nfmt(d.visitors)}</td><td>${nfmt(d.pageviews)}</td><td>${nfmt(d.questions)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function toggleTrendTable() {
+  const el = document.getElementById('trendTable');
+  const open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+  document.getElementById('trendTableBtn').textContent = open ? 'Show table' : 'Hide table';
 }
 
 /* ══════════════════════════════════════

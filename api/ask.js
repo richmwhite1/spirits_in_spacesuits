@@ -6,11 +6,27 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { embedQuery } from '../lib/embed.js';
 import { findRelevantChunks, getSupabase } from '../lib/supabase.js';
 import { checkRateLimit, getIP, rateLimitResponse } from '../lib/rateLimit.js';
+import { getCountry, visitorHash } from '../lib/analytics.js';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Memoize first-turn answers for 7 days — same question = same canonical answer
 const ASK_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+// Record the question for the admin dashboard. Never awaited — analytics must not
+// add latency to an answer, and a failed insert must never fail the request. Handed
+// to context.waitUntil where the runtime offers it so the write still completes
+// after the response has been streamed back.
+function logAsk(req, ctx, fields) {
+  try {
+    const write = visitorHash(req)
+      .then(visitor =>
+        getSupabase().from('ask_log').insert({ ...fields, visitor, country: getCountry(req) })
+      )
+      .then(() => {}, () => {});
+    ctx?.waitUntil?.(write);
+  } catch { /* never let logging break an answer */ }
+}
 
 async function hashQuestion(text) {
   const buf = new TextEncoder().encode(text.toLowerCase().trim());
@@ -34,7 +50,7 @@ TONE: Warm, direct, intellectually serious, occasionally wry. Irish cadence with
 
 PURPOSE: This AI exists so that every person on earth — regardless of time zone, language, or background — can access fifty years of Seán's teaching as freely as if he were in the room.`;
 
-export default async function handler(req) {
+export default async function handler(req, ctx) {
   // Only accept POST
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 200 });
@@ -79,6 +95,8 @@ export default async function handler(req) {
   const cacheable = history.length === 0;
   const questionHash = cacheable ? await hashQuestion(cleanQuestion) : null;
 
+  const startedAt = Date.now();
+
   try {
     // 0. Cache lookup — return memoized answer if fresh
     if (cacheable) {
@@ -97,6 +115,16 @@ export default async function handler(req) {
           .eq('question_hash', questionHash)
           .then(() => {}, () => {});
 
+        logAsk(req, ctx, {
+          question: cleanQuestion,
+          answered: (cached.response?.sources?.length ?? 0) > 0,
+          cached: true,
+          source_count: cached.response?.sources?.length ?? 0,
+          top_score: cached.response?.sources?.[0]?.similarity ?? null,
+          latency_ms: Date.now() - startedAt,
+          follow_up: false
+        });
+
         return new Response(JSON.stringify({ ...cached.response, remaining, cached: true }), {
           status: 200,
           headers: { 'Content-Type': 'application/json' }
@@ -112,6 +140,16 @@ export default async function handler(req) {
     const chunks = rawChunks.filter(c => c.similarity > 0.35).slice(0, 8);
 
     if (chunks.length === 0) {
+      logAsk(req, ctx, {
+        question: cleanQuestion,
+        answered: false,
+        cached: false,
+        source_count: 0,
+        top_score: rawChunks.length ? Math.round(rawChunks[0].similarity * 100) : null,
+        latency_ms: Date.now() - startedAt,
+        follow_up: !cacheable
+      });
+
       return new Response(JSON.stringify({
         answer: rawChunks.length === 0
           ? "I don't have enough material in the archive yet to answer that well. As more of Seán's transcripts are added, this will improve. In the meantime, you might find relevant teaching in his video archive."
@@ -202,6 +240,16 @@ export default async function handler(req) {
         }, { onConflict: 'question_hash' })
         .then(() => {}, () => {});
     }
+
+    logAsk(req, ctx, {
+      question: cleanQuestion,
+      answered: true,
+      cached: false,
+      source_count: sources.length,
+      top_score: Math.round(chunks[0].similarity * 100),
+      latency_ms: Date.now() - startedAt,
+      follow_up: !cacheable
+    });
 
     return new Response(JSON.stringify({ ...payload, remaining }), {
       status: 200,
