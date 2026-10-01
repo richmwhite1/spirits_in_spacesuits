@@ -3625,12 +3625,19 @@ setTimeout(() => {
    ANALYTICS
    First-party, cookie-free. Events are queued and posted to /api/track in
    batches — a typical visit is two requests: the pageview on arrival, and
-   everything else on the way out. Honours Do Not Track.
+   everything else on the way out.
+
+   Deliberately does NOT check Do Not Track or Global Privacy Control. Nothing
+   personal is stored: no cookies, no third party, and the only visitor id is a
+   salted hash that rotates every UTC day, so it can't be reversed or joined
+   across days. GPC is an opt-out from selling or sharing personal data, which
+   this isn't. Honouring the signals cost 10-20% of visits — including the
+   owner's own — for no privacy gained. (Plausible and Fathom make the same
+   call.) If that ever needs revisiting, the guard goes back on the first line
+   of this IIFE.
 ══════════════════════════════════════ */
 window.sisTrack = function () {};
 (function () {
-  if (navigator.doNotTrack === '1' || window.doNotTrack === '1' || navigator.globalPrivacyControl) return;
-
   const rand = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
   let sid;
   try {
