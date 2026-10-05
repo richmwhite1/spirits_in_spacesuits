@@ -1,7 +1,8 @@
-// GET /api/admin/analytics?days=30 — the whole engagement dashboard in one payload.
+// GET /api/admin/analytics?period=month — the whole engagement dashboard in one payload.
 //
-// All the aggregation happens in Postgres (analytics_summary), so this is a single
-// round trip regardless of how many panels the dashboard grows.
+// period is a calendar window: today | week | month | year | all. All the
+// aggregation happens in Postgres (analytics_summary), so this is a single round
+// trip regardless of how many panels the dashboard grows.
 
 import { createClient } from '@supabase/supabase-js';
 
@@ -17,10 +18,12 @@ export default async function handler(req) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: JSON_HEADERS });
   }
 
-  const days = Math.min(Math.max(parseInt(new URL(req.url).searchParams.get('days') || '30', 10) || 30, 1), 365);
+  const PERIODS = ['today', 'week', 'month', 'year', 'all'];
+  const requested = (new URL(req.url).searchParams.get('period') || 'month').toLowerCase();
+  const period = PERIODS.includes(requested) ? requested : 'month';
 
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
-  const { data, error } = await supabase.rpc('analytics_summary', { p_days: days });
+  const { data, error } = await supabase.rpc('analytics_summary', { p_period: period });
 
   if (error) {
     // The panel is useless — and confusing — if the migration hasn't been applied
@@ -29,7 +32,7 @@ export default async function handler(req) {
     return new Response(JSON.stringify({
       error: error.message,
       notReady,
-      hint: notReady ? 'Apply supabase/migrations/20260930_analytics.sql, then reload.' : undefined
+      hint: notReady ? 'Apply the migrations in supabase/migrations/ (20260930_analytics.sql, 20261005_analytics_periods.sql), then reload.' : undefined
     }), { status: notReady ? 200 : 500, headers: JSON_HEADERS });
   }
 
